@@ -43,9 +43,6 @@ meta:
   monitoring_templates:
   - name: collectd
     release: collectd
-  - name: newrelic-monitor
-    release: newrelic
-
 
 networks: (( merge ))
 name: (( merge ))

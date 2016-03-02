@@ -9,8 +9,6 @@ meta:
     version: latest
   - name: fisma
     version: latest
-  - name: newrelic
-    version: latest
   - name: collectd
     version: latest
   default_env:
