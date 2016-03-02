@@ -66,7 +66,7 @@ resources:
     access_key_id: {{cg-s3-bosh-releases-access-key-id}}
     bucket: {{cg-s3-bosh-releases-bucket}}
     private: true
-    regexp: logsearch-(.*).tgz
+    regexp: logsearch-for-cloudfoundry-(.*).tgz
     secret_access_key: {{cg-s3-bosh-releases-secret-access-key}}
 
 - name: logsearch-config
