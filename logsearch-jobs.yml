@@ -80,6 +80,7 @@ properties:
       port: 514
   push-kibana:
     app_name: logs
+    app_instances: 3
     oauth2_client_id: logsearch-for-cloudfoundry
     oauth2_client_secret: (( merge ))
   redis:
