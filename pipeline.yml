@@ -1,6 +1,5 @@
 ---
 jobs:
-
 - name: deploy-logsearch-production
   plan:
   - aggregate:
@@ -63,6 +62,20 @@ jobs:
         BOSH_DEPLOYMENT_NAME: {{logsearch-production-deployment-bosh-deployment}}
         BOSH_ERRAND: push-kibana
         BOSH_CACERT: common-prod/boshCA.crt
+- name: push-event-logger
+  plan:
+  - aggregate:
+    - get: event-logger-app
+      trigger: true
+  - put: deploy-event-logger-app
+    params:
+      manifest: event-logger-app/manifest.yml
+      path: event-logger-app
+      current_app_name: cf-app-events-logger
+      environment_variables:
+        CF_USER: {{cf-admin-username}}
+        CF_PASSWORD: {{cf-admin-password}}
+        CF_API: {{cf-api-url}}
 
 resources:
 - name: common-prod
@@ -103,6 +116,22 @@ resources:
     password: {{logsearch-production-deployment-bosh-password}}
     deployment: {{logsearch-production-deployment-bosh-deployment}}
     ignore_ssl: false
+
+- name: event-logger-app
+  type: git
+  source:
+    uri: {{event-logger-app-git-url}}
+    branch: {{event-logger-app-git-branch}}
+
+- name: deploy-event-logger-app
+  type: cf
+  source:
+    api: {{cf-api-url}}
+    username: {{cf-deploy-username}}
+    password: {{cf-deploy-password}}
+    organization: {{cf-organization}}
+    space: {{cf-space}}
+    skip_cert_check: false
 
 - name: pipeline-tasks
   type: git
