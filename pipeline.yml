@@ -109,7 +109,7 @@ resources:
     name: {{logsearch-stemcell}}
 
 - name: logsearch-production-deployment
-  type: bosh-deployment
+  type: 18f-bosh-deployment
   source:
     target: {{logsearch-production-deployment-bosh-target}}
     username: {{logsearch-production-deployment-bosh-username}}
