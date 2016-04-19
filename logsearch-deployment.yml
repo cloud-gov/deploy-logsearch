@@ -19,7 +19,7 @@ meta:
   stemcell: (( merge ))
   disk_size:
     elasticsearch_master: 50_000
-    elasticsearch_data: 750_000
+    elasticsearch_data: 500_000
     queue: 75_000
 
 name: (( meta.environment ))
