@@ -18,6 +18,8 @@ properties:
       environment:
         <<: (( merge ))
         ES_HEAP_SIZE: 1024M
+  hm:
+    cloud_watch_enabled: true
 
 disk_pools:
   - name: "elasticsearch_master"
