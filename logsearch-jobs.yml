@@ -39,6 +39,14 @@ meta:
   hardening_templates:
   - name: harden
     release: fisma
+  - name: tripwire
+    release: tripwire
+  - name: awslogs
+    release: awslogs
+  - name: nessus-agent
+    release: nessus-agent
+  - name: newrelic-monitor
+    release: newrelic
 
   monitoring_templates:
   - name: collectd
