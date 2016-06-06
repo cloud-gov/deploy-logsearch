@@ -11,6 +11,14 @@ meta:
     version: latest
   - name: collectd
     version: latest
+  - name: tripwire
+    version: latest
+  - name: awslogs
+    version: latest
+  - name: nessus-agent
+    version: latest
+  - name: newrelic
+    version: latest
   default_env:
     # Default vcap & root password on deployed VMs (ie c1oudc0w)
     # Generated using mkpasswd -m sha-512
