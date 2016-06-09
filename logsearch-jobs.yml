@@ -41,6 +41,10 @@ meta:
     release: fisma
   - name: tripwire
     release: tripwire
+  - name: riemannc
+    release: riemannc
+  - name: clamav 
+    release: clamav
   - name: awslogs
     release: awslogs
   - name: nessus-agent
