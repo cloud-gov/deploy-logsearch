@@ -19,6 +19,10 @@ meta:
     version: latest
   - name: newrelic
     version: latest
+  - name: riemannc
+    version: latest
+  - name: clamav
+    version: latest
   default_env:
     # Default vcap & root password on deployed VMs (ie c1oudc0w)
     # Generated using mkpasswd -m sha-512
