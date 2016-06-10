@@ -5,13 +5,19 @@ jobs:
   - aggregate:
     - get: pipeline-tasks
     - get: logsearch-config
+      trigger: true
     - get: common-prod
+      trigger: true
     - get: cg-s3-logsearch-release
     - get: logsearch-stemcell
+    - get: upstream-logsearch-release
   - task: logsearch-manifest
     config:
       platform: linux
-      image: docker:///18fgsa/concourse-task
+      image_resource:
+        type: docker-image
+        source:
+          repository: 18fgsa/concourse-task
       inputs:
       - name: logsearch-config
       - name: common-prod
@@ -26,6 +32,7 @@ jobs:
       manifest: logsearch-manifest/manifest.yml
       releases:
         - cg-s3-logsearch-release/*.tgz
+        - upstream-logsearch-release/*.tgz
       stemcells:
         - logsearch-stemcell/*.tgz
     on_failure:
@@ -50,18 +57,18 @@ jobs:
   plan:
   - aggregate:
     - get: pipeline-tasks
-    - get: common-prod
+    - get: common
+      resource: common-prod
       passed: [deploy-logsearch-production]
   - task: kibana-errand
     file: pipeline-tasks/bosh-errand.yml
-    config:
-      params:
-        BOSH_TARGET: {{logsearch-production-deployment-bosh-target}}
-        BOSH_USERNAME: {{logsearch-production-deployment-bosh-username}}
-        BOSH_PASSWORD: {{logsearch-production-deployment-bosh-password}}
-        BOSH_DEPLOYMENT_NAME: {{logsearch-production-deployment-bosh-deployment}}
-        BOSH_ERRAND: push-kibana
-        BOSH_CACERT: common-prod/boshCA.crt
+    params:
+      BOSH_TARGET: {{logsearch-production-deployment-bosh-target}}
+      BOSH_USERNAME: {{logsearch-production-deployment-bosh-username}}
+      BOSH_PASSWORD: {{logsearch-production-deployment-bosh-password}}
+      BOSH_DEPLOYMENT_NAME: {{logsearch-production-deployment-bosh-deployment}}
+      BOSH_ERRAND: push-kibana
+      BOSH_CACERT: common/boshCA.crt
 - name: push-event-logger
   plan:
   - aggregate:
@@ -82,20 +89,31 @@ resources:
   type: cg-common
   source:
     bucket_name: {{logsearch-private-bucket-production}}
-    access_key_id: {{logsearch-private-access-key-id-production}}
-    secret_access_key: {{logsearch-private-secret-access-key-production}}
+    access_key_id: {{ci-access-key-id}}
+    secret_access_key: {{ci-secret-access-key}}
     secrets_file: logsearch.yml
     secrets_passphrase: {{logsearch-production-private-passphrase}}
     bosh_cert: bosh.pem
+    region: {{aws-region}}
 
 - name: cg-s3-logsearch-release
   type: s3
   source:
-    access_key_id: {{cg-s3-bosh-releases-access-key-id}}
+    access_key_id: {{ci-access-key-id}}
     bucket: {{cg-s3-bosh-releases-bucket}}
     private: true
     regexp: logsearch-for-cloudfoundry-(.*).tgz
-    secret_access_key: {{cg-s3-bosh-releases-secret-access-key}}
+    secret_access_key: {{ci-secret-access-key}}
+    region_name: {{aws-region}}
+
+- name: upstream-logsearch-release
+  type: s3
+  source:
+    access_key_id: {{ci-access-key-id}}
+    bucket: {{cg-s3-bosh-releases-bucket}}
+    regexp: logsearch-boshrelease-(.*).tgz
+    region_name: {{aws-region}}
+    secret_access_key: {{ci-secret-access-key}}
 
 - name: logsearch-config
   type: git
@@ -104,9 +122,13 @@ resources:
     branch: {{cg-deploy-logsearch-git-branch}}
 
 - name: logsearch-stemcell
-  type: bosh-io-stemcell
+  type: s3
   source:
-    name: {{logsearch-stemcell}}
+    access_key_id: {{ci-access-key-id}}
+    bucket: {{stemcell-bucket}}
+    regexp: light-bosh-stemcell-(.*)-aws-xen-hvm-ubuntu-trusty-go_agent.tgz
+    region_name: {{aws-region}}
+    secret_access_key: {{ci-secret-access-key}}
 
 - name: logsearch-production-deployment
   type: 18f-bosh-deployment
