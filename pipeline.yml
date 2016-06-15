@@ -83,6 +83,8 @@ jobs:
         CF_USER: {{cf-admin-username}}
         CF_PASSWORD: {{cf-admin-password}}
         CF_API: {{cf-api-url}}
+        FETCH_EVERY: "10"
+        CLEAR_CACHE_EVERY: "300"
 
 resources:
 - name: common-prod
@@ -165,3 +167,17 @@ resources:
   type: slack-notification
   source:
     url: {{slack-webhook-url}}
+
+resource_types:
+- name: slack-notification
+  type: docker-image
+  source:
+    repository: cfcommunity/slack-notification-resource
+- name: 18f-bosh-deployment
+  type: docker-image
+  source:
+    repository: 18fgsa/bosh-deployment-resource
+- name: cg-common
+  type: docker-image
+  source:
+    repository: 18fgsa/cg-common-resource
