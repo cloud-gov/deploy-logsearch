@@ -21,11 +21,17 @@ properties:
 
 disk_pools:
   - name: "elasticsearch_master"
-    cloud_properties: {type: gp2}
+    cloud_properties: 
+      type: gp2
+      encrypted: true
   - name: "elasticsearch_data"
-    cloud_properties: {type: gp2}
+    cloud_properties: 
+      type: gp2
+      encrypted: true
   - name: "queue"
-    cloud_properties: {type: gp2}
+    cloud_properties: 
+      type: gp2
+      encrypted: true
 
 update:
   canaries: 1
@@ -49,6 +55,7 @@ resource_pools:
     ephemeral_disk:
       size: 30_000
       type: gp2
+      encrypted: true
     availability_zone: (( meta.zones.z1 ))
     key_name: (( meta.aws.key_name ))
 - name: medium
@@ -57,6 +64,7 @@ resource_pools:
     ephemeral_disk:
       size: 30_000
       type: gp2
+      encrypted: true
     availability_zone: (( meta.zones.z1 ))
     key_name: (( meta.aws.key_name ))
 - name: high_memory
@@ -65,6 +73,7 @@ resource_pools:
     ephemeral_disk:
       size: 100_000
       type: gp2
+      encrypted: true
     availability_zone: (( meta.zones.z1 ))
     key_name: (( meta.aws.key_name ))
 - name: high_cpu
@@ -73,6 +82,7 @@ resource_pools:
     ephemeral_disk:
       size: 30_000
       type: gp2
+      encrypted: true
     availability_zone: (( meta.zones.z1 ))
     key_name: (( meta.aws.key_name ))
 - name: high_cpu_high_memory
@@ -81,6 +91,7 @@ resource_pools:
     ephemeral_disk:
       size: 100_000
       type: gp2
+      encrypted: true
     availability_zone: (( meta.zones.z1 ))
     key_name: (( meta.aws.key_name ))
 
