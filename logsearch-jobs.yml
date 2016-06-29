@@ -43,8 +43,10 @@ meta:
     release: tripwire
   - name: riemannc
     release: riemannc
-  - name: clamav 
+  - name: clamav
     release: clamav
+  - name: snort
+    release: snort
   - name: awslogs
     release: awslogs
   - name: nessus-agent
