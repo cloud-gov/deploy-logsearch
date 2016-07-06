@@ -17,7 +17,8 @@ properties:
       <<: (( merge ))
       environment:
         <<: (( merge ))
-        ES_HEAP_SIZE: 1024M
+        ES_HEAP_SIZE: 8g
+        JAVA_OPTS: "-Djava.io.tmpdir=${TMP_DIR}"
 
 disk_pools:
   - name: "elasticsearch_master"
