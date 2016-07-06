@@ -17,7 +17,7 @@ properties:
       <<: (( merge ))
       environment:
         <<: (( merge ))
-        JAVA_OPTS: "-Djava.io.tmpdir=${TMP_DIR}"
+        JAVA_OPTS: "\"-Djava.io.tmpdir=${TMP_DIR}\""
 
 disk_pools:
   - name: "elasticsearch_master"
