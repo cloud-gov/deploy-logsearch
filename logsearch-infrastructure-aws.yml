@@ -69,7 +69,7 @@ resource_pools:
     key_name: (( meta.aws.key_name ))
 - name: high_memory
   cloud_properties:
-    instance_type: t2.large
+    instance_type: r3.4xlarge
     ephemeral_disk:
       size: 100_000
       type: gp2
