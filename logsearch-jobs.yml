@@ -11,6 +11,8 @@ meta:
     release: logsearch
   - name: curator
     release: logsearch
+  - name: riemann-emitter
+    release: riemann
 
   elasticsearch_data_templates:
   - name: elasticsearch
@@ -122,6 +124,12 @@ properties:
     admin_username: (( merge ))
     admin_password: "(( merge ))"
     admin_client_secret: "(( merge ))"
+  riemann_emitter:
+    host: (( merge ))
+    port: (( merge ))
+    elastic:
+      host: (( merge ))
+      port: (( merge ))
 
 jobs:
 - name: elasticsearch_master
