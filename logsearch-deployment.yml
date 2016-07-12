@@ -21,6 +21,8 @@ meta:
     version: latest
   - name: riemannc
     version: latest
+  - name: riemann
+    version: latest
   - name: clamav
     version: latest
   - name: snort
