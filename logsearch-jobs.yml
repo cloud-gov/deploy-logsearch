@@ -13,6 +13,8 @@ meta:
     release: logsearch
   - name: riemann-emitter
     release: riemann
+  - name: riemann-logcheck
+    release: riemann
 
   elasticsearch_data_templates:
   - name: elasticsearch
