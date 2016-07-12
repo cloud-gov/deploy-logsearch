@@ -122,7 +122,6 @@ properties:
     firehose_user: (( merge ))
     firehose_password: (( merge ))
     admin_username: (( merge ))
-    admin_password: "(( merge ))"
     admin_client_secret: "(( merge ))"
   riemann_emitter:
     host: (( merge ))
