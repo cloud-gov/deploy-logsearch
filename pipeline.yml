@@ -11,7 +11,7 @@ jobs:
     - get: cg-s3-logsearch-release
     - get: cg-s3-riemann-release
     - get: logsearch-stemcell
-    - get: upstream-logsearch-release
+    - get: last-good-upstream-release-adam-manually-copied-to-s3
   - task: logsearch-manifest
     config:
       platform: linux
@@ -34,7 +34,7 @@ jobs:
       releases:
         - cg-s3-logsearch-release/*.tgz
         - cg-s3-riemann-release/*.tgz
-        - upstream-logsearch-release/*.tgz
+        - last-good-upstream-release-adam-manually-copied-to-s3/*.tgz
       stemcells:
         - logsearch-stemcell/*.tgz
     on_failure:
@@ -110,7 +110,7 @@ resources:
     secret_access_key: {{ci-secret-access-key}}
     region_name: {{aws-region}}
 
-- name: upstream-logsearch-release
+- name: last-good-upstream-release-adam-manually-copied-to-s3
   type: s3
   source:
     access_key_id: {{ci-access-key-id}}
