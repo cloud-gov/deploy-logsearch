@@ -13,9 +13,8 @@ if [ ! -z "$2" ]; then
   MANIFEST=$2
 fi
 
-spiff merge \
+spruce merge \
   $SCRIPTPATH/logsearch-deployment.yml \
-  $SCRIPTPATH/logsearch-filters.yml \
   $SCRIPTPATH/logsearch-jobs.yml \
   $SCRIPTPATH/logsearch-infrastructure-aws.yml \
   $SECRETS \
