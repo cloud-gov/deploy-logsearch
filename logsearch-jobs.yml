@@ -132,6 +132,9 @@ jobs:
   networks:
   - name: default
     static_ips: (( static_ips(5) ))
+  properties:
+    kibana:
+      default_app_id: "dashboard/App-Overview"
 
 - name: ingestor
   instances: 1
@@ -227,7 +230,9 @@ properties:
   elasticsearch:
     master_hosts: (( grab jobs.elasticsearch_master.networks.default.static_ips ))
     cluster_name: logsearch
-    exec: ~
+    exec:
+      environment:
+        JAVA_OPTS: '"-Djava.io.tmpdir=${TMP_DIR}"'
   kibana:
     elasticsearch:
       host: (( grab jobs.elasticsearch_master.networks.default.static_ips.[0] ))
