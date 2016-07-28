@@ -56,6 +56,23 @@ jobs:
         username: {{slack-username}}
         icon_url: {{slack-icon-url}}
 
+- name: upload-kibana-dashboards-production
+  plan:
+  - aggregate:
+    - get: pipeline-tasks
+    - get: common
+      resource: common-prod
+      passed: [deploy-logsearch-production]
+  - task: upload-kibana-dashboards
+    file: pipeline-tasks/bosh-errand.yml
+    params: &errand-params
+      BOSH_TARGET: {{logsearch-production-deployment-bosh-target}}
+      BOSH_USERNAME: {{logsearch-production-deployment-bosh-username}}
+      BOSH_PASSWORD: {{logsearch-production-deployment-bosh-password}}
+      BOSH_DEPLOYMENT_NAME: {{logsearch-production-deployment-bosh-deployment}}
+      BOSH_ERRAND: create-uaa-client
+      BOSH_CACERT: common/boshCA.crt
+
 - name: push-uaa-client-production
   plan:
   - aggregate:
@@ -65,13 +82,7 @@ jobs:
       passed: [deploy-logsearch-production]
   - task: uaa-client-errand
     file: pipeline-tasks/bosh-errand.yml
-    params:
-      BOSH_TARGET: {{logsearch-production-deployment-bosh-target}}
-      BOSH_USERNAME: {{logsearch-production-deployment-bosh-username}}
-      BOSH_PASSWORD: {{logsearch-production-deployment-bosh-password}}
-      BOSH_DEPLOYMENT_NAME: {{logsearch-production-deployment-bosh-deployment}}
-      BOSH_ERRAND: create-uaa-client
-      BOSH_CACERT: common/boshCA.crt
+    params: *errand-params
 
 - name: push-event-logger
   plan:
