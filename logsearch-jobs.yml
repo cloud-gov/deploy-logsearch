@@ -1,7 +1,3 @@
-releases:
-- name: logsearch
-  version: latest
-
 jobs:
 ###############################################################################
 #First deploy group - elasticsearch_master, cluster_monitor, queue, maintenance
@@ -26,14 +22,14 @@ jobs:
 - name: cluster_monitor
   instances: 1
   templates:
-  - { release: logsearch, name: queue }
-  - { release: logsearch, name: parser }
-  - { release: logsearch, name: ingestor_syslog }
-  - { release: logsearch, name: elasticsearch }
-  - { release: logsearch, name: elasticsearch_config }
-  - { release: logsearch, name: curator }
-  - { release: logsearch, name: kibana }
-  - { release: logsearch, name: nats_to_syslog }
+  - {release: logsearch, name: queue}
+  - {release: logsearch, name: parser}
+  - {release: logsearch, name: ingestor_syslog}
+  - {release: logsearch, name: elasticsearch}
+  - {release: logsearch, name: elasticsearch_config}
+  - {release: logsearch, name: curator}
+  - {release: logsearch, name: kibana}
+  - {release: logsearch, name: nats_to_syslog}
   resource_pool: cluster_monitor
   networks:
   - name: default
@@ -240,4 +236,4 @@ properties:
     elasticsearch:
       host: (( grab jobs.elasticsearch_master.networks.default.static_ips.[0] ))
     templates:
-      - index_template: /var/vcap/packages/logsearch-config/default-mappings.json
+    - index_template: /var/vcap/packages/logsearch-config/default-mappings.json

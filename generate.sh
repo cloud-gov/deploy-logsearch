@@ -16,6 +16,7 @@ fi
 spruce merge \
   $SCRIPTPATH/logsearch-deployment.yml \
   $SCRIPTPATH/logsearch-jobs.yml \
+  $SCRIPTPATH/logsearch-hardening.yml \
   $SCRIPTPATH/logsearch-infrastructure-aws.yml \
   $SECRETS \
   > $MANIFEST
