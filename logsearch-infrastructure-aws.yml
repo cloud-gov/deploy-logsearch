@@ -14,37 +14,37 @@ resource_pools:
 - name: elasticsearch_master
   cloud_properties:
     availability_zone: (( grab meta.aws.availability_zone ))
-    instance_type: t2.micro
+    instance_type: t2.medium
 
 - name: elasticsearch_data
   cloud_properties:
     availability_zone: (( grab meta.aws.availability_zone ))
-    instance_type: t2.micro
+    instance_type: m3.xlarge
 
 - name: queue
   cloud_properties:
     availability_zone: (( grab meta.aws.availability_zone ))
-    instance_type: t2.small
+    instance_type: t2.large
 
 - name: ingestor
   cloud_properties:
     availability_zone: (( grab meta.aws.availability_zone ))
-    instance_type: t2.micro
+    instance_type: t2.medium
 
 - name: parser
   cloud_properties:
     availability_zone: (( grab meta.aws.availability_zone ))
-    instance_type: t2.micro
+    instance_type: c3.large
 
 - name: kibana
   cloud_properties:
     availability_zone: (( grab meta.aws.availability_zone ))
-    instance_type: t2.micro
+    instance_type: t2.medium
 
 - name: maintenance
   cloud_properties:
     availability_zone: (( grab meta.aws.availability_zone ))
-    instance_type: t2.micro
+    instance_type: t2.medium
 
 - name: cluster_monitor
   cloud_properties:
@@ -54,12 +54,12 @@ resource_pools:
 - name: haproxy
   cloud_properties:
     availability_zone: (( grab meta.aws.availability_zone ))
-    instance_type: t2.micro
+    instance_type: t2.medium
 
 - name: errand
   cloud_properties:
     availability_zone: (( grab meta.aws.availability_zone ))
-    instance_type: t2.micro
+    instance_type: t2.medium
 
 disk_pools:
 - name: elasticsearch_master
