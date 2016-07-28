@@ -57,12 +57,15 @@ jobs:
         icon_url: {{slack-icon-url}}
 
 - name: smoke-tests-production
+  serial_groups: [errand]
   plan:
   - aggregate:
     - get: pipeline-tasks
     - get: common
       resource: common-prod
+    - get: logsearch-production-deployment
       passed: [deploy-logsearch-production]
+      trigger: true
   - task: smoke-tests
     file: pipeline-tasks/bosh-errand.yml
     params: &errand-params
@@ -74,23 +77,29 @@ jobs:
       BOSH_CACERT: common/boshCA.crt
 
 - name: upload-kibana-dashboards-production
+  serial_groups: [errand]
   plan:
   - aggregate:
     - get: pipeline-tasks
     - get: common
       resource: common-prod
+    - get: logsearch-production-deployment
       passed: [deploy-logsearch-production]
+      trigger: true
   - task: upload-kibana-dashboards
     file: pipeline-tasks/bosh-errand.yml
     params: *errand-params
 
 - name: push-uaa-client-production
+  serial_groups: [errand]
   plan:
   - aggregate:
     - get: pipeline-tasks
     - get: common
       resource: common-prod
+    - get: logsearch-production-deployment
       passed: [deploy-logsearch-production]
+      trigger: true
   - task: uaa-client-errand
     file: pipeline-tasks/bosh-errand.yml
     params: *errand-params
