@@ -59,7 +59,7 @@ jobs:
 - name: smoke-tests-production
   serial_groups: [errand]
   plan:
-  - aggregate:
+  - aggregate: &errand-gets
     - get: pipeline-tasks
     - get: common
       resource: common-prod
@@ -76,16 +76,18 @@ jobs:
       BOSH_ERRAND: create-uaa-client
       BOSH_CACERT: common/boshCA.crt
 
+- name: enable-shard-allocation-production
+  serial_groups: [errand]
+  plan:
+  - aggregate: *errand-gets
+  - task: enable_shard_allocation
+    file: pipeline-tasks/bosh-errand.yml
+    params: *errand-params
+
 - name: upload-kibana-dashboards-production
   serial_groups: [errand]
   plan:
-  - aggregate:
-    - get: pipeline-tasks
-    - get: common
-      resource: common-prod
-    - get: logsearch-production-deployment
-      passed: [deploy-logsearch-production]
-      trigger: true
+  - aggregate: *errand-gets
   - task: upload-kibana-dashboards
     file: pipeline-tasks/bosh-errand.yml
     params: *errand-params
@@ -93,13 +95,7 @@ jobs:
 - name: push-uaa-client-production
   serial_groups: [errand]
   plan:
-  - aggregate:
-    - get: pipeline-tasks
-    - get: common
-      resource: common-prod
-    - get: logsearch-production-deployment
-      passed: [deploy-logsearch-production]
-      trigger: true
+  - aggregate: *errand-gets
   - task: uaa-client-errand
     file: pipeline-tasks/bosh-errand.yml
     params: *errand-params
