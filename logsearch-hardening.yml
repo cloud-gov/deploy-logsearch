@@ -1,0 +1,127 @@
+releases:
+- name: logsearch
+  version: latest
+- name: logsearch-for-cloudfoundry
+  version: latest
+- name: fisma
+  version: latest
+- name: collectd
+  version: latest
+- name: tripwire
+  version: latest
+- name: awslogs
+  version: latest
+- name: nessus-agent
+  version: latest
+- name: newrelic
+  version: latest
+- name: riemannc
+  version: latest
+- name: riemann
+  version: latest
+- name: clamav
+  version: latest
+- name: snort
+  version: latest
+
+jobs:
+- name: elasticsearch_master
+  templates:
+  - (( append ))
+  - {name: harden, release: fisma}
+  - {name: tripwire, release: tripwire}
+  - {name: riemannc, release: riemannc}
+  - {name: clamav, release: clamav}
+  - {name: snort, release: snort}
+  - {name: awslogs, release: awslogs}
+  - {name: nessus-agent, release: nessus-agent}
+  - {name: newrelic-monitor, release: newrelic}
+  - {name: riemann-emitter, release: riemann}
+- name: cluster_monitor
+  templates:
+  - (( append ))
+  - {name: harden, release: fisma}
+  - {name: tripwire, release: tripwire}
+  - {name: riemannc, release: riemannc}
+  - {name: clamav, release: clamav}
+  - {name: snort, release: snort}
+  - {name: awslogs, release: awslogs}
+  - {name: nessus-agent, release: nessus-agent}
+  - {name: newrelic-monitor, release: newrelic}
+- name: maintenance
+  templates:
+  - (( append ))
+  - {name: harden, release: fisma}
+  - {name: tripwire, release: tripwire}
+  - {name: riemannc, release: riemannc}
+  - {name: clamav, release: clamav}
+  - {name: snort, release: snort}
+  - {name: awslogs, release: awslogs}
+  - {name: nessus-agent, release: nessus-agent}
+  - {name: newrelic-monitor, release: newrelic}
+- name: elasticsearch_data
+  templates:
+  - (( append ))
+  - {name: harden, release: fisma}
+  - {name: tripwire, release: tripwire}
+  - {name: riemannc, release: riemannc}
+  - {name: clamav, release: clamav}
+  - {name: snort, release: snort}
+  - {name: awslogs, release: awslogs}
+  - {name: nessus-agent, release: nessus-agent}
+  - {name: newrelic-monitor, release: newrelic}
+- name: queue
+  templates:
+  - (( append ))
+  - {name: harden, release: fisma}
+  - {name: tripwire, release: tripwire}
+  - {name: riemannc, release: riemannc}
+  - {name: clamav, release: clamav}
+  - {name: snort, release: snort}
+  - {name: awslogs, release: awslogs}
+  - {name: nessus-agent, release: nessus-agent}
+  - {name: newrelic-monitor, release: newrelic}
+- name: parser
+  templates:
+  - (( append ))
+  - {name: harden, release: fisma}
+  - {name: tripwire, release: tripwire}
+  - {name: riemannc, release: riemannc}
+  - {name: clamav, release: clamav}
+  - {name: snort, release: snort}
+  - {name: awslogs, release: awslogs}
+  - {name: nessus-agent, release: nessus-agent}
+  - {name: newrelic-monitor, release: newrelic}
+- name: ingestor
+  templates:
+  - (( append ))
+  - {name: harden, release: fisma}
+  - {name: tripwire, release: tripwire}
+  - {name: riemannc, release: riemannc}
+  - {name: clamav, release: clamav}
+  - {name: snort, release: snort}
+  - {name: awslogs, release: awslogs}
+  - {name: nessus-agent, release: nessus-agent}
+  - {name: newrelic-monitor, release: newrelic}
+- name: kibana
+  templates:
+  - (( append ))
+  - {name: harden, release: fisma}
+  - {name: tripwire, release: tripwire}
+  - {name: riemannc, release: riemannc}
+  - {name: clamav, release: clamav}
+  - {name: snort, release: snort}
+  - {name: awslogs, release: awslogs}
+  - {name: nessus-agent, release: nessus-agent}
+  - {name: newrelic-monitor, release: newrelic}
+- name: ls-router
+  templates:
+  - (( append ))
+  - {name: harden, release: fisma}
+  - {name: tripwire, release: tripwire}
+  - {name: riemannc, release: riemannc}
+  - {name: clamav, release: clamav}
+  - {name: snort, release: snort}
+  - {name: awslogs, release: awslogs}
+  - {name: nessus-agent, release: nessus-agent}
+  - {name: newrelic-monitor, release: newrelic}

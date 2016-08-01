@@ -1,98 +1,79 @@
----
 meta:
-  environment: (( merge ))
-
+  aws:
+    availability_zone: ~
   stemcell:
     name: bosh-aws-xen-hvm-ubuntu-trusty-go_agent
     version: latest
 
-  zones: (( merge ))
-  aws: (( merge ))
-
-properties:
-  <<: (( merge ))
-  elasticsearch:
-    <<: (( merge ))
-    exec:
-      <<: (( merge ))
-      environment:
-        <<: (( merge ))
-        JAVA_OPTS: "\"-Djava.io.tmpdir=${TMP_DIR}\""
-
-disk_pools:
-  - name: "elasticsearch_master"
-    cloud_properties: 
-      type: gp2
-      encrypted: true
-  - name: "elasticsearch_data"
-    cloud_properties: 
-      type: gp2
-      encrypted: true
-  - name: "queue"
-    cloud_properties: 
-      type: gp2
-      encrypted: true
-
-update:
-  canaries: 1
-  max_in_flight: 50
-  canary_watch_time: 1000-600000
-  update_watch_time: 1000-600000
-  serial: false
-
 compilation:
   cloud_properties:
-    instance_type: c3.large
-    availability_zone: (( meta.zones.z1 ))
-    ephemeral_disk:
-      size: 30000
-      type: gp2
+    availability_zone: (( grab meta.aws.availability_zone ))
+    instance_type: c3.xlarge
 
 resource_pools:
-- name: tiny
+- name: elasticsearch_master
   cloud_properties:
-    instance_type: t2.small
-    ephemeral_disk:
-      size: 30_000
-      type: gp2
-      encrypted: true
-    availability_zone: (( meta.zones.z1 ))
-    key_name: (( meta.aws.key_name ))
-- name: medium
-  cloud_properties:
+    availability_zone: (( grab meta.aws.availability_zone ))
     instance_type: t2.medium
-    ephemeral_disk:
-      size: 30_000
-      type: gp2
-      encrypted: true
-    availability_zone: (( meta.zones.z1 ))
-    key_name: (( meta.aws.key_name ))
-- name: high_memory
-  cloud_properties:
-    instance_type: t2.large
-    ephemeral_disk:
-      size: 100_000
-      type: gp2
-      encrypted: true
-    availability_zone: (( meta.zones.z1 ))
-    key_name: (( meta.aws.key_name ))
-- name: high_cpu
-  cloud_properties:
-    instance_type: c3.large
-    ephemeral_disk:
-      size: 30_000
-      type: gp2
-      encrypted: true
-    availability_zone: (( meta.zones.z1 ))
-    key_name: (( meta.aws.key_name ))
-- name: high_cpu_high_memory
-  cloud_properties:
-    instance_type: m3.xlarge
-    ephemeral_disk:
-      size: 100_000
-      type: gp2
-      encrypted: true
-    availability_zone: (( meta.zones.z1 ))
-    key_name: (( meta.aws.key_name ))
 
-networks: (( merge ))
+- name: elasticsearch_data
+  cloud_properties:
+    availability_zone: (( grab meta.aws.availability_zone ))
+    instance_type: m3.xlarge
+
+- name: queue
+  cloud_properties:
+    availability_zone: (( grab meta.aws.availability_zone ))
+    instance_type: t2.large
+
+- name: ingestor
+  cloud_properties:
+    availability_zone: (( grab meta.aws.availability_zone ))
+    instance_type: t2.medium
+
+- name: parser
+  cloud_properties:
+    availability_zone: (( grab meta.aws.availability_zone ))
+    instance_type: c3.large
+
+- name: kibana
+  cloud_properties:
+    availability_zone: (( grab meta.aws.availability_zone ))
+    instance_type: t2.medium
+
+- name: maintenance
+  cloud_properties:
+    availability_zone: (( grab meta.aws.availability_zone ))
+    instance_type: t2.medium
+
+- name: cluster_monitor
+  cloud_properties:
+    availability_zone: (( grab meta.aws.availability_zone ))
+    instance_type: m3.xlarge
+
+- name: haproxy
+  cloud_properties:
+    availability_zone: (( grab meta.aws.availability_zone ))
+    instance_type: t2.medium
+
+- name: errand
+  cloud_properties:
+    availability_zone: (( grab meta.aws.availability_zone ))
+    instance_type: t2.medium
+
+disk_pools:
+- name: elasticsearch_master
+  cloud_properties:
+    type: gp2
+
+- name: elasticsearch_data
+  cloud_properties:
+    type: gp2
+
+- name: queue
+  cloud_properties:
+    type: gp2
+
+- name: cluster_monitor
+  cloud_properties:
+    type: gp2
