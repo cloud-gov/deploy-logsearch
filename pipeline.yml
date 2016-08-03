@@ -1,6 +1,7 @@
 ---
 jobs:
 - name: deploy-logsearch-staging
+  serial_groups: [bosh-staging]
   plan:
   - aggregate:
     - get: pipeline-tasks
@@ -57,7 +58,7 @@ jobs:
         icon_url: {{slack-icon-url}}
 
 - name: smoke-tests-staging
-  serial_groups: [errand]
+  serial_groups: [bosh-staging]
   plan:
   - aggregate: &staging-errand-gets
     - get: pipeline-tasks
@@ -68,37 +69,39 @@ jobs:
       trigger: true
   - task: smoke-tests
     file: pipeline-tasks/bosh-errand.yml
-    params: &staging-errand-params
-      BOSH_TARGET: {{logsearch-staging-deployment-bosh-target}}
-      BOSH_USERNAME: {{logsearch-staging-deployment-bosh-username}}
-      BOSH_PASSWORD: {{logsearch-staging-deployment-bosh-password}}
-      BOSH_DEPLOYMENT_NAME: {{logsearch-staging-deployment-bosh-deployment}}
-      BOSH_ERRAND: create-uaa-client
-      BOSH_CACERT: common/boshCA.crt
+    params:
+      <<: *staging-errand-params
+      BOSH_ERRAND: smoke-tests
 
 - name: enable-shard-allocation-staging
-  serial_groups: [errand]
+  serial_groups: [bosh-staging]
   plan:
   - aggregate: *staging-errand-gets
   - task: enable_shard_allocation
     file: pipeline-tasks/bosh-errand.yml
-    params: *staging-errand-params
+    params:
+      <<: *staging-errand-params
+      BOSH_ERRAND: enable_shard_allocation
 
 - name: upload-kibana-dashboards-staging
-  serial_groups: [errand]
+  serial_groups: [bosh-staging]
   plan:
   - aggregate: *staging-errand-gets
   - task: upload-kibana-dashboards
     file: pipeline-tasks/bosh-errand.yml
-    params: *staging-errand-params
+    params:
+      <<: *staging-errand-params
+      BOSH_ERRAND: upload-kibana-dashboards
 
 - name: push-uaa-client-staging
-  serial_groups: [errand]
+  serial_groups: [bosh-staging]
   plan:
   - aggregate: *staging-errand-gets
   - task: uaa-client-errand
     file: pipeline-tasks/bosh-errand.yml
-    params: *staging-errand-params
+    params:
+      <<: *staging-errand-params
+      BOSH_ERRAND: create-uaa-client
 
 - name: push-event-logger-staging
   plan:
@@ -118,6 +121,7 @@ jobs:
         CLEAR_CACHE_EVERY: "300"
 
 - name: deploy-logsearch-production
+  serial_groups: [bosh-production]
   plan:
   - aggregate:
     - get: pipeline-tasks
@@ -176,7 +180,7 @@ jobs:
         icon_url: {{slack-icon-url}}
 
 - name: smoke-tests-production
-  serial_groups: [errand]
+  serial_groups: [bosh-production]
   plan:
   - aggregate: &production-errand-gets
     - get: pipeline-tasks
@@ -187,37 +191,39 @@ jobs:
       trigger: true
   - task: smoke-tests
     file: pipeline-tasks/bosh-errand.yml
-    params: &production-errand-params
-      BOSH_TARGET: {{logsearch-production-deployment-bosh-target}}
-      BOSH_USERNAME: {{logsearch-production-deployment-bosh-username}}
-      BOSH_PASSWORD: {{logsearch-production-deployment-bosh-password}}
-      BOSH_DEPLOYMENT_NAME: {{logsearch-production-deployment-bosh-deployment}}
-      BOSH_ERRAND: create-uaa-client
-      BOSH_CACERT: common/boshCA.crt
+    params:
+      <<: *production-errand-params
+      BOSH_ERRAND: smoke-tests
 
 - name: enable-shard-allocation-production
-  serial_groups: [errand]
+  serial_groups: [bosh-production]
   plan:
   - aggregate: *production-errand-gets
   - task: enable_shard_allocation
     file: pipeline-tasks/bosh-errand.yml
-    params: *production-errand-params
+    params:
+      <<: *production-errand-params
+      BOSH_ERRAND: enable_shard_allocation
 
 - name: upload-kibana-dashboards-production
-  serial_groups: [errand]
+  serial_groups: [bosh-production]
   plan:
   - aggregate: *production-errand-gets
   - task: upload-kibana-dashboards
     file: pipeline-tasks/bosh-errand.yml
-    params: *production-errand-params
+    params:
+      <<: *production-errand-params
+      BOSH_ERRAND: upload-kibana-dashboards
 
 - name: push-uaa-client-production
-  serial_groups: [errand]
+  serial_groups: [bosh-production]
   plan:
   - aggregate: *production-errand-gets
   - task: uaa-client-errand
     file: pipeline-tasks/bosh-errand.yml
-    params: *production-errand-params
+    params:
+      <<: *production-errand-params
+      BOSH_ERRAND: create-uaa-client
 
 - name: push-event-logger-production
   plan:
@@ -371,3 +377,17 @@ resource_types:
   type: docker-image
   source:
     repository: 18fgsa/cg-common-resource
+
+staging-errand-params: &staging-errand-params
+  BOSH_TARGET: {{logsearch-staging-deployment-bosh-target}}
+  BOSH_USERNAME: {{logsearch-staging-deployment-bosh-username}}
+  BOSH_PASSWORD: {{logsearch-staging-deployment-bosh-password}}
+  BOSH_DEPLOYMENT_NAME: {{logsearch-staging-deployment-bosh-deployment}}
+  BOSH_CACERT: common/boshCA.crt
+
+production-errand-params: &production-errand-params
+  BOSH_TARGET: {{logsearch-production-deployment-bosh-target}}
+  BOSH_USERNAME: {{logsearch-production-deployment-bosh-username}}
+  BOSH_PASSWORD: {{logsearch-production-deployment-bosh-password}}
+  BOSH_DEPLOYMENT_NAME: {{logsearch-production-deployment-bosh-deployment}}
+  BOSH_CACERT: common/boshCA.crt
