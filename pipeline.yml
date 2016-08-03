@@ -1,6 +1,7 @@
 ---
 jobs:
 - name: deploy-logsearch-staging
+  serial_groups: [bosh-staging]
   plan:
   - aggregate:
     - get: pipeline-tasks
@@ -57,7 +58,7 @@ jobs:
         icon_url: {{slack-icon-url}}
 
 - name: smoke-tests-staging
-  serial_groups: [errand]
+  serial_groups: [bosh-staging]
   plan:
   - aggregate: &staging-errand-gets
     - get: pipeline-tasks
@@ -73,7 +74,7 @@ jobs:
       BOSH_ERRAND: smoke-tests
 
 - name: enable-shard-allocation-staging
-  serial_groups: [errand]
+  serial_groups: [bosh-staging]
   plan:
   - aggregate: *staging-errand-gets
   - task: enable_shard_allocation
@@ -83,7 +84,7 @@ jobs:
       BOSH_ERRAND: enable_shard_allocation
 
 - name: upload-kibana-dashboards-staging
-  serial_groups: [errand]
+  serial_groups: [bosh-staging]
   plan:
   - aggregate: *staging-errand-gets
   - task: upload-kibana-dashboards
@@ -93,7 +94,7 @@ jobs:
       BOSH_ERRAND: upload-kibana-dashboards
 
 - name: push-uaa-client-staging
-  serial_groups: [errand]
+  serial_groups: [bosh-staging]
   plan:
   - aggregate: *staging-errand-gets
   - task: uaa-client-errand
@@ -120,6 +121,7 @@ jobs:
         CLEAR_CACHE_EVERY: "300"
 
 - name: deploy-logsearch-production
+  serial_groups: [bosh-production]
   plan:
   - aggregate:
     - get: pipeline-tasks
@@ -178,7 +180,7 @@ jobs:
         icon_url: {{slack-icon-url}}
 
 - name: smoke-tests-production
-  serial_groups: [errand]
+  serial_groups: [bosh-production]
   plan:
   - aggregate: &production-errand-gets
     - get: pipeline-tasks
@@ -194,7 +196,7 @@ jobs:
       BOSH_ERRAND: smoke-tests
 
 - name: enable-shard-allocation-production
-  serial_groups: [errand]
+  serial_groups: [bosh-production]
   plan:
   - aggregate: *production-errand-gets
   - task: enable_shard_allocation
@@ -204,7 +206,7 @@ jobs:
       BOSH_ERRAND: enable_shard_allocation
 
 - name: upload-kibana-dashboards-production
-  serial_groups: [errand]
+  serial_groups: [bosh-production]
   plan:
   - aggregate: *production-errand-gets
   - task: upload-kibana-dashboards
@@ -214,7 +216,7 @@ jobs:
       BOSH_ERRAND: upload-kibana-dashboards
 
 - name: push-uaa-client-production
-  serial_groups: [errand]
+  serial_groups: [bosh-production]
   plan:
   - aggregate: *production-errand-gets
   - task: uaa-client-errand
