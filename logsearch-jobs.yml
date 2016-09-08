@@ -242,3 +242,9 @@ properties:
       host: (( grab jobs.elasticsearch_master.networks.default.static_ips.[0] ))
     templates:
     - index_template: /var/vcap/packages/logsearch-config/default-mappings.json
+  snort:
+    rules: |
+      alert tcp any any -> any 9200 (msg:"Unexpected logsearch action"; content:"POST"; http_method; content: "logs-app"; http_uri; content:"/_update"; http_uri; classtype:trojan-activity; sid:343080002; rev:1;)
+      alert tcp any any -> any 9200 (msg:"Unexpected logsearch action"; content:"POST"; http_method; content: "logs-platform"; http_uri; content:"/_update"; http_uri; classtype:trojan-activity; sid:343080003; rev:1;)
+      alert tcp any any -> any 9200 (msg:"Unexpected logsearch action"; content:"DELETE"; http_method; content: "logs-app"; http_uri; classtype:trojan-activity; sid:343080004; rev:1;)
+      alert tcp any any -> any 9200 (msg:"Unexpected logsearch action"; content:"DELETE"; http_method; content: "logs-platform"; http_uri; classtype:trojan-activity; sid:343080005; rev:1;)
