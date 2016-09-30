@@ -43,7 +43,7 @@ jobs:
       params:
         text: |
           :x: FAILED to deploy logsearch on staging
-          <https://$ATC_EXTERNAL_URL/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
+          <$ATC_EXTERNAL_URL/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
         channel: {{slack-channel}}
         username: {{slack-username}}
         icon_url: {{slack-icon-url}}
@@ -52,7 +52,7 @@ jobs:
       params:
         text: |
           :white_check_mark: Successfully deployed logsearch on staging
-          <https://$ATC_EXTERNAL_URL/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
+          <$ATC_EXTERNAL_URL/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
         channel: {{slack-channel}}
         username: {{slack-username}}
         icon_url: {{slack-icon-url}}
@@ -83,15 +83,15 @@ jobs:
       <<: *staging-errand-params
       BOSH_ERRAND: enable_shard_allocation
 
-- name: upload-kibana-dashboards-staging
+- name: upload-kibana-objects-staging
   serial_groups: [bosh-staging]
   plan:
   - aggregate: *staging-errand-gets
-  - task: upload-kibana-dashboards
+  - task: upload-kibana-objects
     file: pipeline-tasks/bosh-errand.yml
     params:
       <<: *staging-errand-params
-      BOSH_ERRAND: upload-kibana-dashboards
+      BOSH_ERRAND: upload-kibana-objects
 
 - name: push-uaa-client-staging
   serial_groups: [bosh-staging]
@@ -165,7 +165,7 @@ jobs:
       params:
         text: |
           :x: FAILED to deploy logsearch on production
-          <https://$ATC_EXTERNAL_URL/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
+          <$ATC_EXTERNAL_URL/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
         channel: {{slack-channel}}
         username: {{slack-username}}
         icon_url: {{slack-icon-url}}
@@ -174,7 +174,7 @@ jobs:
       params:
         text: |
           :white_check_mark: Successfully deployed logsearch on production
-          <https://$ATC_EXTERNAL_URL/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
+          <$ATC_EXTERNAL_URL/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
         channel: {{slack-channel}}
         username: {{slack-username}}
         icon_url: {{slack-icon-url}}
@@ -205,15 +205,15 @@ jobs:
       <<: *production-errand-params
       BOSH_ERRAND: enable_shard_allocation
 
-- name: upload-kibana-dashboards-production
+- name: upload-kibana-objects-production
   serial_groups: [bosh-production]
   plan:
   - aggregate: *production-errand-gets
-  - task: upload-kibana-dashboards
+  - task: upload-kibana-objects
     file: pipeline-tasks/bosh-errand.yml
     params:
       <<: *production-errand-params
-      BOSH_ERRAND: upload-kibana-dashboards
+      BOSH_ERRAND: upload-kibana-objects
 
 - name: push-uaa-client-production
   serial_groups: [bosh-production]

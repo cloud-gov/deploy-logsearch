@@ -95,11 +95,16 @@ jobs:
 - name: maintenance
   instances: 1
   templates:
-  - {name: elasticsearch_config, release: logsearch}
   - {name: curator, release: logsearch}
+  - {name: elasticsearch_config, release: logsearch}
+  - {name: logsearch-for-cloudfoundry-filters, release: logsearch-for-cloudfoundry}
   resource_pool: maintenance
   networks:
   - name: default
+  properties:
+    elasticsearch_config:
+      templates:
+      - index_template: /var/vcap/packages/logsearch-for-cloudfoundry-filters/logs-template.json
   update:
     serial: true # Block on this job to create deploy group 1
 
@@ -128,6 +133,7 @@ jobs:
   instances: 1
   templates:
   - {name: kibana, release: logsearch}
+  - {name: kibana-auth-plugin, release: logsearch-for-cloudfoundry}
   resource_pool: kibana
   networks:
   - name: default
@@ -135,12 +141,15 @@ jobs:
   properties:
     kibana:
       default_app_id: "dashboard/App-Overview"
+      plugins:
+      - auth: /var/vcap/packages/kibana-auth-plugin/kibana-auth-plugin.tar.gz
 
 - name: ingestor
   instances: 1
   templates:
-  - {name: ingestor_syslog, release: logsearch}
   - {name: ingestor_relp, release: logsearch}
+  - {name: ingestor_syslog, release: logsearch}
+  - {name: ingestor_cloudfoundry-firehose, release: logsearch-for-cloudfoundry}
   resource_pool: ingestor
   networks:
   - name: default
@@ -150,15 +159,25 @@ jobs:
       debug: false
       relp:
         port: ~
+    syslog:
+      host: (( grab jobs.ingestor.networks.default.static_ips.[0] ))
+      port: 5514
 
 - name: parser
   instances: 2
   templates:
   - {name: parser, release: logsearch}
   - {name: elasticsearch, release: logsearch}
+  - {name: logsearch-for-cloudfoundry-filters, release: logsearch-for-cloudfoundry}
   resource_pool: parser
   networks:
   - name: default
+  properties:
+    logstash_parser:
+      elasticsearch_index: "logs-%{[@metadata][index]}-%{+YYYY.MM.dd}"
+      elasticsearch_index_type: "%{[@metadata][type]}"
+      filters:
+      - logsearch-for-cf: /var/vcap/packages/logsearch-for-cloudfoundry-filters/logstash-filters-default.conf
   update:
     serial: false # Block to create deploy group 2
     max_in_flight: 4  # Its ok to update multiple parsers at a time
@@ -214,6 +233,37 @@ jobs:
         host: (( grab jobs.ls-router.networks.[0].static_ips.[0] ))
       elasticsearch_master:
         host: (( grab jobs.elasticsearch_master.networks.default.static_ips.[0] ))
+
+- name: upload-kibana-objects
+  lifecycle: errand
+  release: logsearch-for-cloudfoundry
+  instances: 1
+  templates:
+  - {name: upload-kibana-objects, release: logsearch-for-cloudfoundry}
+  networks:
+  - name: default
+  resource_pool: errand
+  properties:
+    elasticsearch:
+      host: (( grab jobs.elasticsearch_master.networks.default.static_ips.[0] ))
+      port: 9200
+
+- name: create-uaa-client
+  lifecycle: errand
+  release: logsearch-for-cloudfoundry
+  instances: 1
+  templates:
+  - {name: create-uaa-client, release: logsearch-for-cloudfoundry}
+  networks:
+  - name: default
+  resource_pool: errand
+  properties:
+    create-uaa-client:
+      oauth2_client_id: (( param "specify uaa client id" ))
+      oauth2_client_secret: (( param "specify uaa client secret" ))
+      cloudfoundry:
+        system_domain: (( param "specify cf system domain" ))
+        admin_client_secret: (( param "specify cf client secret" ))
 
 # Global properties
 properties:
