@@ -6,6 +6,8 @@ jobs:
   instances: 1
   templates:
   - {name: elasticsearch, release: logsearch}
+  - {name: riemann-emitter, release: riemann}
+  - {name: riemann-checklogs, release: riemann}
   resource_pool: elasticsearch_master
   persistent_disk_pool: elasticsearch_master
   networks:
