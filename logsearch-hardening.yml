@@ -1,7 +1,7 @@
 releases:
 - {name: logsearch, version: latest}
 - {name: logsearch-for-cloudfoundry, version: latest}
-- {name: fisma, version, latest}
+- {name: fisma, version: latest}
 - {name: collectd, version: latest}
 - {name: tripwire, version: latest}
 - {name: awslogs, version: latest}
