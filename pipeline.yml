@@ -13,6 +13,7 @@ jobs:
     - get: cg-s3-logsearch-release
     - get: cg-s3-riemann-release
     - get: logsearch-stemcell
+      trigger: true
     - get: upstream-logsearch-release
   - task: logsearch-manifest
     config: &manifest-config
@@ -134,6 +135,7 @@ jobs:
   - aggregate:
     - get: pipeline-tasks
     - get: logsearch-config
+      passed: [deploy-logsearch-staging]
       trigger: true
     - get: common
       resource: common-prod
@@ -141,6 +143,8 @@ jobs:
     - get: cg-s3-logsearch-release
     - get: cg-s3-riemann-release
     - get: logsearch-stemcell
+      passed: [deploy-logsearch-staging]
+      trigger: true
     - get: upstream-logsearch-release
     - get: logsearch-staging-deployment
       passed: [smoke-tests-staging]
