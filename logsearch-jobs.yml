@@ -277,6 +277,14 @@ properties:
     debug: false
   logstash_ingestor:
     debug: false
+    outputs:
+      - plugin: redis
+        options: {}
+      - plugin: s3
+        options:
+          region: (( grab meta.aws.region ))
+          bucket: (( grab meta.ingestor.bucket ))
+          time_file: 5
   redis:
     host: (( grab jobs.queue.networks.default.static_ips.[0] ))
   elasticsearch:
