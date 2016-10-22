@@ -10,6 +10,7 @@ jobs:
     - get: common
       resource: common-staging
       trigger: true
+    - get: cg-s3-logstash-output-s3-backport-release
     - get: cg-s3-logsearch-release
     - get: cg-s3-riemann-release
     - get: logsearch-stemcell
@@ -35,6 +36,7 @@ jobs:
       cert: common/boshCA.crt
       manifest: logsearch-manifest/manifest.yml
       releases:
+      - cg-s3-logstash-output-s3-backport-release/*.tgz
       - cg-s3-logsearch-release/*.tgz
       - cg-s3-riemann-release/*.tgz
       - upstream-logsearch-release/*.tgz
@@ -50,7 +52,7 @@ jobs:
       params: &slack-params
         text: |
           :x: FAILED to deploy logsearch on staging
-          <$ATC_EXTERNAL_URL/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
+          <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
         channel: {{slack-channel}}
         username: {{slack-username}}
         icon_url: {{slack-icon-url}}
@@ -60,7 +62,7 @@ jobs:
         <<: *slack-params
         text: |
           :white_check_mark: Successfully deployed logsearch on staging
-          <$ATC_EXTERNAL_URL/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
+          <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
 
 - name: smoke-tests-staging
   serial_groups: [bosh-staging]
@@ -83,14 +85,14 @@ jobs:
         <<: *slack-params
         text: |
           :x: Smoke tests for logsearch on staging FAILED
-          <$ATC_EXTERNAL_URL/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
+          <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
     on_success:
       put: slack
       params:
         <<: *slack-params
         text: |
           :white_check_mark: Smoke tests for logsearch on staging PASSED
-          <$ATC_EXTERNAL_URL/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
+          <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
 
 - name: upload-kibana-objects-staging
   serial_groups: [bosh-staging]
@@ -140,6 +142,7 @@ jobs:
     - get: common
       resource: common-prod
       trigger: true
+    - get: cg-s3-logstash-output-s3-backport-release
     - get: cg-s3-logsearch-release
     - get: cg-s3-riemann-release
     - get: logsearch-stemcell
@@ -163,14 +166,14 @@ jobs:
         <<: *slack-params
         text: |
           :x: FAILED to deploy logsearch on production
-          <$ATC_EXTERNAL_URL/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
+          <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
     on_success:
       put: slack
       params:
         <<: *slack-params
         text: |
           :white_check_mark: Successfully deployed logsearch on production
-          <$ATC_EXTERNAL_URL/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
+          <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
 
 - name: smoke-tests-production
   serial_groups: [bosh-production]
@@ -193,14 +196,14 @@ jobs:
         <<: *slack-params
         text: |
           :x: Smoke tests for logsearch on production FAILED
-          <$ATC_EXTERNAL_URL/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
+          <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
     on_success:
       put: slack
       params:
         <<: *slack-params
         text: |
           :white_check_mark: Smoke tests for logsearch on production PASSED
-          <$ATC_EXTERNAL_URL/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
+          <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
 
 - name: upload-kibana-objects-production
   serial_groups: [bosh-production]
@@ -268,6 +271,16 @@ resources:
   type: bosh-io-release
   source:
     repository: logsearch/logsearch-boshrelease
+
+- name: cg-s3-logstash-output-s3-backport-release
+  type: s3
+  source:
+    access_key_id: {{ci-access-key-id}}
+    bucket: {{cg-s3-bosh-releases-bucket}}
+    private: true
+    regexp: logstash-output-s3-backport-(.*).tgz
+    secret_access_key: {{ci-secret-access-key}}
+    region_name: {{aws-region}}
 
 - name: cg-s3-logsearch-release
   type: s3
