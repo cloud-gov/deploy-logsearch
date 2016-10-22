@@ -152,6 +152,8 @@ jobs:
   - {name: ingestor_relp, release: logsearch}
   - {name: ingestor_syslog, release: logsearch}
   - {name: ingestor_cloudfoundry-firehose, release: logsearch-for-cloudfoundry}
+  - {name: apply-patch, release: logstash-output-s3-backport}
+ 
   resource_pool: ingestor
   networks:
   - name: default
