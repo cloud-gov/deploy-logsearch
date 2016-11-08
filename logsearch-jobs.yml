@@ -32,6 +32,7 @@ jobs:
   - {release: logsearch, name: curator}
   - {release: logsearch, name: kibana}
   - {release: logsearch, name: nats_to_syslog}
+  - {name: apply-patch, release: logstash-output-s3-backport}
   resource_pool: cluster_monitor
   networks:
   - name: default
