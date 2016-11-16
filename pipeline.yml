@@ -12,10 +12,11 @@ jobs:
       trigger: true
     - get: cg-s3-logstash-output-s3-backport-release
     - get: cg-s3-logsearch-release
+    - get: cg-s3-logsearch-for-cf-release
     - get: cg-s3-riemann-release
     - get: logsearch-stemcell
       trigger: true
-    - get: upstream-logsearch-release
+    # - get: upstream-logsearch-release
   - task: logsearch-manifest
     config: &manifest-config
       platform: linux
@@ -38,8 +39,9 @@ jobs:
       releases:
       - cg-s3-logstash-output-s3-backport-release/*.tgz
       - cg-s3-logsearch-release/*.tgz
+      - cg-s3-logsearch-for-cf-release/*.tgz
       - cg-s3-riemann-release/*.tgz
-      - upstream-logsearch-release/*.tgz
+      # - upstream-logsearch-release/*.tgz
       stemcells:
       - logsearch-stemcell/*.tgz
   - task: enable_shard_allocation
@@ -47,22 +49,22 @@ jobs:
     params:
       <<: *staging-errand-params
       BOSH_ERRAND: enable_shard_allocation
-    on_failure:
-      put: slack
-      params: &slack-params
-        text: |
-          :x: FAILED to deploy logsearch on staging
-          <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
-        channel: {{slack-channel}}
-        username: {{slack-username}}
-        icon_url: {{slack-icon-url}}
-    on_success:
-      put: slack
-      params:
-        <<: *slack-params
-        text: |
-          :white_check_mark: Successfully deployed logsearch on staging
-          <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
+  on_failure:
+    put: slack
+    params: &slack-params
+      text: |
+        :x: FAILED to deploy logsearch on staging
+        <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
+      channel: {{slack-channel}}
+      username: {{slack-username}}
+      icon_url: {{slack-icon-url}}
+  on_success:
+    put: slack
+    params:
+      <<: *slack-params
+      text: |
+        :white_check_mark: Successfully deployed logsearch on staging
+        <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
 
 - name: smoke-tests-staging
   serial_groups: [bosh-staging]
@@ -79,20 +81,20 @@ jobs:
     params:
       <<: *staging-errand-params
       BOSH_ERRAND: smoke-tests
-    on_failure:
-      put: slack
-      params:
-        <<: *slack-params
-        text: |
-          :x: Smoke tests for logsearch on staging FAILED
-          <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
-    on_success:
-      put: slack
-      params:
-        <<: *slack-params
-        text: |
-          :white_check_mark: Smoke tests for logsearch on staging PASSED
-          <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
+  on_failure:
+    put: slack
+    params:
+      <<: *slack-params
+      text: |
+        :x: Smoke tests for logsearch on staging FAILED
+        <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
+  on_success:
+    put: slack
+    params:
+      <<: *slack-params
+      text: |
+        :white_check_mark: Smoke tests for logsearch on staging PASSED
+        <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
 
 - name: upload-kibana-objects-staging
   serial_groups: [bosh-staging]
@@ -144,11 +146,12 @@ jobs:
       trigger: true
     - get: cg-s3-logstash-output-s3-backport-release
     - get: cg-s3-logsearch-release
+    - get: cg-s3-logsearch-for-cf-release
     - get: cg-s3-riemann-release
     - get: logsearch-stemcell
       passed: [deploy-logsearch-staging]
       trigger: true
-    - get: upstream-logsearch-release
+    # - get: upstream-logsearch-release
     - get: logsearch-staging-deployment
       passed: [smoke-tests-staging]
   - task: logsearch-manifest
@@ -160,20 +163,20 @@ jobs:
     params:
       <<: *production-errand-params
       BOSH_ERRAND: enable_shard_allocation
-    on_failure:
-      put: slack
-      params:
-        <<: *slack-params
-        text: |
-          :x: FAILED to deploy logsearch on production
-          <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
-    on_success:
-      put: slack
-      params:
-        <<: *slack-params
-        text: |
-          :white_check_mark: Successfully deployed logsearch on production
-          <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
+  on_failure:
+    put: slack
+    params:
+      <<: *slack-params
+      text: |
+        :x: FAILED to deploy logsearch on production
+        <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
+  on_success:
+    put: slack
+    params:
+      <<: *slack-params
+      text: |
+        :white_check_mark: Successfully deployed logsearch on production
+        <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
 
 - name: smoke-tests-production
   serial_groups: [bosh-production]
@@ -190,20 +193,20 @@ jobs:
     params:
       <<: *production-errand-params
       BOSH_ERRAND: smoke-tests
-    on_failure:
-      put: slack
-      params:
-        <<: *slack-params
-        text: |
-          :x: Smoke tests for logsearch on production FAILED
-          <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
-    on_success:
-      put: slack
-      params:
-        <<: *slack-params
-        text: |
-          :white_check_mark: Smoke tests for logsearch on production PASSED
-          <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
+  on_failure:
+    put: slack
+    params:
+      <<: *slack-params
+      text: |
+        :x: Smoke tests for logsearch on production FAILED
+        <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
+  on_success:
+    put: slack
+    params:
+      <<: *slack-params
+      text: |
+        :white_check_mark: Smoke tests for logsearch on production PASSED
+        <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
 
 - name: upload-kibana-objects-production
   serial_groups: [bosh-production]
@@ -267,10 +270,11 @@ resources:
     bosh_cert: bosh.pem
     region: {{aws-region}}
 
-- name: upstream-logsearch-release
-  type: bosh-io-release
-  source:
-    repository: logsearch/logsearch-boshrelease
+# TODO: Restore after https://github.com/cloudfoundry-community/logsearch-boshrelease/pull/5 is released
+# - name: upstream-logsearch-release
+#   type: bosh-io-release
+#   source:
+#     repository: logsearch/logsearch-boshrelease
 
 - name: cg-s3-logstash-output-s3-backport-release
   type: s3
@@ -288,7 +292,17 @@ resources:
     access_key_id: {{ci-access-key-id}}
     bucket: {{cg-s3-bosh-releases-bucket}}
     private: true
-    regexp: logsearch-for-cloudfoundry-(.*).tgz
+    regexp: logsearch-([\d.]*).tgz
+    secret_access_key: {{ci-secret-access-key}}
+    region_name: {{aws-region}}
+
+- name: cg-s3-logsearch-for-cf-release
+  type: s3
+  source:
+    access_key_id: {{ci-access-key-id}}
+    bucket: {{cg-s3-bosh-releases-bucket}}
+    private: true
+    regexp: logsearch-for-cloudfoundry-([\d.]*).tgz
     secret_access_key: {{ci-secret-access-key}}
     region_name: {{aws-region}}
 
