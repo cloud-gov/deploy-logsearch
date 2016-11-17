@@ -206,6 +206,12 @@ jobs:
       ingestor:
         backend_servers: (( grab jobs.ingestor.networks.[0].static_ips ))
       kibana:
+        frontend:
+          custom_config:
+          - http-response set-header X-Content-Type-Options nosniff
+          - http-response set-header X-XSS-Protection 1;\ mode=block
+          - http-response set-header Cache-Control no-cache,\ no-store,\ must-revalidate,\ private
+          - http-response add-header Pragma no-cache
         backend_servers: (( grab jobs.kibana.networks.[0].static_ips ))
       cluster_monitor:
         backend_servers: (( grab jobs.cluster_monitor.networks.[0].static_ips ))
