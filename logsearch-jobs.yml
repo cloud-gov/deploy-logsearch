@@ -195,6 +195,7 @@ jobs:
   instances: 1
   templates:
   - { name: haproxy, release: logsearch }
+  - { name: route_registrar, release: cf }
   resource_pool: haproxy
   networks:
   - name: default
