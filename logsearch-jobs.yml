@@ -154,12 +154,13 @@ jobs:
   - {name: ingestor_syslog, release: logsearch}
   - {name: ingestor_cloudfoundry-firehose, release: logsearch-for-cloudfoundry}
   - {name: apply-patch, release: logstash-output-s3-backport}
- 
   resource_pool: ingestor
   networks:
   - name: default
     static_ips: (( static_ips(1) ))
   properties:
+    cloudfoundry:
+      firehose_events: "LogMessage,ContainerMetric,Error"
     logstash_ingestor:
       debug: false
       relp:
