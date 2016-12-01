@@ -11,6 +11,11 @@ compilation:
   reuse_compilation_vms: true
   cloud_properties: {}
 
+releases:
+- {name: logsearch, version: latest}
+- {name: logsearch-for-cloudfoundry, version: latest}
+- {name: riemann, version: latest}
+
 resource_pools:
 - name: elasticsearch_master
   network: default
