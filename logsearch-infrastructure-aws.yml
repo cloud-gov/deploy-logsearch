@@ -35,7 +35,7 @@ resource_pools:
 - name: parser
   cloud_properties:
     availability_zone: (( grab meta.aws.availability_zone ))
-    instance_type: c3.large
+    instance_type: c4.xlarge
 
 - name: kibana
   cloud_properties:
