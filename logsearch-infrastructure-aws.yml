@@ -14,7 +14,7 @@ resource_pools:
 - name: elasticsearch_master
   cloud_properties:
     availability_zone: (( grab meta.aws.availability_zone ))
-    instance_type: t2.medium
+    instance_type: t2.xlarge
 
 - name: elasticsearch_data
   cloud_properties:
