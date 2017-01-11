@@ -29,10 +29,12 @@ jobs:
   serial_groups: [bosh-staging]
   plan:
   - aggregate:
+    - get: common
+      resource: master-bosh-root-cert
     - get: pipeline-tasks
     - get: logsearch-config
       trigger: true
-    - get: common
+    - get: common-secrets
       resource: common-staging
       trigger: true
     - get: cg-s3-logstash-output-s3-backport-release
@@ -51,15 +53,15 @@ jobs:
           repository: 18fgsa/concourse-task
       inputs:
       - name: logsearch-config
-      - name: common
+      - name: common-secrets
       run:
         path: logsearch-config/generate.sh
-        args: ["common/secrets.yml", "logsearch-manifest/manifest.yml"]
+        args: ["common-secrets/secrets.yml", "logsearch-manifest/manifest.yml"]
       outputs:
       - name: logsearch-manifest
   - put: logsearch-staging-deployment
     params: &deploy-params
-      cert: common/boshCA.crt
+      cert: common/master-bosh.crt
       manifest: logsearch-manifest/manifest.yml
       releases:
       - cg-s3-logstash-output-s3-backport-release/*.tgz
@@ -95,9 +97,9 @@ jobs:
   serial_groups: [bosh-staging]
   plan:
   - aggregate: &staging-errand-gets
-    - get: pipeline-tasks
     - get: common
-      resource: common-staging
+      resource: master-bosh-root-cert
+    - get: pipeline-tasks
     - get: logsearch-staging-deployment
       passed: [deploy-logsearch-staging]
       trigger: true
@@ -162,11 +164,13 @@ jobs:
   serial_groups: [bosh-production]
   plan:
   - aggregate:
+    - get: common
+      resource: master-bosh-root-cert
     - get: pipeline-tasks
     - get: logsearch-config
       passed: [deploy-logsearch-staging]
       trigger: true
-    - get: common
+    - get: common-secrets
       resource: common-prod
       trigger: true
     - get: cg-s3-logstash-output-s3-backport-release
@@ -209,7 +213,7 @@ jobs:
   - aggregate: &production-errand-gets
     - get: pipeline-tasks
     - get: common
-      resource: common-prod
+      resource: master-bosh-root-cert
     - get: logsearch-production-deployment
       passed: [deploy-logsearch-production]
       trigger: true
@@ -273,6 +277,14 @@ jobs:
         CLEAR_CACHE_EVERY: "300"
 
 resources:
+- name: master-bosh-root-cert
+  type: s3
+  source:
+    access_key_id: {{ci-access-key-id}}
+    bucket: {{logsearch-private-bucket-production}}
+    region_name: {{aws-region}}
+    secret_access_key: {{ci-secret-access-key}}
+    versioned_file: master-bosh.crt
 - name: common-staging
   type: cg-common
   source:
@@ -466,11 +478,11 @@ staging-errand-params: &staging-errand-params
   BOSH_USERNAME: {{logsearch-staging-deployment-bosh-username}}
   BOSH_PASSWORD: {{logsearch-staging-deployment-bosh-password}}
   BOSH_DEPLOYMENT_NAME: {{logsearch-staging-deployment-bosh-deployment}}
-  BOSH_CACERT: common/boshCA.crt
+  BOSH_CACERT: common/master-bosh.crt
 
 production-errand-params: &production-errand-params
   BOSH_TARGET: {{logsearch-production-deployment-bosh-target}}
   BOSH_USERNAME: {{logsearch-production-deployment-bosh-username}}
   BOSH_PASSWORD: {{logsearch-production-deployment-bosh-password}}
   BOSH_DEPLOYMENT_NAME: {{logsearch-production-deployment-bosh-deployment}}
-  BOSH_CACERT: common/boshCA.crt
+  BOSH_CACERT: common/master-bosh.crt
