@@ -71,11 +71,6 @@ jobs:
       # - upstream-logsearch-release/*.tgz
       stemcells:
       - logsearch-stemcell/*.tgz
-  - task: enable_shard_allocation
-    file: pipeline-tasks/bosh-errand.yml
-    params:
-      <<: *staging-errand-params
-      BOSH_ERRAND: enable_shard_allocation
   on_failure:
     put: slack
     params: &slack-params
@@ -187,11 +182,6 @@ jobs:
     config: *manifest-config
   - put: logsearch-production-deployment
     params: *deploy-params
-  - task: enable_shard_allocation
-    file: pipeline-tasks/bosh-errand.yml
-    params:
-      <<: *production-errand-params
-      BOSH_ERRAND: enable_shard_allocation
   on_failure:
     put: slack
     params:
