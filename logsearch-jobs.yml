@@ -29,7 +29,6 @@ jobs:
   - {release: logsearch, name: ingestor_syslog}
   - {release: logsearch, name: elasticsearch}
   - {release: logsearch, name: elasticsearch_config}
-  - {release: logsearch, name: curator}
   - {release: logsearch, name: kibana}
   - {release: logsearch, name: nats_to_syslog}
   - {name: apply-patch, release: logstash-output-s3-backport}
@@ -55,11 +54,6 @@ jobs:
     redis:
       host: 127.0.0.1
       maxmemory: 10
-    curator:
-      elasticsearch_host: 127.0.0.1
-      elasticsearch_port: 9200
-      purge_logs:
-        retention_period: 180
     elasticsearch_config:
       elasticsearch:
         host: 127.0.0.1
@@ -108,6 +102,11 @@ jobs:
     elasticsearch_config:
       templates:
       - index_template: /var/vcap/packages/logsearch-config-es-mappings/logs-template.json
+    curator:
+      elasticsearch_host: 127.0.0.1
+      elasticsearch_port: 9200
+      purge_logs:
+        retention_period: 180
   update:
     serial: true # Block on this job to create deploy group 1
 
