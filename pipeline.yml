@@ -5,26 +5,54 @@ jobs:
   plan:
   - aggregate:
     - get: release-git-repo
+      resource: logsearch-release-git-repo
       trigger: true
     - get: pipeline-tasks
     - get: final-builds-dir-tarball
+      resource: logsearch-final-builds-dir-tarball
     - get: releases-dir-tarball
+      resource: logsearch-releases-dir-tarball
   - task: finalize-release
     file: pipeline-tasks/finalize-bosh-release.yml
     config:
       params:
         PRIVATE_YML_CONTENT: {{private-yml}}
   - aggregate:
-    - put: release-tarball
+    - put: logsearch-release-tarball
       params:
         file: finalized-release/logsearch-*.tgz
-    - put: final-builds-dir-tarball
+    - put: logsearch-final-builds-dir-tarball
       params:
         file: finalized-release/final-builds-dir-logsearch.tgz
-    - put: releases-dir-tarball
+    - put: logsearch-releases-dir-tarball
       params:
         file: finalized-release/releases-dir-logsearch.tgz
-
+- name: logsearch-for-cf-boshrelease
+  plan:
+  - aggregate:
+    - get: release-git-repo
+      resource: logsearch-for-cf-release-git-repo
+      trigger: true
+    - get: pipeline-tasks
+    - get: final-builds-dir-tarball
+      resource: logsearch-for-cf-final-builds-dir-tarball
+    - get: releases-dir-tarball
+      resource: logsearch-for-cf-releases-dir-tarball
+  - task: finalize-release
+    file: pipeline-tasks/finalize-bosh-release.yml
+    config:
+      params:
+        PRIVATE_YML_CONTENT: {{private-yml}}
+  - aggregate:
+    - put: logsearch-for-cf-release-tarball
+      params:
+        file: finalized-release/logsearch-for-cloudfoundry-*.tgz
+    - put: logsearch-for-cf-final-builds-dir-tarball
+      params:
+        file: finalized-release/final-builds-dir-logsearch-for-cloudfoundry.tgz
+    - put: logsearch-for-cf-releases-dir-tarball
+      params:
+        file: finalized-release/releases-dir-logsearch-for-cloudfoundry.tgz
 - name: deploy-logsearch-staging
   serial_groups: [bosh-staging]
   plan:
@@ -394,13 +422,13 @@ resources:
     url: {{slack-webhook-url}}
 
 # TODO: Delete after https://github.com/cloudfoundry-community/logsearch-boshrelease/pull/5 is released
-- name: release-git-repo
+- name: logsearch-release-git-repo
   type: git
   source:
-    uri: {{release-git-url}}
-    branch: {{release-git-branch}}
+    uri: {{logsearch-release-git-url}}
+    branch: {{logsearch-release-git-branch}}
 
-- name: release-tarball
+- name: logsearch-release-tarball
   type: s3
   source:
     region_name: {{s3-bosh-releases-region}}
@@ -408,8 +436,9 @@ resources:
     regexp: logsearch-(.*).tgz
     access_key_id: {{s3-bosh-releases-access-key-id}}
     secret_access_key: {{s3-bosh-releases-secret-access-key}}
+    server_side_encryption: AES256
 
-- name: final-builds-dir-tarball
+- name: logsearch-final-builds-dir-tarball
   type: s3
   source:
     region_name: {{s3-bosh-releases-region}}
@@ -417,8 +446,9 @@ resources:
     versioned_file: final-builds-dir-logsearch.tgz
     access_key_id: {{s3-bosh-releases-access-key-id}}
     secret_access_key: {{s3-bosh-releases-secret-access-key}}
+    server_side_encryption: AES256
 
-- name: releases-dir-tarball
+- name: logsearch-releases-dir-tarball
   type: s3
   source:
     region_name: {{s3-bosh-releases-region}}
@@ -426,6 +456,42 @@ resources:
     versioned_file: releases-dir-logsearch.tgz
     access_key_id: {{s3-bosh-releases-access-key-id}}
     secret_access_key: {{s3-bosh-releases-secret-access-key}}
+    server_side_encryption: AES256
+
+- name: logsearch-for-cf-release-git-repo
+  type: git
+  source:
+    uri: {{logsearch-for-cf-release-git-url}}
+    branch: {{logsearch-for-cf-release-git-branch}}
+- name: logsearch-for-cf-release-tarball
+  type: s3
+  source:
+    region_name: {{s3-bosh-releases-region}}
+    bucket: {{s3-bosh-releases-bucket}}
+    regexp: logsearch-for-cloudfoundry-(.*).tgz
+    access_key_id: {{s3-bosh-releases-access-key-id}}
+    secret_access_key: {{s3-bosh-releases-secret-access-key}}
+    server_side_encryption: AES256
+
+- name: logsearch-for-cf-final-builds-dir-tarball
+  type: s3
+  source:
+    region_name: {{s3-bosh-releases-region}}
+    bucket: {{s3-bosh-releases-bucket}}
+    versioned_file: final-builds-dir-logsearch-for-cloudfoundry.tgz
+    access_key_id: {{s3-bosh-releases-access-key-id}}
+    secret_access_key: {{s3-bosh-releases-secret-access-key}}
+    server_side_encryption: AES256
+
+- name: logsearch-for-cf-releases-dir-tarball
+  type: s3
+  source:
+    region_name: {{s3-bosh-releases-region}}
+    bucket: {{s3-bosh-releases-bucket}}
+    versioned_file: releases-dir-logsearch-for-cloudfoundry.tgz
+    access_key_id: {{s3-bosh-releases-access-key-id}}
+    secret_access_key: {{s3-bosh-releases-secret-access-key}}
+    server_side_encryption: AES256
 
 resource_types:
 - name: slack-notification
