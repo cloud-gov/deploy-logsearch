@@ -145,6 +145,17 @@ jobs:
       default_app_id: "dashboard/App-Overview"
       plugins:
       - auth: /var/vcap/packages/kibana-auth-plugin/kibana-auth-plugin.tar.gz
+      - analytics: https://github.com/jmcarp/kibana-ga/releases/download/v0.1.0/kibana-ga-v0.1.0.tar.gz
+      config_options:
+        ga.enabled: true
+        ga.name: (( param "specify google analytics app name" ))
+        ga.tracker: (( param "specify google analytics tracker id" ))
+        ga.fields:
+          cookieName: gaCookie
+          cookieExpires: 86400
+        ga.set:
+          forceSSL: true
+          anonymizeIp: true
 
 - name: ingestor
   instances: 1
