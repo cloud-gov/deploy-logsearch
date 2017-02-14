@@ -58,9 +58,6 @@ jobs:
       elasticsearch:
         host: 127.0.0.1
         port: 9200
-      templates:
-      - shards-and-replicas: "{ \"template\" : \"*\", \"order\" : 99, \"settings\" : { \"number_of_shards\" : 1, \"number_of_replicas\" : 0 } }"
-      - index_template: /var/vcap/packages/logsearch-config/default-mappings.json
     logstash_parser:
       filters:
       - monitor: /var/vcap/packages/logsearch-config/logstash-filters-monitor.conf
@@ -99,9 +96,6 @@ jobs:
   networks:
   - name: default
   properties:
-    elasticsearch_config:
-      templates:
-      - index_template: /var/vcap/packages/logsearch-config-es-mappings/logs-template.json
     curator:
       elasticsearch_host: 127.0.0.1
       elasticsearch_port: 9200
@@ -297,6 +291,8 @@ properties:
     exec:
       environment:
         JAVA_OPTS: '"-Djava.io.tmpdir=${TMP_DIR}"'
+    limits:
+      fd: 131072  # 2 ** 17
   kibana:
     elasticsearch:
       host: (( grab jobs.elasticsearch_master.networks.default.static_ips.[0] ))
@@ -305,7 +301,9 @@ properties:
     elasticsearch:
       host: (( grab jobs.elasticsearch_master.networks.default.static_ips.[0] ))
     templates:
-    - index_template: /var/vcap/packages/logsearch-config/default-mappings.json
+    - shards-and-replicas: /var/vcap/jobs/elasticsearch_config/index-templates/shards-and-replicas.json
+    - index-settings: /var/vcap/jobs/elasticsearch_config/index-templates/index-settings.json
+    - index-mappings: /var/vcap/jobs/elasticsearch_config/index-templates/index-mappings.json
   snort:
     rules:
     - 'alert tcp any any -> any 9200 (msg:"Unexpected logsearch action"; content:"POST"; http_method; content: "logs-app"; http_uri; content:"/_update"; http_uri; classtype:web-application-attack; sid:343080002; rev:1;)'
