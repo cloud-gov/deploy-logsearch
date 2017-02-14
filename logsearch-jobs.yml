@@ -297,6 +297,8 @@ properties:
     exec:
       environment:
         JAVA_OPTS: '"-Djava.io.tmpdir=${TMP_DIR}"'
+    limits:
+      fd: 131072  # 2 ** 17
   kibana:
     elasticsearch:
       host: (( grab jobs.elasticsearch_master.networks.default.static_ips.[0] ))
