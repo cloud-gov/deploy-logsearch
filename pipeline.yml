@@ -119,18 +119,21 @@ jobs:
 - name: smoke-tests-staging
   serial_groups: [bosh-staging]
   plan:
-  - aggregate: &staging-errand-gets
+  - aggregate:
     - get: common
       resource: master-bosh-root-cert
     - get: pipeline-tasks
     - get: logsearch-staging-deployment
       passed: [deploy-logsearch-staging]
       trigger: true
+    - get: tests-timer
+      trigger: true
   - task: smoke-tests
     file: pipeline-tasks/bosh-errand.yml
     params:
       <<: *staging-errand-params
       BOSH_ERRAND: smoke-tests
+      BOSH_FLAGS: "--keep-alive"
   on_failure:
     put: slack
     params:
@@ -138,18 +141,17 @@ jobs:
       text: |
         :x: Smoke tests for logsearch on staging FAILED
         <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
-  on_success:
-    put: slack
-    params:
-      <<: *slack-params
-      text: |
-        :white_check_mark: Smoke tests for logsearch on staging PASSED
-        <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
 
 - name: upload-kibana-objects-staging
   serial_groups: [bosh-staging]
   plan:
-  - aggregate: *staging-errand-gets
+  - aggregate:
+    - get: common
+      resource: master-bosh-root-cert
+    - get: pipeline-tasks
+    - get: logsearch-staging-deployment
+      passed: [deploy-logsearch-staging]
+      trigger: true
   - task: upload-kibana-objects
     file: pipeline-tasks/bosh-errand.yml
     params:
@@ -218,18 +220,21 @@ jobs:
 - name: smoke-tests-production
   serial_groups: [bosh-production]
   plan:
-  - aggregate: &production-errand-gets
+  - aggregate:
     - get: pipeline-tasks
     - get: common
       resource: master-bosh-root-cert
     - get: logsearch-production-deployment
       passed: [deploy-logsearch-production]
       trigger: true
+    - get: tests-timer
+      trigger: true
   - task: smoke-tests
     file: pipeline-tasks/bosh-errand.yml
     params:
       <<: *production-errand-params
       BOSH_ERRAND: smoke-tests
+      BOSH_FLAGS: "--keep-alive"
   on_failure:
     put: slack
     params:
@@ -237,18 +242,17 @@ jobs:
       text: |
         :x: Smoke tests for logsearch on production FAILED
         <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
-  on_success:
-    put: slack
-    params:
-      <<: *slack-params
-      text: |
-        :white_check_mark: Smoke tests for logsearch on production PASSED
-        <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
 
 - name: upload-kibana-objects-production
   serial_groups: [bosh-production]
   plan:
-  - aggregate: *production-errand-gets
+  - aggregate:
+    - get: pipeline-tasks
+    - get: common
+      resource: master-bosh-root-cert
+    - get: logsearch-production-deployment
+      passed: [deploy-logsearch-production]
+      trigger: true
   - task: upload-kibana-objects
     file: pipeline-tasks/bosh-errand.yml
     params:
@@ -492,6 +496,11 @@ resources:
     access_key_id: {{s3-bosh-releases-access-key-id}}
     secret_access_key: {{s3-bosh-releases-secret-access-key}}
     server_side_encryption: AES256
+
+- name: tests-timer
+  type: time
+  source:
+    interval: 10m
 
 resource_types:
 - name: slack-notification
