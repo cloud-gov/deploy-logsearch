@@ -141,6 +141,14 @@ jobs:
       text: |
         :x: Smoke tests for logsearch on staging FAILED
         <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
+  on_success:
+    put: slack
+    params:
+      <<: *slack-params
+      channel: {{slack-news-channel}}
+      text: |
+        :white_check_mark: Smoke tests for logsearch on staging PASSED
+        <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
 
 - name: upload-kibana-objects-staging
   serial_groups: [bosh-staging]
@@ -241,6 +249,14 @@ jobs:
       <<: *slack-params
       text: |
         :x: Smoke tests for logsearch on production FAILED
+        <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
+  on_success:
+    put: slack
+    params:
+      <<: *slack-params
+      channel: {{slack-news-channel}}
+      text: |
+        :white_check_mark: Smoke tests for logsearch on production PASSED
         <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
 
 - name: upload-kibana-objects-production
