@@ -239,23 +239,6 @@ jobs:
       host: (( grab jobs.elasticsearch_master.networks.default.static_ips.[0] ))
       port: 9200
 
-- name: create-uaa-client
-  lifecycle: errand
-  release: logsearch-for-cloudfoundry
-  instances: 1
-  templates:
-  - {name: create-uaa-client, release: logsearch-for-cloudfoundry}
-  networks:
-  - name: default
-  resource_pool: errand
-  properties:
-    create-uaa-client:
-      oauth2_client_id: (( param "specify uaa client id" ))
-      oauth2_client_secret: (( param "specify uaa client secret" ))
-      cloudfoundry:
-        system_domain: (( param "specify cf system domain" ))
-        admin_client_secret: (( param "specify cf client secret" ))
-
 # Global properties
 properties:
   curator:
