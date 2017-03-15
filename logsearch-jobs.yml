@@ -136,6 +136,7 @@ jobs:
     static_ips: (( static_ips(5) ))
   properties:
     kibana:
+      memory_limit: 65
       default_app_id: "dashboard/App-Overview"
       plugins:
       - auth: /var/vcap/packages/kibana-auth-plugin/kibana-auth-plugin.tar.gz
