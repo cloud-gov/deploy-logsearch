@@ -8,6 +8,7 @@ jobs:
   - {name: elasticsearch, release: logsearch}
   - {name: riemann-emitter, release: riemann}
   - {name: riemann-checklogs, release: riemann}
+  - {name: snort-config, release: snort}
   resource_pool: elasticsearch_master
   persistent_disk_pool: elasticsearch_master
   networks:
