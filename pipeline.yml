@@ -87,6 +87,8 @@ jobs:
         args: ["common-secrets/secrets.yml", "logsearch-manifest/manifest.yml"]
       outputs:
       - name: logsearch-manifest
+      params:
+        LOGSEARCH_INGESTOR_PROFILE: staging-logsearch-ingestor
   - put: logsearch-staging-deployment
     params: &deploy-params
       cert: common/master-bosh.crt
@@ -207,7 +209,10 @@ jobs:
     - get: logsearch-staging-deployment
       passed: [smoke-tests-staging]
   - task: logsearch-manifest
-    config: *manifest-config
+    config:
+      <<: *manifest-config
+      params:
+        LOGSEARCH_INGESTOR_PROFILE: production-logsearch-ingestor
   - put: logsearch-production-deployment
     params: *deploy-params
   on_failure:
