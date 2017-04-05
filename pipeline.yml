@@ -1,58 +1,5 @@
 ---
 jobs:
-# TODO: Delete after https://github.com/cloudfoundry-community/logsearch-boshrelease/pull/5 is released
-- name: logsearch-boshrelease
-  plan:
-  - aggregate:
-    - get: release-git-repo
-      resource: logsearch-release-git-repo
-      trigger: true
-    - get: pipeline-tasks
-    - get: final-builds-dir-tarball
-      resource: logsearch-final-builds-dir-tarball
-    - get: releases-dir-tarball
-      resource: logsearch-releases-dir-tarball
-  - task: finalize-release
-    file: pipeline-tasks/finalize-bosh-release.yml
-    config:
-      params:
-        PRIVATE_YML_CONTENT: {{private-yml}}
-  - aggregate:
-    - put: logsearch-release-tarball
-      params:
-        file: finalized-release/logsearch-*.tgz
-    - put: logsearch-final-builds-dir-tarball
-      params:
-        file: finalized-release/final-builds-dir-logsearch.tgz
-    - put: logsearch-releases-dir-tarball
-      params:
-        file: finalized-release/releases-dir-logsearch.tgz
-- name: logsearch-for-cf-boshrelease
-  plan:
-  - aggregate:
-    - get: release-git-repo
-      resource: logsearch-for-cf-release-git-repo
-      trigger: true
-    - get: pipeline-tasks
-    - get: final-builds-dir-tarball
-      resource: logsearch-for-cf-final-builds-dir-tarball
-    - get: releases-dir-tarball
-      resource: logsearch-for-cf-releases-dir-tarball
-  - task: finalize-release
-    file: pipeline-tasks/finalize-bosh-release.yml
-    config:
-      params:
-        PRIVATE_YML_CONTENT: {{private-yml}}
-  - aggregate:
-    - put: logsearch-for-cf-release-tarball
-      params:
-        file: finalized-release/logsearch-for-cloudfoundry-*.tgz
-    - put: logsearch-for-cf-final-builds-dir-tarball
-      params:
-        file: finalized-release/final-builds-dir-logsearch-for-cloudfoundry.tgz
-    - put: logsearch-for-cf-releases-dir-tarball
-      params:
-        file: finalized-release/releases-dir-logsearch-for-cloudfoundry.tgz
 - name: deploy-logsearch-staging
   serial_groups: [bosh-staging]
   plan:
@@ -65,9 +12,8 @@ jobs:
     - get: common-secrets
       resource: common-staging
       trigger: true
-    - get: cg-s3-logstash-output-s3-backport-release
-    - get: cg-s3-logsearch-release
-    - get: cg-s3-logsearch-for-cf-release
+    - get: logsearch-release
+    - get: logsearch-for-cf-release
     - get: cg-s3-riemann-release
     - get: logsearch-stemcell
       trigger: true
@@ -94,9 +40,8 @@ jobs:
       cert: common/master-bosh.crt
       manifest: logsearch-manifest/manifest.yml
       releases:
-      - cg-s3-logstash-output-s3-backport-release/*.tgz
-      - cg-s3-logsearch-release/*.tgz
-      - cg-s3-logsearch-for-cf-release/*.tgz
+      - logsearch-release/*.tgz
+      - logsearch-for-cf-release/*.tgz
       - cg-s3-riemann-release/*.tgz
       # - upstream-logsearch-release/*.tgz
       stemcells:
@@ -198,9 +143,8 @@ jobs:
     - get: common-secrets
       resource: common-prod
       trigger: true
-    - get: cg-s3-logstash-output-s3-backport-release
-    - get: cg-s3-logsearch-release
-    - get: cg-s3-logsearch-for-cf-release
+    - get: logsearch-release
+    - get: logsearch-for-cf-release
     - get: cg-s3-riemann-release
     - get: logsearch-stemcell
       passed: [deploy-logsearch-staging]
@@ -330,41 +274,15 @@ resources:
     bosh_cert: bosh.pem
     region: {{aws-region}}
 
-# TODO: Restore after https://github.com/cloudfoundry-community/logsearch-boshrelease/pull/5 is released
-# - name: upstream-logsearch-release
-#   type: bosh-io-release
-#   source:
-#     repository: logsearch/logsearch-boshrelease
-
-- name: cg-s3-logstash-output-s3-backport-release
-  type: s3
+- name: logsearch-release
+  type: bosh-io-release
   source:
-    access_key_id: {{ci-access-key-id}}
-    bucket: {{cg-s3-bosh-releases-bucket}}
-    private: true
-    regexp: logstash-output-s3-backport-(.*).tgz
-    secret_access_key: {{ci-secret-access-key}}
-    region_name: {{aws-region}}
+    repository: cloudfoundry-community/logsearch-boshrelease
 
-- name: cg-s3-logsearch-release
-  type: s3
+- name: logsearch-for-cf-release
+  type: bosh-io-release
   source:
-    access_key_id: {{ci-access-key-id}}
-    bucket: {{cg-s3-bosh-releases-bucket}}
-    private: true
-    regexp: logsearch-([\d.]*).tgz
-    secret_access_key: {{ci-secret-access-key}}
-    region_name: {{aws-region}}
-
-- name: cg-s3-logsearch-for-cf-release
-  type: s3
-  source:
-    access_key_id: {{ci-access-key-id}}
-    bucket: {{cg-s3-bosh-releases-bucket}}
-    private: true
-    regexp: logsearch-for-cloudfoundry-([\d.]*).tgz
-    secret_access_key: {{ci-secret-access-key}}
-    region_name: {{aws-region}}
+    repository: cloudfoundry-community/logsearch-for-cloudfoundry
 
 - name: cg-s3-riemann-release
   type: s3
@@ -445,78 +363,6 @@ resources:
   type: slack-notification
   source:
     url: {{slack-webhook-url}}
-
-# TODO: Delete after https://github.com/cloudfoundry-community/logsearch-boshrelease/pull/5 is released
-- name: logsearch-release-git-repo
-  type: git
-  source:
-    uri: {{logsearch-release-git-url}}
-    branch: {{logsearch-release-git-branch}}
-
-- name: logsearch-release-tarball
-  type: s3
-  source:
-    region_name: {{s3-bosh-releases-region}}
-    bucket: {{s3-bosh-releases-bucket}}
-    regexp: logsearch-(.*).tgz
-    access_key_id: {{s3-bosh-releases-access-key-id}}
-    secret_access_key: {{s3-bosh-releases-secret-access-key}}
-    server_side_encryption: AES256
-
-- name: logsearch-final-builds-dir-tarball
-  type: s3
-  source:
-    region_name: {{s3-bosh-releases-region}}
-    bucket: {{s3-bosh-releases-bucket}}
-    versioned_file: final-builds-dir-logsearch.tgz
-    access_key_id: {{s3-bosh-releases-access-key-id}}
-    secret_access_key: {{s3-bosh-releases-secret-access-key}}
-    server_side_encryption: AES256
-
-- name: logsearch-releases-dir-tarball
-  type: s3
-  source:
-    region_name: {{s3-bosh-releases-region}}
-    bucket: {{s3-bosh-releases-bucket}}
-    versioned_file: releases-dir-logsearch.tgz
-    access_key_id: {{s3-bosh-releases-access-key-id}}
-    secret_access_key: {{s3-bosh-releases-secret-access-key}}
-    server_side_encryption: AES256
-
-- name: logsearch-for-cf-release-git-repo
-  type: git
-  source:
-    uri: {{logsearch-for-cf-release-git-url}}
-    branch: {{logsearch-for-cf-release-git-branch}}
-- name: logsearch-for-cf-release-tarball
-  type: s3
-  source:
-    region_name: {{s3-bosh-releases-region}}
-    bucket: {{s3-bosh-releases-bucket}}
-    regexp: logsearch-for-cloudfoundry-(.*).tgz
-    access_key_id: {{s3-bosh-releases-access-key-id}}
-    secret_access_key: {{s3-bosh-releases-secret-access-key}}
-    server_side_encryption: AES256
-
-- name: logsearch-for-cf-final-builds-dir-tarball
-  type: s3
-  source:
-    region_name: {{s3-bosh-releases-region}}
-    bucket: {{s3-bosh-releases-bucket}}
-    versioned_file: final-builds-dir-logsearch-for-cloudfoundry.tgz
-    access_key_id: {{s3-bosh-releases-access-key-id}}
-    secret_access_key: {{s3-bosh-releases-secret-access-key}}
-    server_side_encryption: AES256
-
-- name: logsearch-for-cf-releases-dir-tarball
-  type: s3
-  source:
-    region_name: {{s3-bosh-releases-region}}
-    bucket: {{s3-bosh-releases-bucket}}
-    versioned_file: releases-dir-logsearch-for-cloudfoundry.tgz
-    access_key_id: {{s3-bosh-releases-access-key-id}}
-    secret_access_key: {{s3-bosh-releases-secret-access-key}}
-    server_side_encryption: AES256
 
 - name: tests-timer
   type: time

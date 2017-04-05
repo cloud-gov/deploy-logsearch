@@ -32,7 +32,6 @@ jobs:
   - {release: logsearch, name: elasticsearch_config}
   - {release: logsearch, name: kibana}
   - {release: logsearch, name: nats_to_syslog}
-  - {name: apply-patch, release: logstash-output-s3-backport}
   resource_pool: cluster_monitor
   networks:
   - name: default
@@ -140,14 +139,13 @@ jobs:
       memory_limit: 65
       default_app_id: "dashboard/App-Overview"
       plugins:
-      - auth: /var/vcap/packages/kibana-auth-plugin/kibana-auth-plugin.tar.gz
+      - auth: /var/vcap/packages/kibana-auth-plugin/kibana-auth-plugin.zip
 
 - name: ingestor
   instances: 1
   templates:
   - {name: ingestor_syslog, release: logsearch}
   - {name: ingestor_cloudfoundry-firehose, release: logsearch-for-cloudfoundry}
-  - {name: apply-patch, release: logstash-output-s3-backport}
   resource_pool: ingestor
   networks:
   - name: default
