@@ -246,8 +246,6 @@ properties:
       host: (( grab jobs.elasticsearch_master.networks.default.static_ips.[0] ))
       port: 9200
   logstash:
-    plugins:
-    - {name: logstash-output-cloudwatchlogs-latest, version: 2.0.0.pre1}
   logstash_parser:
     debug: false
   logstash_ingestor:
@@ -261,11 +259,6 @@ properties:
         bucket: (( grab meta.ingestor.bucket ))
         time_file: 5
         server_side_encryption: true
-    - plugin: cloudwatchlogs
-      options:
-        region: (( grab meta.aws.region ))
-        log_group_name: (( concat "logsearch-" meta.env ))
-        log_stream_name: "firehose-%instance_id%"
   redis:
     host: (( grab jobs.queue.networks.default.static_ips.[0] ))
   elasticsearch:
