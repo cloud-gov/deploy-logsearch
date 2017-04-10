@@ -285,6 +285,9 @@ properties:
     - shards-and-replicas: /var/vcap/jobs/elasticsearch_config/index-templates/shards-and-replicas.json
     - index-settings: /var/vcap/jobs/elasticsearch_config/index-templates/index-settings.json
     - index-mappings: /var/vcap/jobs/elasticsearch_config/index-templates/index-mappings.json
+    - index-mappings-lfc: /var/vcap/jobs/elasticsearch-config-lfc/index-mappings.json
+    - index-mappings-app-lfc: /var/vcap/jobs/elasticsearch-config-lfc/index-mappings-app.json
+    - index-mappings-platform-lfc: /var/vcap/jobs/elasticsearch-config-lfc/index-mappings-platform.json
   snort:
     rules:
     - 'alert tcp any any -> any 9200 (msg:"Unexpected logsearch action"; content:"POST"; http_method; content: "logs-app"; http_uri; content:"/_update"; http_uri; classtype:web-application-attack; sid:343080002; rev:1;)'
