@@ -9,6 +9,7 @@ compilation:
   cloud_properties:
     availability_zone: (( grab meta.aws.availability_zone ))
     instance_type: c3.xlarge
+    iam_instance_profile: (( grab $COMPILATION_PROFILE ))
 
 resource_pools:
 - name: elasticsearch_master
@@ -62,6 +63,7 @@ resource_pools:
   cloud_properties:
     availability_zone: (( grab meta.aws.availability_zone ))
     instance_type: t2.medium
+    iam_instance_profile: (( grab $COMPILATION_PROFILE ))
 
 disk_pools:
 - name: elasticsearch_master

@@ -34,6 +34,7 @@ jobs:
       outputs:
       - name: logsearch-manifest
       params:
+        COMPILATION_PROFILE: staging-bosh-compilation
         LOGSEARCH_INGESTOR_PROFILE: staging-logsearch-ingestor
   - put: logsearch-staging-deployment
     params: &deploy-params
@@ -156,6 +157,7 @@ jobs:
     config:
       <<: *manifest-config
       params:
+        COMPILATION_PROFILE: production-bosh-compilation
         LOGSEARCH_INGESTOR_PROFILE: production-logsearch-ingestor
   - put: logsearch-production-deployment
     params: *deploy-params
