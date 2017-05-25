@@ -11,6 +11,7 @@ instance_groups:
   - {name: snort-config, release: snort}
   vm_type: logsearch_es_master
   persistent_disk_type: logsearch_es_master
+  stemcell: default
   azs: [z1]
   networks:
   - name: logsearch
@@ -36,6 +37,7 @@ instance_groups:
   - {release: logsearch, name: nats_to_syslog}
   vm_type: logsearch_cluster_monitor
   persistent_disk_type: logsearch_cluster_monitor
+  stemcell: default
   azs: [z1]
   networks:
   - name: logsearch
@@ -75,11 +77,12 @@ instance_groups:
   - {name: queue, release: logsearch}
   vm_type: logsearch_queue
   persistent_disk_type: logsearch_queue
+  stemcell: default
   azs: [z1]
   networks:
   - name: logsearch
     static_ips:
-    - (( grab terraform_outputs.static_ips.[3] ))
+    - (( grab terraform_outputs.logsearch_static_ips.[3] ))
 
 - name: maintenance
   instances: 1
@@ -88,6 +91,7 @@ instance_groups:
   - {name: elasticsearch_config, release: logsearch}
   - {name: elasticsearch-config-lfc, release: logsearch-for-cloudfoundry}
   vm_type: logsearch_maintenance
+  stemcell: default
   azs: [z1]
   networks:
   - name: logsearch
@@ -118,6 +122,7 @@ instance_groups:
   - {name: elasticsearch, release: logsearch}
   vm_type: logsearch_es_data
   persistent_disk_type: logsearch_es_data
+  stemcell: default
   azs: [z1]
   networks:
   - name: logsearch
@@ -142,6 +147,7 @@ instance_groups:
   - {name: kibana, release: logsearch}
   - {name: kibana-auth-plugin, release: logsearch-for-cloudfoundry}
   vm_type: logsearch_kibana
+  stemcell: default
   azs: [z1]
   networks:
   - name: logsearch
@@ -161,6 +167,7 @@ instance_groups:
   - {name: ingestor_syslog, release: logsearch}
   - {name: ingestor_cloudfoundry-firehose, release: logsearch-for-cloudfoundry}
   vm_type: logsearch_ingestor
+  stemcell: default
   azs: [z1]
   vm_extensions: [logsearch-ingestor-profile]
   properties:
@@ -181,6 +188,7 @@ instance_groups:
   - {name: elasticsearch, release: logsearch}
   - {name: parser-config-lfc, release: logsearch-for-cloudfoundry}
   vm_type: logsearch_parser
+  stemcell: default
   azs: [z1]
   networks:
   - name: logsearch
@@ -209,6 +217,7 @@ instance_groups:
   - { name: haproxy, release: logsearch }
   - { name: route_registrar, release: cf }
   vm_type: logsearch_haproxy
+  stemcell: default
   azs: [z1]
   networks:
   - name: logsearch
@@ -228,6 +237,7 @@ instance_groups:
   instances: 1
   vm_type: logsearch_errand
   vm_extensions: [logsearch-errand-profile]
+  stemcell: default
   azs: [z1]
   networks:
   - name: logsearch
@@ -246,6 +256,7 @@ instance_groups:
   instances: 1
   vm_type: logsearch_errand
   vm_extensions: [logsearch-errand-profile]
+  stemcell: default
   azs: [z1]
   networks:
   - name: logsearch
@@ -255,7 +266,6 @@ instance_groups:
   - {name: upload-kibana-objects, release: logsearch-for-cloudfoundry}
   networks:
   - name: logsearch
-  resource_pool: errand
   properties:
     elasticsearch:
       host: (( grab instance_groups.elasticsearch_master.networks.logsearch.static_ips.[0] ))

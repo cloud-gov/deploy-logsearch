@@ -39,8 +39,8 @@ jobs:
             spruce merge \
               --prune terraform_outputs \
               logsearch-config/logsearch-deployment.yml \
-              logsearch-jobs.yml \
-              common-secrets/secrets.yml \ 
+              logsearch-config/logsearch-jobs.yml \
+              common-secrets/secrets.yml \
               logsearch-config/logsearch-staging.yml \
               terraform-yaml/state.yml \
               > logsearch-manifest/manifest.yml
@@ -177,7 +177,7 @@ jobs:
               --prune terraform_outputs \
               logsearch-config/logsearch-deployment.yml \
               logsearch-jobs.yml \
-              common-secrets/secrets.yml \ 
+              common-secrets/secrets.yml \
               logsearch-config/logsearch-production.yml \
               terraform-yaml/state.yml \
               > logsearch-manifest/manifest.yml
@@ -422,6 +422,11 @@ resource_types:
   type: docker-image
   source:
     repository: 18fgsa/cg-common-resource
+
+- name: s3-iam
+  type: docker-image
+  source:
+    repository: 18fgsa/s3-resource
 
 staging-errand-params: &staging-errand-params
   BOSH_TARGET: {{logsearch-staging-deployment-bosh-target}}
