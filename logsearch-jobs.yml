@@ -39,7 +39,8 @@ instance_groups:
   azs: [z1]
   networks:
   - name: logsearch
-    static_ips: (( grab terraform_outputs.logsearch_static_ips.[2] ))
+    static_ips:
+    - (( grab terraform_outputs.logsearch_static_ips.[2] ))
   properties:
     kibana:
       port: 5601
@@ -64,17 +65,6 @@ instance_groups:
     logstash_parser:
       filters:
       - monitor: /var/vcap/packages/logsearch-config/logstash-filters-monitor.conf
-    nats_to_syslog:
-      nats:
-        subject: ">"
-        user: nats
-        password: nats-password
-        port: 4222
-        machines: []
-      debug: true
-      syslog:
-        host: 127.0.0.1
-        port: 514
     logstash_ingestor:
       syslog:
         port: 514
@@ -123,7 +113,7 @@ instance_groups:
 ##################################################################
 
 - name: elasticsearch_data
-  instances: 2
+  instances: 6
   jobs:
   - {name: elasticsearch, release: logsearch}
   vm_type: logsearch_es_data
@@ -132,8 +122,12 @@ instance_groups:
   networks:
   - name: logsearch
     static_ips:
-    - (( grab terraform_outputs.logsearch_static_ips.[16] ))
-    - (( grab terraform_outputs.logsearch_static_ips.[17] ))
+    - (( grab terraform_outputs.logsearch_static_ips.[16]))
+    - (( grab terraform_outputs.logsearch_static_ips.[17]))
+    - (( grab terraform_outputs.logsearch_static_ips.[14]))
+    - (( grab terraform_outputs.logsearch_static_ips.[15]))
+    - (( grab terraform_outputs.logsearch_static_ips.[13]))
+    - (( grab terraform_outputs.logsearch_static_ips.[12]))
   properties:
     elasticsearch:
       node:
@@ -163,20 +157,15 @@ instance_groups:
         console.enabled: false
 
 - name: ingestor
-  instances: 1
   jobs:
   - {name: ingestor_syslog, release: logsearch}
   - {name: ingestor_cloudfoundry-firehose, release: logsearch-for-cloudfoundry}
   vm_type: logsearch_ingestor
   azs: [z1]
-  networks:
-  - name: logsearch
-    static_ips:
-    - (( grab terraform_outputs.logsearch_static_ips.[1] ))
   vm_extensions: [logsearch-ingestor-profile]
   properties:
     cloudfoundry:
-      firehose_events: "LogMessage,ContainerMetric,Error"
+      firehose_events: "LogMessage,ContainerMetric"
     logstash_ingestor:
       debug: false
       relp:

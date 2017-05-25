@@ -17,6 +17,8 @@ jobs:
     - get: cg-s3-riemann-release
     - get: logsearch-stemcell
       trigger: true
+    - get : terraform-yaml
+      resource: terraform-yaml-staging
     # - get: upstream-logsearch-release
   - task: logsearch-manifest
     config: &manifest-config
@@ -28,9 +30,20 @@ jobs:
       inputs:
       - name: logsearch-config
       - name: common-secrets
+      - name: terraform-yaml
       run:
-        path: logsearch-config/generate.sh
-        args: ["common-secrets/secrets.yml", "logsearch-config/logsearch-staging.yml", "logsearch-manifest/manifest.yml"]
+        path: sh
+        args:
+          - -exc 
+          - | 
+            spruce merge \
+              --prune terraform_outputs \
+              logsearch-config/logsearch-deployment.yml \
+              logsearch-jobs.yml \
+              common-secrets/secrets.yml \ 
+              logsearch-config/logsearch-staging.yml \
+              terraform-yaml/state.yml \
+              > logsearch-manifest/manifest.yml
       outputs:
       - name: logsearch-manifest
   - put: logsearch-staging-deployment
@@ -150,12 +163,24 @@ jobs:
     # - get: upstream-logsearch-release
     - get: logsearch-staging-deployment
       passed: [smoke-tests-staging]
+    - get: terraform-yaml
+      resource: terraform-yaml-production
   - task: logsearch-manifest
     config:
       <<: *manifest-config
       run:
-        path: logsearch-config/generate.sh
-        args: ["common-secrets/secrets.yml", "logsearch-config/logsearch-production.yml", "logsearch-manifest/manifest.yml"]
+        path: sh
+        args:
+          - -exc 
+          - | 
+            spruce merge \
+              --prune terraform_outputs \
+              logsearch-config/logsearch-deployment.yml \
+              logsearch-jobs.yml \
+              common-secrets/secrets.yml \ 
+              logsearch-config/logsearch-production.yml \
+              terraform-yaml/state.yml \
+              > logsearch-manifest/manifest.yml
   - put: logsearch-production-deployment
     params: *deploy-params
   on_failure:
@@ -367,6 +392,20 @@ resources:
   type: time
   source:
     interval: 10m
+
+- name: terraform-yaml-staging
+  type: s3-iam
+  source:
+    bucket: {{tf-state-bucket-staging}}
+    versioned_file: {{tf-state-file-staging}}
+    region_name: {{aws-region}}
+
+- name: terraform-yaml-production
+  type: s3-iam
+  source:
+    bucket: {{tf-state-bucket-production}}
+    versioned_file: {{tf-state-file-production}}
+    region_name: {{aws-region}}
 
 resource_types:
 - name: slack-notification
