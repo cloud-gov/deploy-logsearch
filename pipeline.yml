@@ -30,12 +30,9 @@ jobs:
       - name: common-secrets
       run:
         path: logsearch-config/generate.sh
-        args: ["common-secrets/secrets.yml", "logsearch-manifest/manifest.yml"]
+        args: ["common-secrets/secrets.yml", "logsearch-config/logsearch-staging.yml", "logsearch-manifest/manifest.yml"]
       outputs:
       - name: logsearch-manifest
-      params:
-        COMPILATION_PROFILE: staging-bosh-compilation
-        LOGSEARCH_INGESTOR_PROFILE: staging-logsearch-ingestor
   - put: logsearch-staging-deployment
     params: &deploy-params
       cert: common/master-bosh.crt
@@ -156,9 +153,9 @@ jobs:
   - task: logsearch-manifest
     config:
       <<: *manifest-config
-      params:
-        COMPILATION_PROFILE: production-bosh-compilation
-        LOGSEARCH_INGESTOR_PROFILE: production-logsearch-ingestor
+      run:
+        path: logsearch-config/generate.sh
+        args: ["common-secrets/secrets.yml", "logsearch-config/logsearch-production.yml", "logsearch-manifest/manifest.yml"]
   - put: logsearch-production-deployment
     params: *deploy-params
   on_failure:

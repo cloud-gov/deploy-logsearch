@@ -1,0 +1,8 @@
+instance_groups:
+- name: ingestor
+  instances: 2
+  networks:
+  - name: logsearch
+    static_ips:
+    - (( grab ... ))
+    - (( grab ... ))

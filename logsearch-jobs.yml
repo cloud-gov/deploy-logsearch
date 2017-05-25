@@ -1,19 +1,21 @@
-jobs:
+instance_groups:
 ###############################################################################
 #First deploy group - elasticsearch_master, cluster_monitor, queue, maintenance
 ###############################################################################
 - name: elasticsearch_master
   instances: 1
-  templates:
+  jobs:
   - {name: elasticsearch, release: logsearch}
   - {name: riemann-emitter, release: riemann}
   - {name: riemann-checklogs, release: riemann}
   - {name: snort-config, release: snort}
-  resource_pool: elasticsearch_master
-  persistent_disk_pool: elasticsearch_master
+  vm_type: logsearch_es_master
+  persistent_disk_type: logsearch_es_master
+  azs: [z1]
   networks:
-  - name: default
-    static_ips: (( static_ips(0) ))
+  - name: logsearch
+    static_ips:
+    - (( grab terraform_outputs.logsearch_static_ips.[0] ))
   properties:
     elasticsearch:
       node:
@@ -24,7 +26,7 @@ jobs:
 
 - name: cluster_monitor
   instances: 1
-  templates:
+  jobs:
   - {release: logsearch, name: queue}
   - {release: logsearch, name: parser}
   - {release: logsearch, name: ingestor_syslog}
@@ -32,11 +34,12 @@ jobs:
   - {release: logsearch, name: elasticsearch_config}
   - {release: logsearch, name: kibana}
   - {release: logsearch, name: nats_to_syslog}
-  resource_pool: cluster_monitor
+  vm_type: logsearch_cluster_monitor
+  persistent_disk_type: logsearch_cluster_monitor
+  azs: [z1]
   networks:
-  - name: default
-    static_ips: (( static_ips(2) ))
-  persistent_disk_pool: cluster_monitor
+  - name: logsearch
+    static_ips: (( grab terraform_outputs.logsearch_static_ips.[2] ))
   properties:
     kibana:
       port: 5601
@@ -78,23 +81,26 @@ jobs:
 
 - name: queue
   instances: 1
-  templates:
+  jobs:
   - {name: queue, release: logsearch}
-  resource_pool: queue
-  persistent_disk_pool: queue
+  vm_type: logsearch_queue
+  persistent_disk_type: logsearch_queue
+  azs: [z1]
   networks:
-  - name: default
-    static_ips: (( static_ips(3) ))
+  - name: logsearch
+    static_ips:
+    - (( grab terraform_outputs.static_ips.[3] ))
 
 - name: maintenance
   instances: 1
-  templates:
+  jobs:
   - {name: curator, release: logsearch}
   - {name: elasticsearch_config, release: logsearch}
   - {name: elasticsearch-config-lfc, release: logsearch-for-cloudfoundry}
-  resource_pool: maintenance
+  vm_type: logsearch_maintenance
+  azs: [z1]
   networks:
-  - name: default
+  - name: logsearch
   properties:
     curator:
       elasticsearch_host: 127.0.0.1
@@ -118,13 +124,16 @@ jobs:
 
 - name: elasticsearch_data
   instances: 2
-  templates:
+  jobs:
   - {name: elasticsearch, release: logsearch}
-  resource_pool: elasticsearch_data
-  persistent_disk_pool: elasticsearch_data
+  vm_type: logsearch_es_data
+  persistent_disk_type: logsearch_es_data
+  azs: [z1]
   networks:
-  - name: default
-    static_ips: (( static_ips(16, 17) ))
+  - name: logsearch
+    static_ips:
+    - (( grab terraform_outputs.logsearch_static_ips.[16] ))
+    - (( grab terraform_outputs.logsearch_static_ips.[17] ))
   properties:
     elasticsearch:
       node:
@@ -135,13 +144,15 @@ jobs:
 
 - name: kibana
   instances: 1
-  templates:
+  jobs: 
   - {name: kibana, release: logsearch}
   - {name: kibana-auth-plugin, release: logsearch-for-cloudfoundry}
-  resource_pool: kibana
+  vm_type: logsearch_kibana
+  azs: [z1]
   networks:
-  - name: default
-    static_ips: (( static_ips(5) ))
+  - name: logsearch
+    static_ips: 
+    - (( grab terraform_outputs.logsearch_static_ips.[5] ))
   properties:
     kibana:
       memory_limit: 65
@@ -153,13 +164,16 @@ jobs:
 
 - name: ingestor
   instances: 1
-  templates:
+  jobs:
   - {name: ingestor_syslog, release: logsearch}
   - {name: ingestor_cloudfoundry-firehose, release: logsearch-for-cloudfoundry}
-  resource_pool: ingestor
+  vm_type: logsearch_ingestor
+  azs: [z1]
   networks:
-  - name: default
-    static_ips: (( static_ips(1) ))
+  - name: logsearch
+    static_ips:
+    - (( grab terraform_outputs.logsearch_static_ips.[1] ))
+  vm_extensions: [logsearch-ingestor-profile]
   properties:
     cloudfoundry:
       firehose_events: "LogMessage,ContainerMetric,Error"
@@ -168,18 +182,19 @@ jobs:
       relp:
         port: ~
     syslog:
-      host: (( grab jobs.ingestor.networks.default.static_ips.[0] ))
+      host: (( grab instance_groups.ingestor.networks.logsearch.static_ips.[0] ))
       port: 5514
 
 - name: parser
   instances: 2
-  templates:
+  jobs:
   - {name: parser, release: logsearch}
   - {name: elasticsearch, release: logsearch}
   - {name: parser-config-lfc, release: logsearch-for-cloudfoundry}
-  resource_pool: parser
+  vm_type: logsearch_parser
+  azs: [z1]
   networks:
-  - name: default
+  - name: logsearch
   properties:
     logstash_parser:
       elasticsearch:
@@ -201,52 +216,60 @@ jobs:
 
 - name: ls-router
   instances: 1
-  templates:
+  jobs:
   - { name: haproxy, release: logsearch }
   - { name: route_registrar, release: cf }
-  resource_pool: haproxy
+  vm_type: logsearch_haproxy
+  azs: [z1]
   networks:
-  - name: default
-    default: [gateway, dns]
-    static_ips: (( static_ips(9) ))
+  - name: logsearch
+    static_ips: 
+    - (( grab terraform_outputs.logsearch_static_ips.[9] ))
   properties:
     haproxy:
-      syslog_server: (( grab jobs.cluster_monitor.networks.[0].static_ips.[0] ))
+      syslog_server: (( grab instance_groups.cluster_monitor.networks.logsearch.static_ips.[0] ))
       ingestor:
-        backend_servers: (( grab jobs.ingestor.networks.[0].static_ips ))
+        backend_servers: (( grab instance_groups.ingestor.networks.logsearch.static_ips ))
       kibana:
-        backend_servers: (( grab jobs.kibana.networks.[0].static_ips ))
+        backend_servers: (( grab instance_groups.kibana.networks.logsearch.static_ips ))
       cluster_monitor:
-        backend_servers: (( grab jobs.cluster_monitor.networks.[0].static_ips ))
+        backend_servers: (( grab instance_groups.cluster_monitor.networks.logsearch.static_ips ))
 
 - name: smoke-tests
   instances: 1
-  resource_pool: errand
-  release: logsearch
-  templates:
-  - {name: smoke-tests, release: logsearch}
+  vm_type: logsearch_errand
+  vm_extensions: [logsearch-errand-profile]
+  azs: [z1]
   networks:
-  - name: default
+  - name: logsearch
   lifecycle: errand
+  release: logsearch
+  jobs:
+  - {name: smoke-tests, release: logsearch}
   properties:
     smoke_tests:
       syslog_ingestor:
-        host: (( grab jobs.ls-router.networks.[0].static_ips.[0] ))
+        host: (( grab instance_groups.ls-router.networks.logsearch.static_ips.[0] ))
       elasticsearch_master:
-        host: (( grab jobs.elasticsearch_master.networks.default.static_ips.[0] ))
+        host: (( grab instance_groups.elasticsearch_master.networks.logsearch.static_ips.[0] ))
 
 - name: upload-kibana-objects
+  instances: 1
+  vm_type: logsearch_errand
+  vm_extensions: [logsearch-errand-profile]
+  azs: [z1]
+  networks:
+  - name: logsearch
   lifecycle: errand
   release: logsearch-for-cloudfoundry
-  instances: 1
-  templates:
+  jobs:
   - {name: upload-kibana-objects, release: logsearch-for-cloudfoundry}
   networks:
-  - name: default
+  - name: logsearch
   resource_pool: errand
   properties:
     elasticsearch:
-      host: (( grab jobs.elasticsearch_master.networks.default.static_ips.[0] ))
+      host: (( grab instance_groups.elasticsearch_master.networks.logsearch.static_ips.[0] ))
       port: 9200
     kibana_objects:
       upload_patterns:
@@ -260,7 +283,7 @@ jobs:
 properties:
   curator:
     elasticsearch:
-      host: (( grab jobs.elasticsearch_master.networks.default.static_ips.[0] ))
+      host: (( grab instance_groups.elasticsearch_master.networks.logsearch.static_ips.[0] ))
       port: 9200
   logstash:
   logstash_parser:
@@ -272,15 +295,15 @@ properties:
       options: {}
     - plugin: s3
       options:
-        region: (( grab meta.aws.region ))
-        bucket: (( grab meta.ingestor.bucket ))
+        region: (( grab terraform_outputs.vpc_region ))
+        bucket: (( grab terraform_outputs.logsearch_archive_bucket_name ))
         validate_credentials_on_root_bucket: false  # https://github.com/logstash-plugins/logstash-output-s3/issues/132
         server_side_encryption: true
         time_file: 5
   redis:
-    host: (( grab jobs.queue.networks.default.static_ips.[0] ))
+    host: (( grab instance_groups.queue.networks.logsearch.static_ips.[0] ))
   elasticsearch:
-    master_hosts: (( grab jobs.elasticsearch_master.networks.default.static_ips ))
+    master_hosts: (( grab instance_groups.elasticsearch_master.networks.logsearch.static_ips ))
     cluster_name: logsearch
     exec:
       environment:
@@ -293,16 +316,16 @@ properties:
       delay_allocation_restart: "15m"
   kibana:
     elasticsearch:
-      host: (( grab jobs.elasticsearch_master.networks.default.static_ips.[0] ))
+      host: (( grab instance_groups.elasticsearch_master.networks.logsearch.static_ips.[0] ))
       port: 9200
   elasticsearch_config:
     elasticsearch:
-      host: (( grab jobs.elasticsearch_master.networks.default.static_ips.[0] ))
+      host: (( grab instance_groups.elasticsearch_master.networks.logsearch.static_ips.[0] ))
   snort:
     rules:
     - 'alert tcp any any -> any 9200 (msg:"Unexpected logsearch action"; content:"POST"; http_method; content: "logs-app"; http_uri; content:"/_update"; http_uri; classtype:web-application-attack; sid:343080002; rev:1;)'
     - 'alert tcp any any -> any 9200 (msg:"Unexpected logsearch action"; content:"POST"; http_method; content: "logs-platform"; http_uri; content:"/_update"; http_uri; classtype:web-application-attack; sid:343080003; rev:1;)'
     - 'alert tcp any any -> any 9200 (msg:"Unexpected logsearch action"; content:"DELETE"; http_method; content: "logs-app"; http_uri; classtype:web-application-attack; sid:343080004; rev:1;)'
-    - (( concat "suppress gen_id 1, sig_id 343080004, track by_src, ip " jobs.cluster_monitor.networks.default.static_ips.[0] ))
+    - (( concat "suppress gen_id 1, sig_id 343080004, track by_src, ip " instance_groups.cluster_monitor.networks.logsearch.static_ips.[0] ))
     - 'alert tcp any any -> any 9200 (msg:"Unexpected logsearch action"; content:"DELETE"; http_method; content: "logs-platform"; http_uri; classtype:web-application-attack; sid:343080005; rev:1;)'
-    - (( concat "suppress gen_id 1, sig_id 343080005, track by_src, ip " jobs.cluster_monitor.networks.default.static_ips.[0] ))
+    - (( concat "suppress gen_id 1, sig_id 343080005, track by_src, ip " instance_groups.cluster_monitor.networks.logsearch.static_ips.[0] ))

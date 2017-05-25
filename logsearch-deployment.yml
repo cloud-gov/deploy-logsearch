@@ -1,3 +1,22 @@
+name: (( param "Please configure your deployment name" ))
+
+director_uuid: (( param "Please set the UUID of your BOSH Director" ))
+
+update:
+  serial: false
+  canaries: 1
+  canary_watch_time: 30000-600000
+  update_watch_time: 5000-600000
+  max_in_flight: 1
+  max_errors: 1
+
+stemcells:
+- alias: default
+  name: bosh-aws-xen-hvm-ubuntu-trusty-go_agent
+  version: latest
+
+
+
 meta:
   default_env:
     bosh:
@@ -94,11 +113,3 @@ disk_pools:
 - name: cluster_monitor
   disk_size: 102400
   cloud_properties: {}
-
-update:
-  serial: false
-  canaries: 1
-  canary_watch_time: 30000-600000
-  update_watch_time: 5000-600000
-  max_in_flight: 1
-  max_errors: 1
