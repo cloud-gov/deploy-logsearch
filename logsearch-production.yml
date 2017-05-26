@@ -17,11 +17,13 @@ instance_groups:
     - (( grab terraform_outputs.logsearch_static_ips.[18] ))
 
 - name: ls-router
-  properties:
-    route_registrar:
-      routes:
-      - name: logsearch
-        port: 80
-        registration_interval: 20s
-        uris:
-        - logs.fr.cloud.gov
+  jobs:
+  - name: route_registrar
+    properties:
+      route_registrar:
+        routes:
+        - name: logsearch
+          port: 80
+          registration_interval: 20s
+          uris:
+          - logs.fr.cloud.gov
