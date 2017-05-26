@@ -17,6 +17,8 @@ jobs:
     - get: cg-s3-riemann-release
     - get: logsearch-stemcell
       trigger: true
+    - get : terraform-yaml
+      resource: terraform-yaml-staging
     # - get: upstream-logsearch-release
   - task: logsearch-manifest
     config: &manifest-config
@@ -28,14 +30,22 @@ jobs:
       inputs:
       - name: logsearch-config
       - name: common-secrets
+      - name: terraform-yaml
       run:
-        path: logsearch-config/generate.sh
-        args: ["common-secrets/secrets.yml", "logsearch-manifest/manifest.yml"]
+        path: sh
+        args:
+          - -exc 
+          - | 
+            spruce merge \
+              --prune terraform_outputs \
+              logsearch-config/logsearch-deployment.yml \
+              logsearch-config/logsearch-jobs.yml \
+              common-secrets/secrets.yml \
+              logsearch-config/logsearch-staging.yml \
+              terraform-yaml/state.yml \
+              > logsearch-manifest/manifest.yml
       outputs:
       - name: logsearch-manifest
-      params:
-        COMPILATION_PROFILE: staging-bosh-compilation
-        LOGSEARCH_INGESTOR_PROFILE: staging-logsearch-ingestor
   - put: logsearch-staging-deployment
     params: &deploy-params
       cert: common/master-bosh.crt
@@ -153,12 +163,24 @@ jobs:
     # - get: upstream-logsearch-release
     - get: logsearch-staging-deployment
       passed: [smoke-tests-staging]
+    - get: terraform-yaml
+      resource: terraform-yaml-production
   - task: logsearch-manifest
     config:
       <<: *manifest-config
-      params:
-        COMPILATION_PROFILE: production-bosh-compilation
-        LOGSEARCH_INGESTOR_PROFILE: production-logsearch-ingestor
+      run:
+        path: sh
+        args:
+          - -exc 
+          - | 
+            spruce merge \
+              --prune terraform_outputs \
+              logsearch-config/logsearch-deployment.yml \
+              logsearch-jobs.yml \
+              common-secrets/secrets.yml \
+              logsearch-config/logsearch-production.yml \
+              terraform-yaml/state.yml \
+              > logsearch-manifest/manifest.yml
   - put: logsearch-production-deployment
     params: *deploy-params
   on_failure:
@@ -371,6 +393,20 @@ resources:
   source:
     interval: 10m
 
+- name: terraform-yaml-staging
+  type: s3-iam
+  source:
+    bucket: {{tf-state-bucket-staging}}
+    versioned_file: {{tf-state-file-staging}}
+    region_name: {{aws-region}}
+
+- name: terraform-yaml-production
+  type: s3-iam
+  source:
+    bucket: {{tf-state-bucket-production}}
+    versioned_file: {{tf-state-file-production}}
+    region_name: {{aws-region}}
+
 resource_types:
 - name: slack-notification
   type: docker-image
@@ -386,6 +422,11 @@ resource_types:
   type: docker-image
   source:
     repository: 18fgsa/cg-common-resource
+
+- name: s3-iam
+  type: docker-image
+  source:
+    repository: 18fgsa/s3-resource
 
 staging-errand-params: &staging-errand-params
   BOSH_TARGET: {{logsearch-staging-deployment-bosh-target}}

@@ -1,99 +1,4 @@
-meta:
-  default_env:
-    bosh:
-      password: ~
-
-name: logsearch
-
-compilation:
-  workers: 4
-  network: default
-  reuse_compilation_vms: true
-  cloud_properties: {}
-
-releases:
-- {name: logsearch, version: latest}
-- {name: logsearch-for-cloudfoundry, version: latest}
-- {name: riemann, version: latest}
-- {name: snort, version: latest}
-
-resource_pools:
-- name: elasticsearch_master
-  network: default
-  stemcell: (( grab meta.stemcell ))
-  env: (( grab meta.default_env ))
-  cloud_properties: {}
-
-- name: elasticsearch_data
-  network: default
-  stemcell: (( grab meta.stemcell ))
-  env: (( grab meta.default_env ))
-  cloud_properties: {}
-
-- name: ingestor
-  network: default
-  stemcell: (( grab meta.stemcell ))
-  env: (( grab meta.default_env ))
-  cloud_properties: {}
-
-- name: queue
-  network: default
-  stemcell: (( grab meta.stemcell ))
-  env: (( grab meta.default_env ))
-  cloud_properties: {}
-
-- name: parser
-  network: default
-  stemcell: (( grab meta.stemcell ))
-  env: (( grab meta.default_env ))
-  cloud_properties: {}
-
-- name: kibana
-  network: default
-  stemcell: (( grab meta.stemcell ))
-  env: (( grab meta.default_env ))
-  cloud_properties: {}
-
-- name: maintenance
-  network: default
-  stemcell: (( grab meta.stemcell ))
-  env: (( grab meta.default_env ))
-  cloud_properties: {}
-
-- name: cluster_monitor
-  network: default
-  stemcell: (( grab meta.stemcell ))
-  env: (( grab meta.default_env ))
-  cloud_properties: {}
-
-- name: haproxy
-  network: default
-  stemcell: (( grab meta.stemcell ))
-  env: (( grab meta.default_env ))
-  cloud_properties: {}
-
-- name: errand
-  network: default
-  stemcell: (( grab meta.stemcell ))
-  env: (( grab meta.default_env ))
-  cloud_properties: {}
-
-disk_pools:
-- name: elasticsearch_master
-  disk_size: 102400
-  cloud_properties: {}
-
-- name: elasticsearch_data
-  disk_size: 102400
-  cloud_properties: {}
-
-- name: queue
-  disk_size: 102400
-  cloud_properties: {}
-
-- name: cluster_monitor
-  disk_size: 102400
-  cloud_properties: {}
+director_uuid: (( param "Please set the UUID of your BOSH Director" ))
 
 update:
   serial: false
@@ -102,3 +7,17 @@ update:
   update_watch_time: 5000-600000
   max_in_flight: 1
   max_errors: 1
+
+stemcells:
+- alias: default
+  name: bosh-aws-xen-hvm-ubuntu-trusty-go_agent
+  version: latest
+
+name: logsearch
+
+releases:
+- {name: logsearch, version: latest}
+- {name: logsearch-for-cloudfoundry, version: latest}
+- {name: cf, version: latest}
+- {name: riemann, version: latest}
+- {name: snort, version: latest}
