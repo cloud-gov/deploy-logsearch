@@ -176,7 +176,7 @@ jobs:
             spruce merge \
               --prune terraform_outputs \
               logsearch-config/logsearch-deployment.yml \
-              logsearch-jobs.yml \
+              logsearch-config/logsearch-jobs.yml \
               common-secrets/secrets.yml \
               logsearch-config/logsearch-production.yml \
               terraform-yaml/state.yml \
