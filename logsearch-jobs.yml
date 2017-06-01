@@ -261,7 +261,7 @@ instance_groups:
         firehose_events: "LogMessage,ContainerMetric"
         firehose_client_id: logsearch_firehose_ingestor
         skip_ssl_validation: false
-    syslog:
+      syslog:
         host: (( grab instance_groups.ingestor.networks.logsearch.static_ips.[0] ))
         port: 5514
   vm_type: logsearch_ingestor
@@ -328,13 +328,6 @@ instance_groups:
         ingestor:
           backend_servers: (( grab instance_groups.ingestor.networks.logsearch.static_ips ))
         kibana:
-    release: logsearch
-    properties:
-      haproxy:
-        syslog_server: (( grab instance_groups.cluster_monitor.networks.logsearch.static_ips.[0] ))
-        ingestor:
-          backend_servers: (( grab instance_groups.ingestor.networks.logsearch.static_ips ))
-        kibana:
           backend_servers: (( grab instance_groups.kibana.networks.logsearch.static_ips ))
         cluster_monitor:
           backend_servers: (( grab instance_groups.cluster_monitor.networks.logsearch.static_ips ))
@@ -387,3 +380,10 @@ instance_groups:
         port: 9200
       kibana_objects:
         upload_patterns:
+        - {type: index-pattern, pattern: "/var/vcap/jobs/upload-kibana-objects/kibana-objects/index-pattern/*.json"}
+        - {type: config, pattern: "/var/vcap/jobs/upload-kibana-objects/kibana-objects/config/*.json"}
+        - {type: search, pattern: "/var/vcap/jobs/upload-kibana-objects/kibana-objects/search/[app]-*.json"}
+        - {type: visualization, pattern: "/var/vcap/jobs/upload-kibana-objects/kibana-objects/visualization/App-*.json"}
+        - {type: dashboard, pattern: "/var/vcap/jobs/upload-kibana-objects/kibana-objects/dashboard/App-*.json"}
+  networks:
+  - name: logsearch
