@@ -14,9 +14,9 @@ instance_groups:
   - name: logsearch
     static_ips:
     - (( grab terraform_outputs.logsearch_static_ips.[1] ))
-    properties:
-      cloudfoundry:
-        api_endpoint: api.fr-stage.cloud.gov
+  properties:
+    cloudfoundry:
+      api_endpoint: api.fr-stage.cloud.gov
 
 - name: ls-router
   jobs:
@@ -36,4 +36,5 @@ instance_groups:
     properties:
       kibana:
         env:
+        - (( append ))
         - CF_API_URI: https://api.fr-stage.cloud.gov
