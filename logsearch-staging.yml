@@ -36,4 +36,4 @@ instance_groups:
     properties:
       kibana:
         env:
-        - CF_API_URI: ci.fr-stage.cloud.gov
+        - CF_API_URI: https://api.fr-stage.cloud.gov
