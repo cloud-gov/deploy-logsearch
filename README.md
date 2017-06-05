@@ -16,4 +16,9 @@ properties:
         authorized-grant-types: refresh_token,authorization_code
         redirect-uri: https://CHANGEME/login
         autoapprove: true
+      logsearch_firehose_ingestor:
+        secret: CHANGEME
+        authorized-grant-types: client_credentials
+        authorities: doppler.firehose,cloud_controller.admin
+        override: true
 ```

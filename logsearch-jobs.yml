@@ -219,6 +219,11 @@ instance_groups:
         elasticsearch:
           host: (( grab instance_groups.elasticsearch_master.networks.logsearch.static_ips.[0] ))
           port: 9200
+        env:
+        - KIBANA_OAUTH2_CLIENT_ID: kibana_oauth2_client
+        - SKIP_SSL_VALIDATION: false
+        - CF_SYSTEM_ORG: cloud-gov-operators # Org Managers of this org get admin access
+        - REDIS_HOST: (( grab instance_groups.queue.networks.logsearch.static_ips.[0] ))
   - name: kibana-auth-plugin
     release: logsearch-for-cloudfoundry
   vm_type: logsearch_kibana
@@ -254,6 +259,8 @@ instance_groups:
     properties:
       cloudfoundry:
         firehose_events: "LogMessage,ContainerMetric"
+        firehose_client_id: logsearch_firehose_ingestor
+        skip_ssl_validation: false
       syslog:
         host: (( grab instance_groups.ingestor.networks.logsearch.static_ips.[0] ))
         port: 5514
