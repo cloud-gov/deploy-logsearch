@@ -383,11 +383,13 @@ instance_groups:
       elasticsearch:
         host: (( grab instance_groups.elasticsearch_master.networks.services.static_ips.[0] ))
         port: 9200
+      cloudfoundry:
+        firehose_events: "LogMessage,ContainerMetric"
       kibana_objects:
         upload_patterns:
         - {type: index-pattern, pattern: "/var/vcap/jobs/upload-kibana-objects/kibana-objects/index-pattern/*.json"}
         - {type: config, pattern: "/var/vcap/jobs/upload-kibana-objects/kibana-objects/config/*.json"}
-        - {type: search, pattern: "/var/vcap/jobs/upload-kibana-objects/kibana-objects/search/[app]-*.json"}
+        - {type: search, pattern: "/var/vcap/jobs/upload-kibana-objects/kibana-objects/search/app-*.json"}
         - {type: visualization, pattern: "/var/vcap/jobs/upload-kibana-objects/kibana-objects/visualization/App-*.json"}
         - {type: dashboard, pattern: "/var/vcap/jobs/upload-kibana-objects/kibana-objects/dashboard/App-*.json"}
   networks:
