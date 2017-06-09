@@ -2,7 +2,7 @@ instance_groups:
 - name: elasticsearch_master
   instances: 3
   networks:
-  - name: logsearch
+  - name: services
     static_ips:
     - (( grab terraform_outputs.logsearch_static_ips.[0] ))
     - (( grab terraform_outputs.logsearch_static_ips.[6] ))
@@ -11,7 +11,7 @@ instance_groups:
 - name: ingestor
   instances: 2
   networks:
-  - name: logsearch
+  - name: services
     static_ips:
     - (( grab terraform_outputs.logsearch_static_ips.[1] ))
     - (( grab terraform_outputs.logsearch_static_ips.[18] ))
