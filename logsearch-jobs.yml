@@ -219,6 +219,8 @@ instance_groups:
         elasticsearch:
           host: (( grab instance_groups.elasticsearch_master.networks.services.static_ips.[0] ))
           port: 9200
+        env:
+        - NODE_ENV: production
         source_files: [/var/vcap/jobs/kibana-auth-plugin/config/config.sh]
   - name: kibana-auth-plugin
     release: logsearch-for-cloudfoundry
