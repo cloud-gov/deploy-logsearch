@@ -13,13 +13,12 @@ jobs:
       resource: common-staging
       trigger: true
     - get: logsearch-release
-    - get: logsearch-for-cf-release
+    - get: logsearch-for-cloudfoundry-release
     - get: cg-s3-riemann-release
     - get: logsearch-stemcell
       trigger: true
-    - get : terraform-yaml
+    - get: terraform-yaml
       resource: terraform-yaml-staging
-    # - get: upstream-logsearch-release
   - task: logsearch-manifest
     config: &manifest-config
       platform: linux
@@ -34,16 +33,16 @@ jobs:
       run:
         path: sh
         args:
-          - -exc 
-          - | 
-            spruce merge \
-              --prune terraform_outputs \
-              logsearch-config/logsearch-deployment.yml \
-              logsearch-config/logsearch-jobs.yml \
-              common-secrets/secrets.yml \
-              logsearch-config/logsearch-staging.yml \
-              terraform-yaml/state.yml \
-              > logsearch-manifest/manifest.yml
+        - -exc
+        - |
+          spruce merge \
+            --prune terraform_outputs \
+            logsearch-config/logsearch-deployment.yml \
+            logsearch-config/logsearch-jobs.yml \
+            common-secrets/secrets.yml \
+            logsearch-config/logsearch-staging.yml \
+            terraform-yaml/state.yml \
+            > logsearch-manifest/manifest.yml
       outputs:
       - name: logsearch-manifest
   - put: logsearch-staging-deployment
@@ -52,9 +51,8 @@ jobs:
       manifest: logsearch-manifest/manifest.yml
       releases:
       - logsearch-release/*.tgz
-      - logsearch-for-cf-release/*.tgz
+      - logsearch-for-cloudfoundry-release/*.tgz
       - cg-s3-riemann-release/*.tgz
-      # - upstream-logsearch-release/*.tgz
       stemcells:
       - logsearch-stemcell/*.tgz
   on_failure:
@@ -124,23 +122,6 @@ jobs:
       <<: *staging-errand-params
       BOSH_ERRAND: upload-kibana-objects
 
-- name: push-event-logger-staging
-  plan:
-  - aggregate:
-    - get: event-logger-app
-      trigger: true
-  - put: deploy-event-logger-app-staging
-    params:
-      manifest: event-logger-app/manifest.yml
-      path: event-logger-app
-      current_app_name: cf-app-events-logger
-      environment_variables:
-        CF_USER: {{cf-admin-username-staging}}
-        CF_PASSWORD: {{cf-admin-password-staging}}
-        CF_API: {{cf-api-url-staging}}
-        FETCH_EVERY: "10"
-        CLEAR_CACHE_EVERY: "300"
-
 - name: deploy-logsearch-production
   serial_groups: [bosh-production]
   plan:
@@ -155,12 +136,14 @@ jobs:
       resource: common-prod
       trigger: true
     - get: logsearch-release
-    - get: logsearch-for-cf-release
+      passed: [deploy-logsearch-staging]
+    - get: logsearch-for-cloudfoundry-release
+      passed: [deploy-logsearch-staging]
     - get: cg-s3-riemann-release
+      passed: [deploy-logsearch-staging]
     - get: logsearch-stemcell
       passed: [deploy-logsearch-staging]
       trigger: true
-    # - get: upstream-logsearch-release
     - get: logsearch-staging-deployment
       passed: [smoke-tests-staging]
     - get: terraform-yaml
@@ -171,16 +154,16 @@ jobs:
       run:
         path: sh
         args:
-          - -exc 
-          - | 
-            spruce merge \
-              --prune terraform_outputs \
-              logsearch-config/logsearch-deployment.yml \
-              logsearch-config/logsearch-jobs.yml \
-              common-secrets/secrets.yml \
-              logsearch-config/logsearch-production.yml \
-              terraform-yaml/state.yml \
-              > logsearch-manifest/manifest.yml
+        - -exc
+        - |
+          spruce merge \
+            --prune terraform_outputs \
+            logsearch-config/logsearch-deployment.yml \
+            logsearch-config/logsearch-jobs.yml \
+            common-secrets/secrets.yml \
+            logsearch-config/logsearch-production.yml \
+            terraform-yaml/state.yml \
+            > logsearch-manifest/manifest.yml
   - put: logsearch-production-deployment
     params: *deploy-params
   on_failure:
@@ -248,40 +231,17 @@ jobs:
       <<: *production-errand-params
       BOSH_ERRAND: upload-kibana-objects
 
-- name: push-event-logger-production
-  plan:
-  - aggregate:
-    - get: event-logger-app
-      trigger: true
-    - get: deploy-event-logger-app-staging
-      passed: [push-event-logger-staging]
-  - put: deploy-event-logger-app-production
-    params:
-      manifest: event-logger-app/manifest.yml
-      path: event-logger-app
-      current_app_name: cf-app-events-logger
-      environment_variables:
-        CF_USER: {{cf-admin-username-production}}
-        CF_PASSWORD: {{cf-admin-password-production}}
-        CF_API: {{cf-api-url-production}}
-        FETCH_EVERY: "10"
-        CLEAR_CACHE_EVERY: "300"
-
 resources:
 - name: master-bosh-root-cert
-  type: s3
+  type: s3-iam
   source:
-    access_key_id: {{ci-access-key-id}}
     bucket: {{logsearch-private-bucket-production}}
     region_name: {{aws-region}}
-    secret_access_key: {{ci-secret-access-key}}
     versioned_file: master-bosh.crt
 - name: common-staging
   type: cg-common
   source:
     bucket_name: {{logsearch-private-bucket-staging}}
-    access_key_id: {{ci-access-key-id}}
-    secret_access_key: {{ci-secret-access-key}}
     secrets_file: logsearch.yml
     secrets_passphrase: {{logsearch-staging-private-passphrase}}
     bosh_cert: bosh.pem
@@ -291,31 +251,30 @@ resources:
   type: cg-common
   source:
     bucket_name: {{logsearch-private-bucket-production}}
-    access_key_id: {{ci-access-key-id}}
-    secret_access_key: {{ci-secret-access-key}}
     secrets_file: logsearch.yml
     secrets_passphrase: {{logsearch-production-private-passphrase}}
     bosh_cert: bosh.pem
     region: {{aws-region}}
 
 - name: logsearch-release
-  type: bosh-io-release
+  type: s3-iam
   source:
-    repository: cloudfoundry-community/logsearch-boshrelease
+    bucket: {{cg-s3-bosh-releases-bucket}}
+    regexp: logsearch-([\d\.]*).tgz
+    region_name: {{aws-region}}
 
-- name: logsearch-for-cf-release
-  type: bosh-io-release
+- name: logsearch-for-cloudfoundry-release
+  type: s3-iam
   source:
-    repository: cloudfoundry-community/logsearch-for-cloudfoundry
+    bucket: {{cg-s3-bosh-releases-bucket}}
+    regexp: logsearch-for-cloudfoundry-(.*).tgz
+    region_name: {{aws-region}}
 
 - name: cg-s3-riemann-release
-  type: s3
+  type: s3-iam
   source:
-    access_key_id: {{ci-access-key-id}}
     bucket: {{cg-s3-bosh-releases-bucket}}
-    private: true
     regexp: riemann-(.*).tgz
-    secret_access_key: {{ci-secret-access-key}}
     region_name: {{aws-region}}
 
 - name: logsearch-config
@@ -325,13 +284,11 @@ resources:
     branch: {{cg-deploy-logsearch-git-branch}}
 
 - name: logsearch-stemcell
-  type: s3
+  type: s3-iam
   source:
-    access_key_id: {{ci-access-key-id}}
     bucket: {{stemcell-bucket}}
     regexp: light-bosh-stemcell-(.*)-aws-xen-hvm-ubuntu-trusty-go_agent.tgz
     region_name: {{aws-region}}
-    secret_access_key: {{ci-secret-access-key}}
 
 - name: logsearch-staging-deployment
   type: 18f-bosh-deployment
@@ -350,32 +307,6 @@ resources:
     password: {{logsearch-production-deployment-bosh-password}}
     deployment: {{logsearch-production-deployment-bosh-deployment}}
     ignore_ssl: false
-
-- name: event-logger-app
-  type: git
-  source:
-    uri: {{event-logger-app-git-url}}
-    branch: {{event-logger-app-git-branch}}
-
-- name: deploy-event-logger-app-staging
-  type: cf
-  source:
-    api: {{cf-api-url-staging}}
-    username: {{cf-deploy-username-staging}}
-    password: {{cf-deploy-password-staging}}
-    organization: {{cf-organization-staging}}
-    space: {{cf-space-staging}}
-    skip_cert_check: false
-
-- name: deploy-event-logger-app-production
-  type: cf
-  source:
-    api: {{cf-api-url-production}}
-    username: {{cf-deploy-username-production}}
-    password: {{cf-deploy-password-production}}
-    organization: {{cf-organization-production}}
-    space: {{cf-space-production}}
-    skip_cert_check: false
 
 - name: pipeline-tasks
   type: git
