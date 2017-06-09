@@ -32,9 +32,9 @@ instance_groups:
 
 - name: kibana
   jobs:
-  - name: kibana
+  - name: kibana-auth-plugin
     properties:
-      kibana:
-        env:
-        - (( append ))
-        - CF_API_URI: https://api.fr-stage.cloud.gov
+      kibana-auth:
+        cloudfoundry:
+          api_endpoint: https://api.fr-stage.cloud.gov
+          system_domain: fr-stage.cloud.gov

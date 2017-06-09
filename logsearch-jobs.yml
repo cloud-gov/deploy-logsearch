@@ -205,7 +205,7 @@ instance_groups:
 
 - name: kibana
   instances: 1
-  jobs: 
+  jobs:
   - name: kibana
     release: logsearch
     properties:
@@ -219,19 +219,22 @@ instance_groups:
         elasticsearch:
           host: (( grab instance_groups.elasticsearch_master.networks.logsearch.static_ips.[0] ))
           port: 9200
-        env:
-        - KIBANA_OAUTH2_CLIENT_ID: kibana_oauth2_client
-        - SKIP_SSL_VALIDATION: false
-        - CF_SYSTEM_ORG: cloud-gov-operators # Org Managers of this org get admin access
-        - REDIS_HOST: (( grab instance_groups.queue.networks.logsearch.static_ips.[0] ))
+        source_files: [/var/vcap/jobs/kibana-auth-plugin/config/config.sh]
   - name: kibana-auth-plugin
     release: logsearch-for-cloudfoundry
+    properties:
+      kibana-auth:
+        cloudfoundry:
+          skip_ssl_validation: false
+          client_id: kibana_oauth2_client
+          system_org: cloud-gov-operators # Org Managers of this org get admin access
+        redis_host: (( grab instance_groups.queue.networks.logsearch.static_ips.[0] ))
   vm_type: logsearch_kibana
   stemcell: default
   azs: [z1]
   networks:
   - name: services
-    static_ips: 
+    static_ips:
     - (( grab terraform_outputs.logsearch_static_ips.[5] ))
 
 - name: ingestor
@@ -290,7 +293,7 @@ instance_groups:
   - name: elasticsearch
     release: logsearch
     properties:
-      elasticsearch: 
+      elasticsearch:
         master_hosts: (( grab instance_groups.elasticsearch_master.networks.logsearch.static_ips ))
         cluster_name: logsearch
         exec:
@@ -338,7 +341,7 @@ instance_groups:
   azs: [z1]
   networks:
   - name: services
-    static_ips: 
+    static_ips:
     - (( grab terraform_outputs.logsearch_static_ips.[9] ))
 
 - name: smoke-tests
