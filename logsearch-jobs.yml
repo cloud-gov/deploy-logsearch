@@ -12,7 +12,7 @@ instance_groups:
         node:
           allow_master: true
           allow_data: false
-        master_hosts: (( grab instance_groups.elasticsearch_master.networks.logsearch.static_ips ))
+        master_hosts: (( grab instance_groups.elasticsearch_master.networks.services.static_ips ))
         cluster_name: logsearch
         exec:
           environment:
@@ -40,9 +40,9 @@ instance_groups:
         - 'alert tcp any any -> any 9200 (msg:"Unexpected logsearch action"; content:"POST"; http_method; content: "logs-app"; http_uri; content:"/_update"; http_uri; classtype:web-application-attack; sid:343080002; rev:1;)'
         - 'alert tcp any any -> any 9200 (msg:"Unexpected logsearch action"; content:"POST"; http_method; content: "logs-platform"; http_uri; content:"/_update"; http_uri; classtype:web-application-attack; sid:343080003; rev:1;)'
         - 'alert tcp any any -> any 9200 (msg:"Unexpected logsearch action"; content:"DELETE"; http_method; content: "logs-app"; http_uri; classtype:web-application-attack; sid:343080004; rev:1;)'
-        - (( concat "suppress gen_id 1, sig_id 343080004, track by_src, ip " instance_groups.cluster_monitor.networks.logsearch.static_ips.[0] ))
+        - (( concat "suppress gen_id 1, sig_id 343080004, track by_src, ip " instance_groups.cluster_monitor.networks.services.static_ips.[0] ))
         - 'alert tcp any any -> any 9200 (msg:"Unexpected logsearch action"; content:"DELETE"; http_method; content: "logs-platform"; http_uri; classtype:web-application-attack; sid:343080005; rev:1;)'
-        - (( concat "suppress gen_id 1, sig_id 343080005, track by_src, ip " instance_groups.cluster_monitor.networks.logsearch.static_ips.[0] ))
+        - (( concat "suppress gen_id 1, sig_id 343080005, track by_src, ip " instance_groups.cluster_monitor.networks.services.static_ips.[0] ))
   vm_type: logsearch_es_master
   persistent_disk_type: logsearch_es_master
   stemcell: default
@@ -137,7 +137,7 @@ instance_groups:
         purge_logs:
           retention_period: 180
         elasticsearch:
-          host: (( grab instance_groups.elasticsearch_master.networks.logsearch.static_ips.[0] ))
+          host: (( grab instance_groups.elasticsearch_master.networks.services.static_ips.[0] ))
           port: 9200
   - name: elasticsearch_config
     release: logsearch
@@ -151,7 +151,7 @@ instance_groups:
         - index-mappings-app-lfc: /var/vcap/jobs/elasticsearch-config-lfc/index-mappings-app.json
         - index-mappings-platform-lfc: /var/vcap/jobs/elasticsearch-config-lfc/index-mappings-platform.json
         elasticsearch:
-          host: (( grab instance_groups.elasticsearch_master.networks.logsearch.static_ips.[0] ))
+          host: (( grab instance_groups.elasticsearch_master.networks.services.static_ips.[0] ))
   - name: elasticsearch-config-lfc
     release: logsearch-for-cloudfoundry
   vm_type: logsearch_maintenance
@@ -176,7 +176,7 @@ instance_groups:
         node:
           allow_master: false
           allow_data: true
-        master_hosts: (( grab instance_groups.elasticsearch_master.networks.logsearch.static_ips ))
+        master_hosts: (( grab instance_groups.elasticsearch_master.networks.services.static_ips ))
         cluster_name: logsearch
         exec:
           environment:
@@ -217,7 +217,7 @@ instance_groups:
         config_options: |-
           console.enabled: false
         elasticsearch:
-          host: (( grab instance_groups.elasticsearch_master.networks.logsearch.static_ips.[0] ))
+          host: (( grab instance_groups.elasticsearch_master.networks.services.static_ips.[0] ))
           port: 9200
         source_files: [/var/vcap/jobs/kibana-auth-plugin/config/config.sh]
   - name: kibana-auth-plugin
@@ -228,7 +228,7 @@ instance_groups:
           skip_ssl_validation: false
           client_id: kibana_oauth2_client
           system_org: cloud-gov-operators # Org Managers of this org get admin access
-        redis_host: (( grab instance_groups.queue.networks.logsearch.static_ips.[0] ))
+        redis_host: (( grab instance_groups.queue.networks.services.static_ips.[0] ))
   vm_type: logsearch_kibana
   stemcell: default
   azs: [z1]
@@ -256,7 +256,7 @@ instance_groups:
         relp:
           port: ~
       redis:
-        host: (( grab instance_groups.queue.networks.logsearch.static_ips.[0] ))
+        host: (( grab instance_groups.queue.networks.services.static_ips.[0] ))
   - name: ingestor_cloudfoundry-firehose
     release: logsearch-for-cloudfoundry
     properties:
@@ -265,7 +265,7 @@ instance_groups:
         firehose_client_id: logsearch_firehose_ingestor
         skip_ssl_validation: false
       syslog:
-        host: (( grab instance_groups.ingestor.networks.logsearch.static_ips.[0] ))
+        host: (( grab instance_groups.ingestor.networks.services.static_ips.[0] ))
         port: 5514
   vm_type: logsearch_ingestor
   stemcell: default
@@ -289,12 +289,12 @@ instance_groups:
         - /var/vcap/packages/logsearch-config/deployment_lookup.yml
         - /var/vcap/jobs/parser-config-lfc/config/deployment_lookup.yml
       redis:
-        host: (( grab instance_groups.queue.networks.logsearch.static_ips.[0] ))
+        host: (( grab instance_groups.queue.networks.services.static_ips.[0] ))
   - name: elasticsearch
     release: logsearch
     properties:
       elasticsearch:
-        master_hosts: (( grab instance_groups.elasticsearch_master.networks.logsearch.static_ips ))
+        master_hosts: (( grab instance_groups.elasticsearch_master.networks.services.static_ips ))
         cluster_name: logsearch
         exec:
           environment:
@@ -327,13 +327,13 @@ instance_groups:
     release: logsearch
     properties:
       haproxy:
-        syslog_server: (( grab instance_groups.cluster_monitor.networks.logsearch.static_ips.[0] ))
+        syslog_server: (( grab instance_groups.cluster_monitor.networks.services.static_ips.[0] ))
         ingestor:
-          backend_servers: (( grab instance_groups.ingestor.networks.logsearch.static_ips ))
+          backend_servers: (( grab instance_groups.ingestor.networks.services.static_ips ))
         kibana:
-          backend_servers: (( grab instance_groups.kibana.networks.logsearch.static_ips ))
+          backend_servers: (( grab instance_groups.kibana.networks.services.static_ips ))
         cluster_monitor:
-          backend_servers: (( grab instance_groups.cluster_monitor.networks.logsearch.static_ips ))
+          backend_servers: (( grab instance_groups.cluster_monitor.networks.services.static_ips ))
   - name: route_registrar
     release: cf
   vm_type: logsearch_haproxy
@@ -360,9 +360,9 @@ instance_groups:
     properties:
       smoke_tests:
         syslog_ingestor:
-          host: (( grab instance_groups.ls-router.networks.logsearch.static_ips.[0] ))
+          host: (( grab instance_groups.ls-router.networks.services.static_ips.[0] ))
         elasticsearch_master:
-          host: (( grab instance_groups.elasticsearch_master.networks.logsearch.static_ips.[0] ))
+          host: (( grab instance_groups.elasticsearch_master.networks.services.static_ips.[0] ))
 
 - name: upload-kibana-objects
   instances: 1
@@ -379,7 +379,7 @@ instance_groups:
     release: logsearch-for-cloudfoundry
     properties:
       elasticsearch:
-        host: (( grab instance_groups.elasticsearch_master.networks.logsearch.static_ips.[0] ))
+        host: (( grab instance_groups.elasticsearch_master.networks.services.static_ips.[0] ))
         port: 9200
       kibana_objects:
         upload_patterns:
