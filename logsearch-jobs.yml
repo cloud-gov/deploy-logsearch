@@ -343,8 +343,8 @@ instance_groups:
 
 - name: smoke-tests
   instances: 1
-  vm_type: logsearch_errand
-  vm_extensions: [logsearch-errand-profile]
+  vm_type: errand_small
+  vm_extensions: [errand-profile]
   stemcell: default
   azs: [z1]
   networks:
@@ -363,8 +363,8 @@ instance_groups:
 
 - name: upload-kibana-objects
   instances: 1
-  vm_type: logsearch_errand
-  vm_extensions: [logsearch-errand-profile]
+  vm_type: errand_small
+  vm_extensions: [errand-profile]
   stemcell: default
   azs: [z1]
   networks:
