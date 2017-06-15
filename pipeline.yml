@@ -46,6 +46,13 @@ jobs:
               > logsearch-manifest/manifest.yml
       outputs:
       - name: logsearch-manifest
+  - task: lint-manifest
+    file: pipeline-tasks/lint-manifest.yml
+    input_mapping:
+      pipeline-config: logsearch-config
+      lint-manifest: logsearch-manifest
+    params:
+      LINTER_CONFIG: bosh-lint.yml
   - put: logsearch-staging-deployment
     params: &deploy-params
       cert: common/master-bosh.crt
@@ -181,6 +188,13 @@ jobs:
               logsearch-config/logsearch-production.yml \
               terraform-yaml/state.yml \
               > logsearch-manifest/manifest.yml
+  - task: lint-manifest
+    file: pipeline-tasks/lint-manifest.yml
+    input_mapping:
+      pipeline-config: logsearch-config
+      lint-manifest: logsearch-manifest
+    params:
+      LINTER_CONFIG: bosh-lint.yml
   - put: logsearch-production-deployment
     params: *deploy-params
   on_failure:
