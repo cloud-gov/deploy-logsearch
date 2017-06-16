@@ -18,7 +18,7 @@ instance_groups:
   - name: ingestor_cloudfoundry-firehose
     properties:
       cloudfoundry:
-        api_endpoint: api.fr-stage.cloud.gov
+        api_endpoint: https://api.fr-stage.cloud.gov
 
 - name: ls-router
   jobs:
