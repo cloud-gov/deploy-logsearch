@@ -1,0 +1,18 @@
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: python
+    tag: "3.6"
+
+inputs:
+- name: logsearch-config
+
+run:
+  path: sh
+  args:
+  - exc
+  - |
+    pip install requests
+    python logsearch-config/smoke-tests-login.py

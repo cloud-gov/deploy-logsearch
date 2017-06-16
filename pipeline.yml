@@ -118,6 +118,36 @@ jobs:
         :white_check_mark: Smoke tests for logsearch on staging PASSED
         <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
 
+- name: smoke-tests-login-staging
+  plan:
+  - aggregate:
+    - get: logsearch-config
+    - get: logsearch-staging-deployment
+      trigger: true
+    - get: tests-timer
+      trigger: true
+  - task: smoke-tests-login
+    file: logsearch-config/smoke-tests-login.yml
+    params:
+      CF_USERNAME: {{cf-deploy-username-staging}}
+      CF_PASSWORD: {{cf-deploy-password-staging}}
+      CF_SYSTEM_DOMAIN: {{cf-system-domain-staging}}
+  on_failure:
+    put: slack
+    params:
+      <<: *slack-params
+      text: |
+        :x: Login smoke tests for logsearch on staging FAILED
+        <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
+  on_success:
+    put: slack
+    params:
+      <<: *slack-params
+      channel: {{slack-news-channel}}
+      text: |
+        :white_check_mark: Login smoke tests for logsearch on staging PASSED
+        <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
+
 - name: upload-kibana-objects-staging
   serial_groups: [bosh-staging]
   plan:
@@ -234,6 +264,36 @@ jobs:
       channel: {{slack-news-channel}}
       text: |
         :white_check_mark: Smoke tests for logsearch on production PASSED
+        <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
+
+- name: smoke-tests-login-production
+  plan:
+  - aggregate:
+    - get: logsearch-config
+    - get: logsearch-production-deployment
+      trigger: true
+    - get: tests-timer
+      trigger: true
+  - task: smoke-tests-login
+    file: logsearch-config/smoke-tests-login.yml
+    params:
+      CF_USERNAME: {{cf-deploy-username-production}}
+      CF_PASSWORD: {{cf-deploy-password-production}}
+      CF_SYSTEM_DOMAIN: {{cf-system-domain-production}}
+  on_failure:
+    put: slack
+    params:
+      <<: *slack-params
+      text: |
+        :x: Login smoke tests for logsearch on production FAILED
+        <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
+  on_success:
+    put: slack
+    params:
+      <<: *slack-params
+      channel: {{slack-news-channel}}
+      text: |
+        :white_check_mark: Login smoke tests for logsearch on production PASSED
         <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
 
 - name: upload-kibana-objects-production
