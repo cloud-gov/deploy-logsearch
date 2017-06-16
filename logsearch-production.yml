@@ -15,9 +15,11 @@ instance_groups:
     static_ips:
     - (( grab terraform_outputs.logsearch_static_ips.[1] ))
     - (( grab terraform_outputs.logsearch_static_ips.[18] ))
-  properties:
-    cloudfoundry:
-      api_endpoint: api.fr.cloud.gov
+  jobs:
+  - name: ingestor_cloudfoundry-firehose
+    properties:
+      cloudfoundry:
+        api_endpoint: api.fr.cloud.gov
 
 - name: ls-router
   jobs:

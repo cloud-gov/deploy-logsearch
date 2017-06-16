@@ -95,7 +95,11 @@ jobs:
   - task: smoke-tests
     file: pipeline-tasks/bosh-errand.yml
     params:
-      <<: *staging-errand-params
+      BOSH_TARGET: {{logsearch-staging-deployment-bosh-target}}
+      BOSH_USERNAME: {{logsearch-staging-deployment-bosh-username}}
+      BOSH_PASSWORD: {{logsearch-staging-deployment-bosh-password}}
+      BOSH_DEPLOYMENT_NAME: {{logsearch-staging-deployment-bosh-deployment}}
+      BOSH_CACERT: common/master-bosh.crt
       BOSH_ERRAND: smoke-tests
       BOSH_FLAGS: "--keep-alive"
   on_failure:
@@ -127,7 +131,11 @@ jobs:
   - task: upload-kibana-objects
     file: pipeline-tasks/bosh-errand.yml
     params:
-      <<: *staging-errand-params
+      BOSH_TARGET: {{logsearch-staging-deployment-bosh-target}}
+      BOSH_USERNAME: {{logsearch-staging-deployment-bosh-username}}
+      BOSH_PASSWORD: {{logsearch-staging-deployment-bosh-password}}
+      BOSH_DEPLOYMENT_NAME: {{logsearch-staging-deployment-bosh-deployment}}
+      BOSH_CACERT: common/master-bosh.crt
       BOSH_ERRAND: upload-kibana-objects
 
 - name: deploy-logsearch-production
@@ -205,7 +213,11 @@ jobs:
   - task: smoke-tests
     file: pipeline-tasks/bosh-errand.yml
     params:
-      <<: *production-errand-params
+      BOSH_TARGET: {{logsearch-production-deployment-bosh-target}}
+      BOSH_USERNAME: {{logsearch-production-deployment-bosh-username}}
+      BOSH_PASSWORD: {{logsearch-production-deployment-bosh-password}}
+      BOSH_DEPLOYMENT_NAME: {{logsearch-production-deployment-bosh-deployment}}
+      BOSH_CACERT: common/master-bosh.crt
       BOSH_ERRAND: smoke-tests
       BOSH_FLAGS: "--keep-alive"
   on_failure:
@@ -237,7 +249,11 @@ jobs:
   - task: upload-kibana-objects
     file: pipeline-tasks/bosh-errand.yml
     params:
-      <<: *production-errand-params
+      BOSH_TARGET: {{logsearch-production-deployment-bosh-target}}
+      BOSH_USERNAME: {{logsearch-production-deployment-bosh-username}}
+      BOSH_PASSWORD: {{logsearch-production-deployment-bosh-password}}
+      BOSH_DEPLOYMENT_NAME: {{logsearch-production-deployment-bosh-deployment}}
+      BOSH_CACERT: common/master-bosh.crt
       BOSH_ERRAND: upload-kibana-objects
 
 resources:
@@ -367,17 +383,3 @@ resource_types:
   type: docker-image
   source:
     repository: 18fgsa/s3-resource
-
-staging-errand-params: &staging-errand-params
-  BOSH_TARGET: {{logsearch-staging-deployment-bosh-target}}
-  BOSH_USERNAME: {{logsearch-staging-deployment-bosh-username}}
-  BOSH_PASSWORD: {{logsearch-staging-deployment-bosh-password}}
-  BOSH_DEPLOYMENT_NAME: {{logsearch-staging-deployment-bosh-deployment}}
-  BOSH_CACERT: common/master-bosh.crt
-
-production-errand-params: &production-errand-params
-  BOSH_TARGET: {{logsearch-production-deployment-bosh-target}}
-  BOSH_USERNAME: {{logsearch-production-deployment-bosh-username}}
-  BOSH_PASSWORD: {{logsearch-production-deployment-bosh-password}}
-  BOSH_DEPLOYMENT_NAME: {{logsearch-production-deployment-bosh-deployment}}
-  BOSH_CACERT: common/master-bosh.crt
