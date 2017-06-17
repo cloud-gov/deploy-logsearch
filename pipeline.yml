@@ -129,8 +129,8 @@ jobs:
   - task: smoke-tests-login
     file: logsearch-config/smoke-tests-login.yml
     params:
-      CF_USERNAME: {{cf-deploy-username-staging}}
-      CF_PASSWORD: {{cf-deploy-password-staging}}
+      CF_USERNAME: {{cf-username-staging}}
+      CF_PASSWORD: {{cf-password-staging}}
       CF_SYSTEM_DOMAIN: {{cf-system-domain-staging}}
   on_failure:
     put: slack
@@ -277,8 +277,8 @@ jobs:
   - task: smoke-tests-login
     file: logsearch-config/smoke-tests-login.yml
     params:
-      CF_USERNAME: {{cf-deploy-username-production}}
-      CF_PASSWORD: {{cf-deploy-password-production}}
+      CF_USERNAME: {{cf-username-production}}
+      CF_PASSWORD: {{cf-password-production}}
       CF_SYSTEM_DOMAIN: {{cf-system-domain-production}}
   on_failure:
     put: slack
