@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 import os
-import urllib
 import requests
 
 if __name__ == "__main__":
@@ -9,6 +8,7 @@ if __name__ == "__main__":
 
     logs = session.get('https://logs.{}'.format(os.environ['CF_SYSTEM_DOMAIN']))
     print(logs.url, logs.status_code)
+    assert logs.url == 'https://login.{}/login'.format(os.environ['CF_SYSTEM_DOMAIN'])
     assert logs.status_code == 200
 
     login = session.post(
@@ -20,7 +20,5 @@ if __name__ == "__main__":
         }
     )
     print(login.url, login.status_code)
+    assert login.url == 'https://logs.{}/'.format(os.environ['CF_SYSTEM_DOMAIN'])
     assert login.status_code == 200
-
-    query = urllib.parse.parse_qs(urllib.parse.urlparse(login.url).query)
-    assert 'error' not in query
