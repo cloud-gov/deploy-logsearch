@@ -119,6 +119,7 @@ jobs:
         <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
 
 - name: smoke-tests-login-staging
+  serial_groups: [bosh-staging]
   plan:
   - aggregate:
     - get: logsearch-config
@@ -267,6 +268,7 @@ jobs:
         <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
 
 - name: smoke-tests-login-production
+  serial_groups: [bosh-production]
   plan:
   - aggregate:
     - get: logsearch-config
