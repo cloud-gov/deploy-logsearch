@@ -237,11 +237,12 @@ instance_groups:
       route_registrar:
         routes:
         - name: logsearch
-          registration_interval: 20s
+          registration_interval: 2s
           port: 5601
           health_check:
             name: kibana-up
             script_path: /var/vcap/jobs/kibana/bin/post-start
+          timeout: 1s
   vm_type: logsearch_kibana
   stemcell: default
   azs: [z1]
@@ -329,31 +330,9 @@ instance_groups:
     serial: false # Block to create deploy group 2
     max_in_flight: 4  # Its ok to update multiple parsers at a time
 
-####################################################
-#3nd deploy group - ls-router (haproxy), and errands
-####################################################
-
-- name: ls-router
-  instances: 1
-  jobs:
-  - name: haproxy
-    release: logsearch
-    properties:
-      haproxy:
-        syslog_server: (( grab instance_groups.cluster_monitor.networks.services.static_ips.[0] ))
-        ingestor:
-          backend_servers: (( grab instance_groups.ingestor.networks.services.static_ips ))
-        kibana:
-          backend_servers: (( grab instance_groups.kibana.networks.services.static_ips ))
-        cluster_monitor:
-          backend_servers: (( grab instance_groups.cluster_monitor.networks.services.static_ips ))
-  vm_type: logsearch_haproxy
-  stemcell: default
-  azs: [z1]
-  networks:
-  - name: services
-    static_ips:
-    - (( grab terraform_outputs.logsearch_static_ips.[9] ))
+###########################
+#3nd deploy group - errands
+###########################
 
 - name: smoke-tests
   instances: 1
@@ -371,7 +350,7 @@ instance_groups:
     properties:
       smoke_tests:
         syslog_ingestor:
-          host: (( grab instance_groups.ls-router.networks.services.static_ips.[0] ))
+          host: (( grab instance_groups.ingestor.networks.services.static_ips.[0] ))
         elasticsearch_master:
           host: (( grab instance_groups.elasticsearch_master.networks.services.static_ips.[0] ))
 
