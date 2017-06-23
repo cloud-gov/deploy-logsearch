@@ -204,7 +204,7 @@ instance_groups:
     max_in_flight: 1 # Only update 1 ES data node at a time or risk downtime
 
 - name: kibana
-  instances: 1
+  instances: 2
   jobs:
   - name: kibana
     release: logsearch
@@ -231,6 +231,17 @@ instance_groups:
           client_id: kibana_oauth2_client
           system_org: cloud-gov-operators # Org Managers of this org get admin access
         redis_host: (( grab instance_groups.queue.networks.services.static_ips.[0] ))
+  - name: route_registrar
+    release: cf
+    properties:
+      route_registrar:
+        routes:
+        - name: logsearch
+          registration_interval: 20s
+          port: 5601
+          health_check:
+            name: kibana-up
+            script_path: /var/vcap/jobs/kibana/bin/post-start
   vm_type: logsearch_kibana
   stemcell: default
   azs: [z1]
@@ -336,8 +347,6 @@ instance_groups:
           backend_servers: (( grab instance_groups.kibana.networks.services.static_ips ))
         cluster_monitor:
           backend_servers: (( grab instance_groups.cluster_monitor.networks.services.static_ips ))
-  - name: route_registrar
-    release: cf
   vm_type: logsearch_haproxy
   stemcell: default
   azs: [z1]
