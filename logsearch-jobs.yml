@@ -279,7 +279,7 @@ instance_groups:
         firehose_client_id: logsearch_firehose_ingestor
         skip_ssl_validation: false
       syslog:
-        host: (( grab instance_groups.ingestor.networks.services.static_ips.[0] ))
+        host: 127.0.0.1
         port: 5514
   vm_type: logsearch_ingestor
   stemcell: default
