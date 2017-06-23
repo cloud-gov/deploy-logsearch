@@ -248,8 +248,6 @@ instance_groups:
   azs: [z1]
   networks:
   - name: services
-    static_ips:
-    - (( grab terraform_outputs.logsearch_static_ips.[5] ))
 
 - name: ingestor
   jobs:
