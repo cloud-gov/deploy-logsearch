@@ -21,18 +21,6 @@ instance_groups:
       cloudfoundry:
         api_endpoint: https://api.fr.cloud.gov
 
-- name: ls-router
-  jobs:
-  - name: route_registrar
-    properties:
-      route_registrar:
-        routes:
-        - name: logsearch
-          port: 80
-          registration_interval: 20s
-          uris:
-          - logs.fr.cloud.gov
-
 - name: kibana
   jobs:
   - name: kibana-auth-plugin
@@ -41,3 +29,9 @@ instance_groups:
         cloudfoundry:
           api_endpoint: https://api.fr.cloud.gov
           system_domain: fr.cloud.gov
+  - name: route_registrar
+    properties:
+      route_registrar:
+        routes:
+        - name: logsearch
+          uris: [logs.fr.cloud.gov]
