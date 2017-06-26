@@ -231,6 +231,7 @@ instance_groups:
           client_id: kibana_oauth2_client
           system_org: cloud-gov-operators # Org Managers of this org get admin access
         redis_host: (( grab instance_groups.queue.networks.services.static_ips.[0] ))
+        session_key: (( param "specify kibana session key" ))
   - name: route_registrar
     release: cf
     properties:
