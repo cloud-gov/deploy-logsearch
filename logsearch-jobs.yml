@@ -193,13 +193,6 @@ instance_groups:
   azs: [z1]
   networks:
   - name: services
-    static_ips:
-    - (( grab terraform_outputs.logsearch_static_ips.[16]))
-    - (( grab terraform_outputs.logsearch_static_ips.[17]))
-    - (( grab terraform_outputs.logsearch_static_ips.[14]))
-    - (( grab terraform_outputs.logsearch_static_ips.[15]))
-    - (( grab terraform_outputs.logsearch_static_ips.[13]))
-    - (( grab terraform_outputs.logsearch_static_ips.[12]))
   update:
     max_in_flight: 1 # Only update 1 ES data node at a time or risk downtime
 
