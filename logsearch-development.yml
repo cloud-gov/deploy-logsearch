@@ -1,0 +1,45 @@
+instance_groups:
+- name: elasticsearch_master
+  instances: 3
+  networks:
+  - name: services
+    static_ips:
+    - (( grab terraform_outputs.logsearch_static_ips.[0]))
+    - (( grab terraform_outputs.logsearch_static_ips.[4]))
+    - (( grab terraform_outputs.logsearch_static_ips.[6]))
+
+- name: elasticsearch_data
+  instances: 3
+  networks:
+  - name: services
+    static_ips:
+    - (( grab terraform_outputs.logsearch_static_ips.[16]))
+    - (( grab terraform_outputs.logsearch_static_ips.[17]))
+    - (( grab terraform_outputs.logsearch_static_ips.[14]))
+
+- name: ingestor
+  instances: 1
+  networks:
+  - name: services
+    static_ips:
+    - (( grab terraform_outputs.logsearch_static_ips.[18] ))
+  jobs:
+  - name: ingestor_cloudfoundry-firehose
+    properties:
+      cloudfoundry:
+        api_endpoint: https://api.dev.us-gov-west-1.aws-us-gov.cloud.gov
+
+- name: kibana
+  jobs:
+  - name: kibana-auth-plugin
+    properties:
+      kibana-auth:
+        cloudfoundry:
+          api_endpoint: https://api.dev.us-gov-west-1.aws-us-gov.cloud.gov
+          system_domain: dev.us-gov-west-1.aws-us-gov.cloud.gov
+  - name: route_registrar
+    properties:
+      route_registrar:
+        routes:
+        - name: logsearch
+          uris: [logs.dev.us-gov-west-1.aws-us-gov.cloud.gov]
