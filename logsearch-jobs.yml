@@ -51,6 +51,7 @@ instance_groups:
   networks:
   - name: services
     static_ips:
+  vm_extensions: [logsearch-lb]
   update:
     max_in_flight: 1 # Should never update more than one ES master node at a time or cluster will go down
 
