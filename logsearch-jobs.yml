@@ -40,9 +40,9 @@ instance_groups:
         - 'alert tcp any any -> any 9200 (msg:"Unexpected logsearch action"; content:"POST"; http_method; content: "logs-app"; http_uri; content:"/_update"; http_uri; classtype:web-application-attack; sid:343080002; rev:1;)'
         - 'alert tcp any any -> any 9200 (msg:"Unexpected logsearch action"; content:"POST"; http_method; content: "logs-platform"; http_uri; content:"/_update"; http_uri; classtype:web-application-attack; sid:343080003; rev:1;)'
         - 'alert tcp any any -> any 9200 (msg:"Unexpected logsearch action"; content:"DELETE"; http_method; content: "logs-app"; http_uri; classtype:web-application-attack; sid:343080004; rev:1;)'
-        - (( concat "suppress gen_id 1, sig_id 343080004, track by_src, ip " instance_groups.cluster_monitor.networks.services.static_ips.[0] ))
+        - (( concat "suppress gen_id 1, sig_id 343080004, track by_src, ip " instance_groups.maintenance.networks.services.static_ips.[0] ))
         - 'alert tcp any any -> any 9200 (msg:"Unexpected logsearch action"; content:"DELETE"; http_method; content: "logs-platform"; http_uri; classtype:web-application-attack; sid:343080005; rev:1;)'
-        - (( concat "suppress gen_id 1, sig_id 343080005, track by_src, ip " instance_groups.cluster_monitor.networks.services.static_ips.[0] ))
+        - (( concat "suppress gen_id 1, sig_id 343080005, track by_src, ip " instance_groups.maintenance.networks.services.static_ips.[0] ))
   vm_type: logsearch_es_master
   persistent_disk_type: logsearch_es_master
   stemcell: default
