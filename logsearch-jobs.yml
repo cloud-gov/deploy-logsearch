@@ -159,7 +159,7 @@ instance_groups:
   azs: [z1]
   networks:
   - name: services
-  static_ips:
+    static_ips:
     - (( grab terraform_outputs.logsearch_static_ips.[5] ))
   update:
     serial: true # Block on this job to create deploy group 1
