@@ -154,6 +154,23 @@ instance_groups:
           host: (( grab instance_groups.elasticsearch_master.networks.services.static_ips.[0] ))
   - name: elasticsearch-config-lfc
     release: logsearch-for-cloudfoundry
+  # TODO: Drop after https://github.com/cloudfoundry-community/logsearch-for-cloudfoundry/pull/267 is merged
+  - name: cron
+    release: cron
+    properties:
+      cron:
+        entries:
+        - script:
+            name: slow-logs
+            contents: (( file "cronjobs/slow-logs.sh" ))
+          variables:
+            HOST: (( grab instance_groups.elasticsearch_master.networks.services.static_ips.[0] ))
+          minute: "0"
+          hour: "0"
+          day: "*"
+          month: "*"
+          wday: "*"
+          user: root
   vm_type: logsearch_maintenance
   stemcell: default
   azs: [z1]
