@@ -35,7 +35,7 @@ jobs:
         args:
         - -exc
         - |
-          spruce merge \
+          SPRUCE_FILE_BASE_PATH=logsearch-config spruce merge \
             --prune terraform_outputs \
             logsearch-config/logsearch-deployment.yml \
             logsearch-config/logsearch-jobs.yml \
@@ -203,7 +203,7 @@ jobs:
         args:
         - -exc
         - |
-          spruce merge \
+          SPRUCE_FILE_BASE_PATH=logsearch-config spruce merge \
             --prune terraform_outputs \
             logsearch-config/logsearch-deployment.yml \
             logsearch-config/logsearch-jobs.yml \

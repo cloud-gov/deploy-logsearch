@@ -21,3 +21,4 @@ releases:
 - {name: cf, version: latest}
 - {name: riemann, version: latest}
 - {name: snort, version: latest}
+- {name: cron, version: latest}
