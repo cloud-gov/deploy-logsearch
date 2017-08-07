@@ -21,10 +21,7 @@ if __name__ == "__main__":
             'password': os.environ['CF_PASSWORD'],
             'X-Uaa-Csrf': logs.cookies['X-Uaa-Csrf'],
         },
-        # allow_redirects=False,
     )
     print(login.url, login.status_code)
-    # import ipdb
-    # ipdb.set_trace()
     assert login.url == 'https://logs.{}/'.format(os.environ['CF_SYSTEM_DOMAIN'])
     assert login.status_code == 200
