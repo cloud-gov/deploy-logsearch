@@ -209,6 +209,9 @@ instance_groups:
   - name: ingestor_syslog
     release: logsearch
     properties:
+      logstash:
+        queue:
+          max_bytes: 30gb
       logstash_ingestor:
         outputs:
         - plugin: s3
