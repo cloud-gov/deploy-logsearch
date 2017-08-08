@@ -9,12 +9,7 @@ instance_groups:
     - (( grab terraform_outputs.logsearch_static_ips.[7] ))
 
 - name: ingestor
-  instances: 2
-  networks:
-  - name: services
-    static_ips:
-    - (( grab terraform_outputs.logsearch_static_ips.[1] ))
-    - (( grab terraform_outputs.logsearch_static_ips.[18] ))
+  instances: 3
   jobs:
   - name: ingestor_cloudfoundry-firehose
     properties:
