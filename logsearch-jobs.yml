@@ -158,6 +158,10 @@ instance_groups:
 - name: kibana
   instances: 2
   jobs:
+  - name: elasticsearch
+    release: logsearch
+    consumes:
+      elasticsearch: {from: elasticsearch_master}
   - name: kibana
     release: logsearch
     consumes:
