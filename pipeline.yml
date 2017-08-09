@@ -17,6 +17,8 @@ jobs:
       resource: logsearch-release-development
     - get: logsearch-for-cloudfoundry-release
       resource: logsearch-for-cloudfoundry-release-development
+    - get: elastalert-release
+      resource: elastalert-release-development
     - get: cg-s3-riemann-release
     - get: logsearch-stemcell
       trigger: true
@@ -63,6 +65,7 @@ jobs:
       releases:
       - logsearch-release/*.tgz
       - logsearch-for-cloudfoundry-release/*.tgz
+      - elastalert-release/*.tgz
       - cg-s3-riemann-release/*.tgz
       stemcells:
       - logsearch-stemcell/*.tgz
@@ -187,6 +190,7 @@ jobs:
       trigger: true
     - get: logsearch-release
     - get: logsearch-for-cloudfoundry-release
+    - get: elastalert-release
     - get: cg-s3-riemann-release
     - get: logsearch-stemcell
       trigger: true
@@ -333,6 +337,8 @@ jobs:
     - get: logsearch-release
       passed: [deploy-logsearch-staging]
     - get: logsearch-for-cloudfoundry-release
+      passed: [deploy-logsearch-staging]
+    - get: elastalert-release
       passed: [deploy-logsearch-staging]
     - get: cg-s3-riemann-release
       passed: [deploy-logsearch-staging]
@@ -517,11 +523,22 @@ resources:
     regexp: logsearch-for-cloudfoundry-(.*).tgz
     region_name: {{aws-region}}
 
+- &elastalert-release-tarball
+  name: elastalert-release
+  type: s3-iam
+  source:
+    bucket: {{cg-s3-bosh-releases-bucket}}
+    regexp: elastalert-(.*).tgz
+    region_name: {{aws-region}}
+
 - <<: *logsearch-release-tarball
   name: logsearch-release-development
 
 - <<: *logsearch-for-cloudfoundry-release-tarball
   name: logsearch-for-cloudfoundry-release-development
+
+- <<: *elastalert-release-tarball
+  name: elastalert-release-development
 
 - name: cg-s3-riemann-release
   type: s3-iam

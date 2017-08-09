@@ -72,6 +72,10 @@ instance_groups:
 - name: maintenance
   instances: 1
   jobs:
+  - name: elasticsearch
+    release: logsearch
+    consumes:
+      elasticsearch: {from: elasticsearch_master}
   - name: curator
     release: logsearch
     consumes:
@@ -80,6 +84,43 @@ instance_groups:
       curator:
         purge_logs:
           retention_period: 180
+  - name: elastalert
+    release: elastalert
+    properties:
+      elastalert:
+        elasticsearch:
+          host: 127.0.0.1
+          port: 9200
+        run_every:
+          minutes: 5
+        buffer_time:
+          minutes: 60
+        alert_time_limit:
+          days: 1
+        rules:
+          common:
+            alert:
+            - pagerduty
+            pagerduty_service_key: (( param "set pagerduty service key" ))
+            pagerduty_client_name: (( param "set pagerduty client name" ))
+          rules:
+          - name: cdn-renew-fail
+            content:
+              name: cdn-renew-fail
+              type: any
+              index: logs-app-*
+              filter:
+              - bool:
+                  must:
+                  - term:
+                      "@type": "LogMessage"
+                  - term:
+                      "@cf.app": "cdn-cron"
+                  - match:
+                      "@message": "error renewing certificate"
+                  must_not:
+                  - match:
+                      "app.data.error": "route is not active"
   - name: elasticsearch_config
     release: logsearch
     consumes:
