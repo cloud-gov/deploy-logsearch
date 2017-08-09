@@ -62,8 +62,8 @@ instance_groups:
   instances: 1
   jobs:
   - {name: redis, release: logsearch-for-cloudfoundry}
-  vm_type: logsearch_queue
-  persistent_disk_type: logsearch_queue
+  vm_type: logsearch_redis
+  persistent_disk_type: logsearch_redis
   stemcell: default
   azs: [z1]
   networks:
