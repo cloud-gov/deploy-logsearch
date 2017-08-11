@@ -8,6 +8,14 @@ instance_groups:
     - (( grab terraform_outputs.logsearch_static_ips.[4]))
     - (( grab terraform_outputs.logsearch_static_ips.[6]))
 
+- name: archiver
+  instances: 1
+  jobs:
+  - name: ingestor_cloudfoundry-firehose
+    properties:
+      cloudfoundry:
+        api_endpoint: https://api.fr-stage.cloud.gov
+
 - name: ingestor
   instances: 1
   jobs:

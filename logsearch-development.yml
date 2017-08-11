@@ -11,6 +11,14 @@ instance_groups:
 - name: elasticsearch_data
   instances: 3
 
+- name: archiver
+  instances: 1
+  jobs:
+  - name: ingestor_cloudfoundry-firehose
+    properties:
+      cloudfoundry:
+        api_endpoint: https://api.dev.us-gov-west-1.aws-us-gov.cloud.gov
+
 - name: ingestor
   instances: 1
   jobs:
