@@ -204,13 +204,13 @@ instance_groups:
   networks:
   - name: services
 
-- name: ingestor
+- name: archiver
   jobs:
   - name: elasticsearch
     release: logsearch
     consumes:
       elasticsearch: {from: elasticsearch_master}
-  - name: ingestor_syslog
+  - name: archiver_syslog
     release: logsearch
     properties:
       logstash:
@@ -225,6 +225,37 @@ instance_groups:
             validate_credentials_on_root_bucket: false  # https://github.com/logstash-plugins/logstash-output-s3/issues/132
             server_side_encryption: true
             time_file: 5
+  - name: ingestor_cloudfoundry-firehose
+    release: logsearch-for-cloudfoundry
+    properties:
+      cloudfoundry:
+        firehose_subscription_id: logsearch-archiver
+        firehose_events: "LogMessage,ContainerMetric"
+        firehose_client_id: logsearch_firehose_ingestor
+        skip_ssl_validation: false
+      syslog:
+        host: 127.0.0.1
+        port: 5514
+  vm_type: logsearch_ingestor
+  persistent_disk_type: logsearch_ingestor
+  stemcell: default
+  azs: [z1]
+  networks:
+  - name: services
+  vm_extensions: [logsearch-ingestor-profile]
+
+- name: ingestor
+  jobs:
+  - name: elasticsearch
+    release: logsearch
+    consumes:
+      elasticsearch: {from: elasticsearch_master}
+  - name: ingestor_syslog
+    release: logsearch
+    properties:
+      logstash:
+        queue:
+          max_bytes: 30gb
       logstash_parser:
         elasticsearch:
           # Use per-day indexing strategy
@@ -239,6 +270,7 @@ instance_groups:
     release: logsearch-for-cloudfoundry
     properties:
       cloudfoundry:
+        firehose_subscription_id: logsearch-ingestor
         firehose_events: "LogMessage,ContainerMetric"
         firehose_client_id: logsearch_firehose_ingestor
         skip_ssl_validation: false
@@ -253,7 +285,6 @@ instance_groups:
   azs: [z1]
   networks:
   - name: services
-  vm_extensions: [logsearch-ingestor-profile]
 
 ###########################
 #3nd deploy group - errands
