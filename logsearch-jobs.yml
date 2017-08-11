@@ -78,8 +78,6 @@ instance_groups:
       elasticsearch: {from: elasticsearch_master}
   - name: curator
     release: logsearch
-    consumes:
-      elasticsearch: {from: elasticsearch_master}
     properties:
       curator:
         purge_logs:
@@ -88,9 +86,6 @@ instance_groups:
     release: elastalert
     properties:
       elastalert:
-        elasticsearch:
-          host: 127.0.0.1
-          port: 9200
         run_every:
           minutes: 5
         buffer_time:
