@@ -106,7 +106,7 @@ instance_groups:
           rules:
           - name: cdn-broker-fail
             content:
-              name: cdn-renew-fail
+              name: cdn-broker-fail
               type: any
               index: logs-app-*
               filter:
