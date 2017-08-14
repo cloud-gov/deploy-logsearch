@@ -97,7 +97,7 @@ instance_groups:
             alert:
             - pagerduty
             pagerduty_service_key: (( param "set pagerduty service key" ))
-            pagerduty_client_name: (( param "set pagerduty client name" ))
+            pagerduty_client_name: elastalert via cg-deploy-logserch
           rules:
           - name: cdn-broker-fail
             content:
