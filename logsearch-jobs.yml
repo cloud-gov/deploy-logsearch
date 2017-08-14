@@ -133,6 +133,8 @@ instance_groups:
                       "@cf.app": "cdn-broker"
                   - match:
                       "@message": "cdn-service-broker.Error during update"
+                  - match:
+                      "@raw": "acme: Error"
           - name: cdn-renew-fail
             content:
               name: cdn-renew-fail
