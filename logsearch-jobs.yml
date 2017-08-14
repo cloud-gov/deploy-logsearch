@@ -149,7 +149,7 @@ instance_groups:
                   - term:
                       "@cf.app": "cdn-cron"
                   - match:
-                      "@message": "error renewing certificate"
+                      "@message": "cdn-cron.Error Renewing certificate"
                   must_not:
                   - match:
                       "app.data.error": "route is not active"
