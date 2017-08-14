@@ -119,6 +119,9 @@ instance_groups:
               - app.data.domain
               alert_text_args:
               - app.data.error
+              query_key: app.data.domain
+              realert:
+                hours: 1
               alert_subject: "CDN Broker failed while {0} {1}"
               alert_text: "{0}"
               filter:
@@ -135,6 +138,9 @@ instance_groups:
               name: cdn-renew-fail
               type: any
               index: logs-app-*
+              query_key: app.data.domain
+              realert:
+                days: 1
               alert_subject_args:
               - app.data.domain
               alert_text_args:
@@ -152,7 +158,7 @@ instance_groups:
                       "@message": "cdn-cron.Error Renewing certificate"
                   must_not:
                   - match:
-                      "app.data.error": "route is not active"
+                      "@raw": "Canary"
   - name: elasticsearch_config
     release: logsearch
     consumes:
