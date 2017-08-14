@@ -1,0 +1,79 @@
+instance_groups:
+- name: maintenance
+  jobs:
+  - name: elastalert
+    release: elastalert
+    # if niled out, will use the specified elastic host instead, which is our collocated instance
+    # That instance will use disco to find the right master instead of defaulting to a given index
+    consumes:
+      elasticsearch: nil
+    properties:
+      elastalert:
+        elasticsearch:
+          host: 127.0.0.1
+          port: 9200
+        run_every:
+          minutes: 5
+        buffer_time:
+          minutes: 60
+        alert_time_limit:
+          days: 1
+        rules:
+          common:
+            alert:
+            - pagerduty
+            pagerduty_service_key: (( param "set pagerduty service key" ))
+            pagerduty_client_name: elastalert via cg-deploy-logserch
+          rules:
+          - name: cdn-broker-fail
+            content:
+              name: cdn-broker-fail
+              type: any
+              index: logs-app-*
+              alert_subject_args:
+              - app.data.state
+              - app.data.domain
+              alert_text_args:
+              - app.data.error
+              query_key: app.data.domain
+              realert:
+                hours: 1
+              alert_subject: "CDN Broker failed while {0} {1}"
+              alert_text: "{0}"
+              filter:
+              - bool:
+                  must:
+                  - term:
+                      "@type": "LogMessage"
+                  - term:
+                      "@cf.app": "cdn-broker"
+                  - match:
+                      "@message": "cdn-service-broker.Error during update"
+                  - match:
+                      "@raw": "acme: Error"
+          - name: cdn-renew-fail
+            content:
+              name: cdn-renew-fail
+              type: any
+              index: logs-app-*
+              query_key: app.data.domain
+              realert:
+                days: 1
+              alert_subject_args:
+              - app.data.domain
+              alert_text_args:
+              - app.data.error
+              alert_subject: "CDN Broker failed to renew {0}"
+              alert_text: "{0}"
+              filter:
+              - bool:
+                  must:
+                  - term:
+                      "@type": "LogMessage"
+                  - term:
+                      "@cf.app": "cdn-cron"
+                  - match:
+                      "@message": "cdn-cron.Error Renewing certificate"
+                  must_not:
+                  - match:
+                      "@raw": "Canary"
