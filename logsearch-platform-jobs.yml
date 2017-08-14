@@ -1,0 +1,221 @@
+instance_groups:
+#######################################################
+#First deploy group - elasticsearch_master, maintenance
+#######################################################
+- name: elasticsearch_master
+  instances: 1
+  jobs:
+  - name: elasticsearch
+    release: logsearch
+    provides:
+      elasticsearch: {as: elasticsearch_master}
+    consumes:
+      elasticsearch: {from: elasticsearch_master}
+    properties:
+      elasticsearch:
+        node:
+          allow_master: true
+          allow_data: false
+        cluster_name: logsearch
+        exec:
+          environment:
+            JAVA_OPTS: '"-Djava.io.tmpdir=${TMP_DIR}"'
+        limits:
+          fd: 131072  # 2 ** 17
+        health:
+          timeout: 900
+        recovery:
+          delay_allocation_restart: "15m"
+  vm_type: logsearch_es_master
+  persistent_disk_type: logsearch_es_master
+  stemcell: default
+  azs: [z1]
+  networks:
+  - name: services
+    static_ips:
+  update:
+    max_in_flight: 1 # Should never update more than one ES master node at a time or cluster will go down
+
+- name: redis
+  instances: 1
+  jobs:
+  - {name: redis, release: logsearch-for-cloudfoundry}
+  vm_type: logsearch_queue
+  persistent_disk_type: logsearch_queue
+  stemcell: default
+  azs: [z1]
+  networks:
+  - name: services
+
+- name: maintenance
+  instances: 1
+  jobs:
+  - name: curator
+    release: logsearch
+    consumes:
+      elasticsearch: {from: elasticsearch_master}
+    properties:
+      curator:
+        purge_logs:
+          retention_period: 180
+  - name: elasticsearch_config
+    release: logsearch
+    consumes:
+      elasticsearch: {from: elasticsearch_master}
+    properties:
+      elasticsearch_config:
+        templates:
+        - shards-and-replicas: /var/vcap/jobs/elasticsearch_config/index-templates/shards-and-replicas.json
+        - index-settings: /var/vcap/jobs/elasticsearch_config/index-templates/index-settings.json
+        - index-mappings: /var/vcap/jobs/elasticsearch_config/index-templates/index-mappings.json
+        - index-mappings-lfc: /var/vcap/jobs/elasticsearch-config-lfc/index-mappings.json
+        - index-mappings-app-lfc: /var/vcap/jobs/elasticsearch-config-lfc/index-mappings-app.json
+        - index-mappings-platform-lfc: /var/vcap/jobs/elasticsearch-config-lfc/index-mappings-platform.json
+  - name: elasticsearch-config-lfc
+    release: logsearch-for-cloudfoundry
+
+#########################################################
+#2nd deploy group - elasticsearch_data, kibana, ingestors
+#########################################################
+- name: elasticsearch_data
+  instances: 6
+  jobs:
+  - name: elasticsearch
+    release: logsearch
+    consumes:
+      elasticsearch: {from: elasticsearch_master}
+    properties:
+      elasticsearch:
+        node:
+          allow_master: false
+          allow_data: true
+        exec:
+          environment:
+            JAVA_OPTS: '"-Djava.io.tmpdir=${TMP_DIR}"'
+        limits:
+          fd: 131072  # 2 ** 17
+        health:
+          timeout: 900
+        recovery:
+          delay_allocation_restart: "15m"
+  vm_type: logsearch_es_data
+  persistent_disk_type: logsearch_es_data
+  stemcell: default
+  azs: [z1]
+  networks:
+  - name: services
+  update:
+    max_in_flight: 1 # Only update 1 ES data node at a time or risk downtime
+
+- name: kibana
+  instances: 2
+  jobs:
+  - name: elasticsearch
+    release: logsearch
+    consumes:
+      elasticsearch: {from: elasticsearch_master}
+  - name: kibana
+    release: logsearch
+    consumes:
+      elasticsearch: {from: elasticsearch_master}
+    properties:
+      kibana:
+        memory_limit: 65
+        default_app_id: "dashboard/App-Overview"
+        plugins:
+        - auth: /var/vcap/packages/kibana-auth-plugin/kibana-auth-plugin.zip
+        config_options: |-
+          console.enabled: false
+        env:
+        - NODE_ENV: production
+        source_files: [/var/vcap/jobs/kibana-auth-plugin/config/config.sh]
+  - name: kibana-auth-plugin
+    release: logsearch-for-cloudfoundry
+    properties:
+      kibana-auth:
+        cloudfoundry:
+          skip_ssl_validation: false
+          client_id: kibana_oauth2_client
+          system_org: cloud-gov-operators # Org Managers of this org get admin access
+        session_key: (( param "specify kibana session key" ))
+  vm_type: logsearch_kibana
+  vm_extensions: [platform-kibana-lb]
+  stemcell: default
+  azs: [z1]
+  networks:
+  - name: services
+
+- name: ingestor
+  jobs:
+  - name: elasticsearch
+    release: logsearch
+    consumes:
+      elasticsearch: {from: elasticsearch_master}
+  - name: ingestor_syslog
+    release: logsearch
+    properties:
+      logstash:
+        queue:
+          max_bytes: 30gb
+      logstash_parser:
+        elasticsearch:
+          # Use per-day indexing strategy
+          index: "logs-%{@index_type}-%{+YYYY.MM.dd}"
+          index_type: "%{@type}"
+        filters:
+        - logsearch-for-cf: /var/vcap/packages/logsearch-config-logstash-filters/logstash-filters-default.conf
+        deployment_dictionary:
+        - /var/vcap/packages/logsearch-config/deployment_lookup.yml
+        - /var/vcap/jobs/parser-config-lfc/config/deployment_lookup.yml
+  - name: parser-config-lfc
+    release: logsearch-for-cloudfoundry
+  vm_type: logsearch_ingestor
+  vm_extensions: [platform-syslog-lb]
+  persistent_disk_type: logsearch_ingestor
+  stemcell: default
+  azs: [z1]
+  networks:
+  - name: services
+
+###########################
+#3nd deploy group - errands
+###########################
+- name: smoke-tests
+  instances: 1
+  vm_type: errand_small
+  vm_extensions: [errand-profile]
+  stemcell: default
+  azs: [z1]
+  networks:
+  - name: services
+  lifecycle: errand
+  release: logsearch
+  jobs:
+  - name: smoke-tests
+    release: logsearch
+    consumes:
+      elasticsearch: {from: elasticsearch_master}
+
+- name: upload-kibana-objects
+  instances: 1
+  vm_type: errand_small
+  vm_extensions: [errand-profile]
+  stemcell: default
+  azs: [z1]
+  networks:
+  - name: services
+  lifecycle: errand
+  release: logsearch-for-cloudfoundry
+  jobs:
+  - name: upload-kibana-objects
+    release: logsearch-for-cloudfoundry
+    consumes:
+      elasticsearch: {from: elasticsearch_master}
+    properties:
+      kibana_objects:
+        upload_patterns:
+        - {type: index-pattern, pattern: "/var/vcap/jobs/upload-kibana-objects/kibana-objects/index-pattern/*.json"}
+        - {type: config, pattern: "/var/vcap/jobs/upload-kibana-objects/kibana-objects/config/*.json"}
+        - {type: search, pattern: "/var/vcap/jobs/upload-kibana-objects/kibana-objects/search/platform-*.json"}
+        - {type: visualization, pattern: "/var/vcap/jobs/upload-kibana-objects/kibana-objects/visualization/Platform-*.json"}
+        - {type: dashboard, pattern: "/var/vcap/jobs/upload-kibana-objects/kibana-objects/dashboard/Platform-*.json"}
