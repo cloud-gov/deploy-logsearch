@@ -72,8 +72,13 @@ instance_groups:
 - name: maintenance
   instances: 1
   jobs:
+  - name: elasticsearch
+    release: logsearch
+    consumes:
+      elasticsearch: {from: elasticsearch_master}
   - name: curator
     release: logsearch
+    # nil the link and use the colocated instance when https://github.com/cloudfoundry-community/logsearch-boshrelease/pull/90 is merged
     consumes:
       elasticsearch: {from: elasticsearch_master}
     properties:
