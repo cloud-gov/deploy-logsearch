@@ -114,6 +114,13 @@ instance_groups:
               name: cdn-broker-fail
               type: any
               index: logs-app-*
+              alert_subject_args:
+              - app.data.state
+              - app.data.domain
+              alert_text_args:
+              - app.data.error
+              alert_subject: "CDN Broker failed while {0} {1}"
+              alert_text: "{0}"
               filter:
               - bool:
                   must:
@@ -128,6 +135,12 @@ instance_groups:
               name: cdn-renew-fail
               type: any
               index: logs-app-*
+              alert_subject_args:
+              - app.data.domain
+              alert_text_args:
+              - app.data.error
+              alert_subject: "CDN Broker failed to renew {0}"
+              alert_text: "{0}"
               filter:
               - bool:
                   must:
