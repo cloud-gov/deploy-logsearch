@@ -18,6 +18,7 @@ name: logsearch
 releases:
 - {name: logsearch, version: latest}
 - {name: logsearch-for-cloudfoundry, version: latest}
+- {name: elastalert, version: latest}
 - {name: cf, version: latest}
 - {name: riemann, version: latest}
 - {name: snort, version: latest}

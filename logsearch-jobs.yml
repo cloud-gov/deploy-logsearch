@@ -62,8 +62,8 @@ instance_groups:
   instances: 1
   jobs:
   - {name: redis, release: logsearch-for-cloudfoundry}
-  vm_type: logsearch_queue
-  persistent_disk_type: logsearch_queue
+  vm_type: logsearch_redis
+  persistent_disk_type: logsearch_redis
   stemcell: default
   azs: [z1]
   networks:
@@ -72,8 +72,13 @@ instance_groups:
 - name: maintenance
   instances: 1
   jobs:
+  - name: elasticsearch
+    release: logsearch
+    consumes:
+      elasticsearch: {from: elasticsearch_master}
   - name: curator
     release: logsearch
+    # nil the link and use the colocated instance when https://github.com/cloudfoundry-community/logsearch-boshrelease/pull/90 is merged
     consumes:
       elasticsearch: {from: elasticsearch_master}
     properties:
