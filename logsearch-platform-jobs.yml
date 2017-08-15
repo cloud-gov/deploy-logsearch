@@ -40,8 +40,8 @@ instance_groups:
   instances: 1
   jobs:
   - {name: redis, release: logsearch-for-cloudfoundry}
-  vm_type: logsearch_queue
-  persistent_disk_type: logsearch_queue
+  vm_type: logsearch_redis
+  persistent_disk_type: logsearch_redis
   stemcell: default
   azs: [z1]
   networks:
@@ -73,6 +73,13 @@ instance_groups:
         - index-mappings-platform-lfc: /var/vcap/jobs/elasticsearch-config-lfc/index-mappings-platform.json
   - name: elasticsearch-config-lfc
     release: logsearch-for-cloudfoundry
+  vm_type: logsearch_maintenance
+  stemcell: default
+  azs: [z1]
+  networks:
+  - name: services
+  update:
+    serial: true # Block on this job to create deploy group 1
 
 #########################################################
 #2nd deploy group - elasticsearch_data, kibana, ingestors

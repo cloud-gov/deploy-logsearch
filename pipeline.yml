@@ -11,7 +11,7 @@ jobs:
       resource: logsearch-config-development
       trigger: true
     - get: common-secrets
-      resource: common-development
+      resource: common-platform-development
       trigger: true
     - get: logsearch-release
       resource: logsearch-release-development
@@ -19,7 +19,6 @@ jobs:
       resource: logsearch-for-cloudfoundry-release-development
     - get: elastalert-release
       resource: elastalert-release-development
-    - get: cg-s3-riemann-release
     - get: logsearch-stemcell
       trigger: true
     - get: terraform-yaml
@@ -59,14 +58,13 @@ jobs:
     params:
       LINTER_CONFIG: bosh-lint.yml
   - put: logsearch-platform-development-deployment
-    params: &deploy-params
+    params: &deploy-params-platform
       cert: common/master-bosh.crt
       manifest: logsearch-manifest/manifest.yml
       releases:
       - logsearch-release/*.tgz
       - logsearch-for-cloudfoundry-release/*.tgz
       - elastalert-release/*.tgz
-      - cg-s3-riemann-release/*.tgz
       stemcells:
       - logsearch-stemcell/*.tgz
   on_failure:
@@ -670,6 +668,33 @@ resources:
     secrets_passphrase: {{logsearch-production-private-passphrase}}
     bosh_cert: bosh.pem
     region: {{aws-region}}
+
+- name: common-platform-development
+  type: cg-common
+  source:
+    bucket_name: {{logsearch-private-bucket-development}}
+    secrets_file: logsearch-platform-development.yml
+    secrets_passphrase: {{logsearch-platform-development-private-passphrase}}
+    bosh_cert: bosh.pem
+    region: {{aws-region}}
+
+# - name: common-platform-staging
+#   type: cg-common
+#   source:
+#     bucket_name: {{logsearch-private-bucket-staging}}
+#     secrets_file: logsearch-platform.yml
+#     secrets_passphrase: {{logsearch-platform-staging-private-passphrase}}
+#     bosh_cert: bosh.pem
+#     region: {{aws-region}}
+
+# - name: common-platform-production
+#   type: cg-common
+#   source:
+#     bucket_name: {{logsearch-private-bucket-production}}
+#     secrets_file: logsearch-platform.yml
+#     secrets_passphrase: {{logsearch-platform-production-private-passphrase}}
+#     bosh_cert: bosh.pem
+#     region: {{aws-region}}
 
 - &logsearch-release-tarball
   name: logsearch-release

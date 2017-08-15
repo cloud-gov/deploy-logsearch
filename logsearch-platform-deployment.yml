@@ -18,4 +18,4 @@ name: logsearch-platform
 releases:
 - {name: logsearch, version: latest}
 - {name: logsearch-for-cloudfoundry, version: latest}
-- {name: cf, version: latest}
+- {name: elastalert, version: latest}
