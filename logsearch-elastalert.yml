@@ -51,9 +51,12 @@ instance_groups:
                   - term:
                       "@cf.app": "cdn-broker"
                   - match:
-                      "@message": "cdn-service-broker.Error during update"
+                      "@message": broker.Error
                   - match:
-                      "@raw": "acme: Error"
+                      "app.data.error": acme
+                  must_not:
+                  - match:
+                      "app.data.error": presenting
           - name: cdn-renew-fail
             content:
               name: cdn-renew-fail
@@ -79,7 +82,9 @@ instance_groups:
                   - term:
                       "@cf.app": "cdn-cron"
                   - match:
-                      "@message": "cdn-cron.Error Renewing certificate"
+                      "@message": cron.Error
+                  - match:
+                      "@message": Renewing
                   must_not:
                   - match:
-                      "@raw": "Canary"
+                      "@raw": Canary
