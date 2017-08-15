@@ -23,7 +23,7 @@ instance_groups:
             alert:
             - pagerduty
             pagerduty_service_key: (( param "set pagerduty service key" ))
-            pagerduty_client_name: elastalert via cg-deploy-logserch
+            pagerduty_client_name: elastalert via cg-deploy-logsearch
           rules:
           - name: cdn-broker-fail
             content:
@@ -40,6 +40,9 @@ instance_groups:
                 hours: 1
               alert_subject: "CDN Broker failed while {0} {1}"
               alert_text: "{0}"
+              pagerduty_incident_key: "cdn-broker-fail-{0}"
+              pagerduty_incident_key_args:
+              - app.data.domain
               filter:
               - bool:
                   must:
@@ -65,6 +68,9 @@ instance_groups:
               - app.data.error
               alert_subject: "CDN Broker failed to renew {0}"
               alert_text: "{0}"
+              pagerduty_incident_key: "cdn-renew-fail-{0}"
+              pagerduty_incident_key_args:
+              - app.data.domain
               filter:
               - bool:
                   must:
