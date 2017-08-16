@@ -11,7 +11,6 @@ instance_groups:
       elasticsearch: {as: elasticsearch_master}
     consumes:
       elasticsearch: {from: elasticsearch_master}
-      syslog_forwarder: nil
     properties:
       elasticsearch:
         node:
@@ -77,13 +76,11 @@ instance_groups:
     release: logsearch
     consumes:
       elasticsearch: {from: elasticsearch_master}
-      syslog_forwarder: nil
   - name: curator
     release: logsearch
     # nil the link and use the colocated instance when https://github.com/cloudfoundry-community/logsearch-boshrelease/pull/90 is merged
     consumes:
       elasticsearch: {from: elasticsearch_master}
-      syslog_forwarder: nil
     properties:
       curator:
         purge_logs:
@@ -92,7 +89,6 @@ instance_groups:
     release: logsearch
     consumes:
       elasticsearch: {from: elasticsearch_master}
-      syslog_forwarder: nil
     properties:
       elasticsearch_config:
         templates:
@@ -141,7 +137,6 @@ instance_groups:
     release: logsearch
     consumes:
       elasticsearch: {from: elasticsearch_master}
-      syslog_forwarder: nil
     properties:
       elasticsearch:
         node:
@@ -172,12 +167,10 @@ instance_groups:
     release: logsearch
     consumes:
       elasticsearch: {from: elasticsearch_master}
-      syslog_forwarder: nil
   - name: kibana
     release: logsearch
     consumes:
       elasticsearch: {from: elasticsearch_master}
-      syslog_forwarder: nil
     properties:
       kibana:
         memory_limit: 65
@@ -222,7 +215,6 @@ instance_groups:
     release: logsearch
     consumes:
       elasticsearch: {from: elasticsearch_master}
-      syslog_forwarder: nil
   - name: archiver_syslog
     release: logsearch
     properties:
@@ -263,7 +255,6 @@ instance_groups:
     release: logsearch
     consumes:
       elasticsearch: {from: elasticsearch_master}
-      syslog_forwarder: nil
   - name: ingestor_syslog
     release: logsearch
     properties:
@@ -318,7 +309,6 @@ instance_groups:
     release: logsearch
     consumes:
       elasticsearch: {from: elasticsearch_master}
-      syslog_forwarder: nil
 
 - name: upload-kibana-objects
   instances: 1
@@ -335,7 +325,6 @@ instance_groups:
     release: logsearch-for-cloudfoundry
     consumes:
       elasticsearch: {from: elasticsearch_master}
-      syslog_forwarder: nil
     properties:
       cloudfoundry:
         firehose_events: "LogMessage,ContainerMetric"

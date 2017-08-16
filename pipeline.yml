@@ -43,6 +43,7 @@ jobs:
             --prune terraform_outputs \
             logsearch-config/logsearch-platform-deployment.yml \
             logsearch-config/logsearch-platform-jobs.yml \
+            logsearch-config/logsearch-platform-elastalert.yml \
             common-secrets/secrets.yml \
             logsearch-config/logsearch-platform-development.yml \
             terraform-yaml/state.yml \
@@ -102,7 +103,7 @@ jobs:
       BOSH_TARGET: {{logsearch-development-deployment-bosh-target}}
       BOSH_USERNAME: {{logsearch-development-deployment-bosh-username}}
       BOSH_PASSWORD: {{logsearch-development-deployment-bosh-password}}
-      BOSH_DEPLOYMENT_NAME: {{logsearch-development-deployment-bosh-deployment}}
+      BOSH_DEPLOYMENT_NAME: logsearch-platform
       BOSH_CACERT: common/master-bosh.crt
       BOSH_ERRAND: smoke-tests
       BOSH_FLAGS: "--keep-alive"
@@ -170,7 +171,7 @@ jobs:
       BOSH_TARGET: {{logsearch-development-deployment-bosh-target}}
       BOSH_USERNAME: {{logsearch-development-deployment-bosh-username}}
       BOSH_PASSWORD: {{logsearch-development-deployment-bosh-password}}
-      BOSH_DEPLOYMENT_NAME: {{logsearch-development-deployment-bosh-deployment}}
+      BOSH_DEPLOYMENT_NAME: logsearch-platform
       BOSH_CACERT: common/master-bosh.crt
       BOSH_ERRAND: upload-kibana-objects
 
@@ -264,7 +265,7 @@ jobs:
       BOSH_TARGET: {{logsearch-development-deployment-bosh-target}}
       BOSH_USERNAME: {{logsearch-development-deployment-bosh-username}}
       BOSH_PASSWORD: {{logsearch-development-deployment-bosh-password}}
-      BOSH_DEPLOYMENT_NAME: {{logsearch-development-deployment-bosh-deployment}}
+      BOSH_DEPLOYMENT_NAME: logsearch
       BOSH_CACERT: common/master-bosh.crt
       BOSH_ERRAND: smoke-tests
       BOSH_FLAGS: "--keep-alive"
@@ -332,7 +333,7 @@ jobs:
       BOSH_TARGET: {{logsearch-development-deployment-bosh-target}}
       BOSH_USERNAME: {{logsearch-development-deployment-bosh-username}}
       BOSH_PASSWORD: {{logsearch-development-deployment-bosh-password}}
-      BOSH_DEPLOYMENT_NAME: {{logsearch-development-deployment-bosh-deployment}}
+      BOSH_DEPLOYMENT_NAME: logsearch
       BOSH_CACERT: common/master-bosh.crt
       BOSH_ERRAND: upload-kibana-objects
 
@@ -411,7 +412,7 @@ jobs:
       BOSH_TARGET: {{logsearch-staging-deployment-bosh-target}}
       BOSH_USERNAME: {{logsearch-staging-deployment-bosh-username}}
       BOSH_PASSWORD: {{logsearch-staging-deployment-bosh-password}}
-      BOSH_DEPLOYMENT_NAME: {{logsearch-staging-deployment-bosh-deployment}}
+      BOSH_DEPLOYMENT_NAME: logsearch
       BOSH_CACERT: common/master-bosh.crt
       BOSH_ERRAND: smoke-tests
       BOSH_FLAGS: "--keep-alive"
@@ -478,7 +479,7 @@ jobs:
       BOSH_TARGET: {{logsearch-staging-deployment-bosh-target}}
       BOSH_USERNAME: {{logsearch-staging-deployment-bosh-username}}
       BOSH_PASSWORD: {{logsearch-staging-deployment-bosh-password}}
-      BOSH_DEPLOYMENT_NAME: {{logsearch-staging-deployment-bosh-deployment}}
+      BOSH_DEPLOYMENT_NAME: logsearch
       BOSH_CACERT: common/master-bosh.crt
       BOSH_ERRAND: upload-kibana-objects
 
@@ -563,7 +564,7 @@ jobs:
       BOSH_TARGET: {{logsearch-production-deployment-bosh-target}}
       BOSH_USERNAME: {{logsearch-production-deployment-bosh-username}}
       BOSH_PASSWORD: {{logsearch-production-deployment-bosh-password}}
-      BOSH_DEPLOYMENT_NAME: {{logsearch-production-deployment-bosh-deployment}}
+      BOSH_DEPLOYMENT_NAME: logsearch
       BOSH_CACERT: common/master-bosh.crt
       BOSH_ERRAND: smoke-tests
       BOSH_FLAGS: "--keep-alive"
@@ -630,7 +631,7 @@ jobs:
       BOSH_TARGET: {{logsearch-production-deployment-bosh-target}}
       BOSH_USERNAME: {{logsearch-production-deployment-bosh-username}}
       BOSH_PASSWORD: {{logsearch-production-deployment-bosh-password}}
-      BOSH_DEPLOYMENT_NAME: {{logsearch-production-deployment-bosh-deployment}}
+      BOSH_DEPLOYMENT_NAME: logsearch
       BOSH_CACERT: common/master-bosh.crt
       BOSH_ERRAND: upload-kibana-objects
 

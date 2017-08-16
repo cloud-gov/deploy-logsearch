@@ -50,6 +50,10 @@ instance_groups:
 - name: maintenance
   instances: 1
   jobs:
+  - name: elasticsearch
+    release: logsearch
+    consumes:
+      elasticsearch: {from: elasticsearch_master}
   - name: curator
     release: logsearch
     consumes:
@@ -57,7 +61,7 @@ instance_groups:
     properties:
       curator:
         purge_logs:
-          retention_period: 180
+          retention_period: 30
   - name: elasticsearch_config
     release: logsearch
     consumes:
