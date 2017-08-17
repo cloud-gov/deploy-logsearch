@@ -230,6 +230,7 @@ instance_groups:
             validate_credentials_on_root_bucket: false  # https://github.com/logstash-plugins/logstash-output-s3/issues/132
             server_side_encryption: true
             time_file: 5
+            prefix: "%{+yyyy/MM/dd/HH/mm}"
   - name: ingestor_cloudfoundry-firehose
     release: logsearch-for-cloudfoundry
     properties:
