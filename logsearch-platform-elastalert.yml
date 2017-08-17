@@ -32,18 +32,23 @@ instance_groups:
               index: logs-platform-*
               query_key:
               - "@source.host"
-              - "@message"
+              - "sid"
+              - "rev"
               realert:
                 hours: 1
-              alert_subject: "Snort alert on host {0}"
+              alert_subject: "Snort alert on host {0}:{1}:{2}"
               alert_subject_args:
               - "@source.host"
+              - "sid"
+              - "rev"
               alert_text: "{0}"
               alert_text_args:
               - "@message"
-              pagerduty_incident_key: "snort-alert-{0}"
+              pagerduty_incident_key: "snort-alert-{0}:{1}:{2}"
               pagerduty_incident_key_args:
               - "@source.host"
+              - "sid"
+              - "rev"
               filter:
               - bool:
                   must:
