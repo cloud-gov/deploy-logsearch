@@ -1,0 +1,6 @@
+instance_groups:
+- name: elasticsearch_data
+  instances: 3
+
+- name: ingestor
+  instances: 1
