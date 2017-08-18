@@ -135,14 +135,9 @@ instance_groups:
     properties:
       kibana:
         memory_limit: 65
-        default_app_id: "dashboard/App-Overview"
-        plugins:
-        - auth: /var/vcap/packages/kibana-auth-plugin/kibana-auth-plugin.zip
-        config_options: |-
-          console.enabled: false
+        default_app_id: "dashboard/Platform-Overview"
         env:
         - NODE_ENV: production
-        source_files: [/var/vcap/jobs/kibana-auth-plugin/config/config.sh]
   vm_type: logsearch_kibana
   vm_extensions: [platform-kibana-lb]
   stemcell: default
