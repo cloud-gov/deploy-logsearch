@@ -641,6 +641,23 @@ jobs:
       BOSH_CACERT: common/master-bosh.crt
       BOSH_ERRAND: upload-kibana-objects
 
+- name: check-backup-development
+  plan:
+  - aggregate:
+    - get: check-backup-timer
+      trigger: true
+    - get: logsearch-config
+      resource: logsearch-config-development
+  - task: check-backup
+    file: logsearch-config/ci/check-backup.yml
+    tags: [iaas]
+    params:
+      AWS_DEFAULT_REGION: {{aws-region}}
+      ES_HOST: {{logsearch-development-check-backup-es-host}}
+      GATEWAY_HOST: {{logsearch-development-check-backup-gateway-host}}
+      BUCKET_NAME: logsearch-cf-development
+      ENVIRONMENT: development
+
 - name: deploy-logsearch-staging
   serial_groups: [bosh-staging]
   plan:
@@ -786,6 +803,22 @@ jobs:
       BOSH_DEPLOYMENT_NAME: logsearch
       BOSH_CACERT: common/master-bosh.crt
       BOSH_ERRAND: upload-kibana-objects
+
+- name: check-backup-staging
+  plan:
+  - aggregate:
+    - get: check-backup-timer
+      trigger: true
+    - get: logsearch-config
+  - task: check-backup
+    file: logsearch-config/ci/check-backup.yml
+    tags: [iaas]
+    params:
+      AWS_DEFAULT_REGION: {{aws-region}}
+      ES_HOST: {{logsearch-staging-check-backup-es-host}}
+      GATEWAY_HOST: {{logsearch-staging-check-backup-gateway-host}}
+      BUCKET_NAME: logsearch-cf-staging
+      ENVIRONMENT: staging
 
 - name: deploy-logsearch-production
   serial_groups: [bosh-production]
@@ -938,6 +971,22 @@ jobs:
       BOSH_DEPLOYMENT_NAME: logsearch
       BOSH_CACERT: common/master-bosh.crt
       BOSH_ERRAND: upload-kibana-objects
+
+- name: check-backup-production
+  plan:
+  - aggregate:
+    - get: check-backup-timer
+      trigger: true
+    - get: logsearch-config
+  - task: check-backup
+    file: logsearch-config/ci/check-backup.yml
+    tags: [iaas]
+    params:
+      AWS_DEFAULT_REGION: {{aws-region}}
+      ES_HOST: {{logsearch-production-check-backup-es-host}}
+      GATEWAY_HOST: {{logsearch-production-check-backup-gateway-host}}
+      BUCKET_NAME: logsearch-cf-production
+      ENVIRONMENT: production
 
 resources:
 - name: master-bosh-root-cert
@@ -1112,6 +1161,11 @@ resources:
     url: {{slack-webhook-url}}
 
 - name: tests-timer
+  type: time
+  source:
+    interval: 10m
+
+- name: check-backup-timer
   type: time
   source:
     interval: 10m
