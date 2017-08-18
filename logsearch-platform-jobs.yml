@@ -3,7 +3,7 @@ instance_groups:
 #First deploy group - elasticsearch_master, maintenance
 #######################################################
 - name: elasticsearch_master
-  instances: 1
+  instances: 3
   jobs:
   - name: elasticsearch
     release: logsearch
@@ -33,6 +33,9 @@ instance_groups:
   networks:
   - name: services
     static_ips:
+    - (( grab terraform_outputs.logsearch_static_ips.[7]))
+    - (( grab terraform_outputs.logsearch_static_ips.[8]))
+    - (( grab terraform_outputs.logsearch_static_ips.[9]))
   update:
     max_in_flight: 1 # Should never update more than one ES master node at a time or cluster will go down
 
@@ -119,7 +122,7 @@ instance_groups:
     max_in_flight: 1 # Only update 1 ES data node at a time or risk downtime
 
 - name: kibana
-  instances: 2
+  instances: 0
   jobs:
   - name: elasticsearch
     release: logsearch
@@ -140,15 +143,6 @@ instance_groups:
         env:
         - NODE_ENV: production
         source_files: [/var/vcap/jobs/kibana-auth-plugin/config/config.sh]
-  - name: kibana-auth-plugin
-    release: logsearch-for-cloudfoundry
-    properties:
-      kibana-auth:
-        cloudfoundry:
-          skip_ssl_validation: false
-          client_id: kibana_oauth2_client
-          system_org: cloud-gov-operators # Org Managers of this org get admin access
-        session_key: (( param "specify kibana session key" ))
   vm_type: logsearch_kibana
   vm_extensions: [platform-kibana-lb]
   stemcell: default
@@ -157,6 +151,7 @@ instance_groups:
   - name: services
 
 - name: ingestor
+  instances: 3
   jobs:
   - name: elasticsearch
     release: logsearch
