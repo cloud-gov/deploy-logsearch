@@ -4,7 +4,7 @@ set -eux
 
 file_size=0
 file_count=0
-now=$(date)
+now=$(date -u)
 
 log_count=$(curl -s "${ES_HOST}:${ES_PORT:-9200}/logs-app-*/_search?size=0" -d @<(cat <<EOF
 {
@@ -20,7 +20,7 @@ EOF
 ) | jq -r '.hits.total')
 
 for idx in {0..9}; do
-  prefix=$(date +%Y/%m/%d/%H/%M --date "${now} -${idx} min")
+  prefix=$(date -u +%Y/%m/%d/%H/%M --date "${now} -${idx} min")
   for obj_size in $(aws s3 ls "s3://${BUCKET_NAME}/${prefix}/" | awk '{print $3}'); do
     file_size=$((file_size + obj_size))
     file_count=$((file_count + 1))
