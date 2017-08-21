@@ -11,7 +11,8 @@ log_count=$(curl -s "${ES_HOST}:${ES_PORT:-9200}/logs-app-*/_search?size=0" -d @
   "query": {
     "range": {
       "@timestamp": {
-        "gte": "now-10m"
+        "gt": "now-20m",
+        "lte": "now-10m"
       }
     }
   }
@@ -19,7 +20,7 @@ log_count=$(curl -s "${ES_HOST}:${ES_PORT:-9200}/logs-app-*/_search?size=0" -d @
 EOF
 ) | jq -r '.hits.total')
 
-for idx in {0..9}; do
+for idx in {10..19}; do
   prefix=$(date -u +%Y/%m/%d/%H/%M --date "${now} -${idx} min")
   for obj_size in $(aws s3 ls "s3://${BUCKET_NAME}/${prefix}/" | awk '{print $3}'); do
     file_size=$((file_size + obj_size))
