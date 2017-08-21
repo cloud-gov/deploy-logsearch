@@ -3,7 +3,7 @@ instance_groups:
 #First deploy group - elasticsearch_master, maintenance
 #######################################################
 - name: elasticsearch_master
-  instances: 1
+  instances: 3
   jobs:
   - name: elasticsearch
     release: logsearch
@@ -54,6 +54,9 @@ instance_groups:
   networks:
   - name: services
     static_ips:
+    - (( grab terraform_outputs.logsearch_static_ips.[0]))
+    - (( grab terraform_outputs.logsearch_static_ips.[1]))
+    - (( grab terraform_outputs.logsearch_static_ips.[2]))
   vm_extensions: [logsearch-lb]
   update:
     max_in_flight: 1 # Should never update more than one ES master node at a time or cluster will go down

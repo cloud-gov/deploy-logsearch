@@ -1,13 +1,4 @@
 instance_groups:
-- name: elasticsearch_master
-  instances: 3
-  networks:
-  - name: services
-    static_ips:
-    - (( grab terraform_outputs.logsearch_static_ips.[0] ))
-    - (( grab terraform_outputs.logsearch_static_ips.[6] ))
-    - (( grab terraform_outputs.logsearch_static_ips.[7] ))
-
 - name: archiver
   instances: 3
   jobs:
