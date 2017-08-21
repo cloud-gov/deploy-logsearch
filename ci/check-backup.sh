@@ -32,4 +32,5 @@ cat <<EOF | curl --data-binary @- "${GATEWAY_HOST}:${GATEWAY_PORT:-9091}/metrics
 logsearch_backup_log_count {environment="${ENVIRONMENT}"} ${log_count}
 logsearch_backup_file_size {environment="${ENVIRONMENT}"} ${file_size}
 logsearch_backup_file_count {environment="${ENVIRONMENT}"} ${file_count}
+logsearch_backup_timestamp {environment="${ENVIRONMENT}"} $(date +%s)
 EOF
