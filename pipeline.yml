@@ -335,15 +335,22 @@ jobs:
       resource: master-bosh-root-cert
     - get: pipeline-tasks
     - get: logsearch-config
+      passed: [deploy-logsearch-platform-staging]
       trigger: true
     - get: common-secrets
       resource: common-platform-production
       trigger: true
     - get: logsearch-release
+      passed: [deploy-logsearch-platform-staging]
     - get: logsearch-for-cloudfoundry-release
+      passed: [deploy-logsearch-platform-staging]
     - get: elastalert-release
+      passed: [deploy-logsearch-platform-staging]
     - get: logsearch-stemcell
+      passed: [deploy-logsearch-platform-staging]
       trigger: true
+    - get: logsearch-platform-staging-deployment
+      passed: [smoke-tests-platform-staging]
     - get: terraform-yaml
       resource: terraform-yaml-production
   - task: logsearch-manifest
