@@ -1,4 +1,55 @@
 ---
+groups:
+  - name: all
+    jobs:
+    - deploy-logsearch-development
+    - upload-kibana-objects-development
+    - check-backup-development
+    - smoke-tests-development
+    - smoke-tests-login-development
+    - deploy-logsearch-staging
+    - upload-kibana-objects-staging
+    - check-backup-staging
+    - smoke-tests-staging
+    - smoke-tests-login-staging
+    - deploy-logsearch-production
+    - upload-kibana-objects-production
+    - check-backup-production
+    - smoke-tests-production
+    - smoke-tests-login-production
+    - deploy-logsearch-platform-development
+    - smoke-tests-platform-development
+    - deploy-logsearch-platform-staging
+    - smoke-tests-platform-staging
+    - deploy-logsearch-platform-production
+    - smoke-tests-platform-production
+  - name: development
+    jobs:
+    - deploy-logsearch-platform-development
+    - smoke-tests-platform-development
+    - deploy-logsearch-development
+    - upload-kibana-objects-development
+    - check-backup-development
+    - smoke-tests-development
+    - smoke-tests-login-development
+  - name: staging
+    jobs:
+    - deploy-logsearch-platform-staging
+    - smoke-tests-platform-staging
+    - deploy-logsearch-staging
+    - upload-kibana-objects-staging
+    - check-backup-staging
+    - smoke-tests-staging
+    - smoke-tests-login-staging
+  - name: production
+    jobs:
+    - deploy-logsearch-platform-production
+    - smoke-tests-platform-production
+    - deploy-logsearch-production
+    - upload-kibana-objects-production
+    - check-backup-production
+    - smoke-tests-production
+    - smoke-tests-login-production
 jobs:
 - name: deploy-logsearch-platform-development
   serial_groups: [bosh-platform-development]
