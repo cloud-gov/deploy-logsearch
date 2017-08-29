@@ -173,6 +173,13 @@ instance_groups:
                 }
               }
             }
+            if [@source][component] == "clamd" {
+              grok {
+                match => {
+                  "@message" => "\s%{WORD:event_type}:\s%{DATA:file_path}:\s%{DATA:signature_name}\sFOUND"
+                }
+              }
+            }
         deployment_dictionary:
         - /var/vcap/packages/logsearch-config/deployment_lookup.yml
         - /var/vcap/jobs/parser-config-lfc/config/deployment_lookup.yml
