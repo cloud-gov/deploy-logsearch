@@ -54,3 +54,35 @@ instance_groups:
                   must:
                   - term:
                       "@source.component": "snort"
+          - name: clamav
+            content:
+              name: clamav-alert
+              type: any
+              index: logs-platform-*
+              query_key:
+              - "@source.host"
+              - "event_type"
+              - "signature_name"
+              - "file_path"
+              realert:
+                hours: 1
+              alert_subject: "ClamAV alert on host {0}. sig:{1}; path:{2}"
+              alert_subject_args:
+              - "@source.host"
+              - "signature_name"
+              - "file_path"
+              alert_text: "{0}"
+              alert_text_args:
+              - "@message"
+              pagerduty_incident_key: "clamav-alert-{0}-{1}-{2}"
+              pagerduty_incident_key_args:
+              - "@source.host"
+              - "signature_name"
+              - "file_path"
+              filter:
+              - bool:
+                  must:
+                  - term:
+                      "@source.component": "clamd"
+                  - match:
+                      "event_type": "ScanOnAccess"
