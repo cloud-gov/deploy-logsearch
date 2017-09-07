@@ -4,3 +4,10 @@ instance_groups:
 
 - name: ingestor
   instances: 1
+
+- name: maintenance
+  jobs:
+  - name: curator
+    properties:
+      purge_logs:
+        retention_period: 7
