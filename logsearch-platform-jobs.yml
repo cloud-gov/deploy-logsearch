@@ -57,6 +57,9 @@ instance_groups:
     release: logsearch
     consumes:
       elasticsearch: {from: elasticsearch_master}
+    properties:
+      elasticsearch:
+        heap_size: 2G
   - name: curator
     release: logsearch
     consumes:
@@ -128,6 +131,9 @@ instance_groups:
     release: logsearch
     consumes:
       elasticsearch: {from: elasticsearch_master}
+    properties:
+      elasticsearch:
+        heap_size: 2G
   - name: kibana
     release: logsearch
     consumes:
@@ -152,6 +158,9 @@ instance_groups:
     release: logsearch
     consumes:
       elasticsearch: {from: elasticsearch_master}
+    properties:
+      elasticsearch:
+        heap_size: 1G
   - name: ingestor_syslog
     release: logsearch
     properties:
