@@ -9,5 +9,6 @@ instance_groups:
   jobs:
   - name: curator
     properties:
-      purge_logs:
-        retention_period: 7
+      curator:
+        purge_logs:
+          retention_period: 7
