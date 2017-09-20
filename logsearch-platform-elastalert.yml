@@ -54,6 +54,9 @@ instance_groups:
                   must:
                   - term:
                       "@source.component": "snort"
+                  must_not:
+                  - match:
+                      "sid": "25358"
           - name: clamav
             content:
               name: clamav-alert
