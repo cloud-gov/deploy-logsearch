@@ -144,6 +144,8 @@ instance_groups:
         default_app_id: "dashboard/Platform-Overview"
         env:
         - NODE_ENV: production
+        health:
+          timeout: 600
   vm_type: logsearch_kibana
   vm_extensions: [platform-kibana-lb]
   stemcell: default
