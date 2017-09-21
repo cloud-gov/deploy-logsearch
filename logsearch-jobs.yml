@@ -79,6 +79,9 @@ instance_groups:
     release: logsearch
     consumes:
       elasticsearch: {from: elasticsearch_master}
+    properties:
+      elasticsearch:
+        heap_size: 2G
   - name: curator
     release: logsearch
     # nil the link and use the colocated instance when https://github.com/cloudfoundry-community/logsearch-boshrelease/pull/90 is merged
@@ -175,6 +178,8 @@ instance_groups:
     consumes:
       elasticsearch: {from: elasticsearch_master}
     properties:
+      elasticsearch:
+        heap_size: 2G
       kibana:
         memory_limit: 65
         default_app_id: "dashboard/App-Overview"
@@ -218,6 +223,9 @@ instance_groups:
     release: logsearch
     consumes:
       elasticsearch: {from: elasticsearch_master}
+    properties:
+      elasticsearch:
+        heap_size: 1G
   - name: archiver_syslog
     release: logsearch
     properties:
@@ -260,6 +268,9 @@ instance_groups:
     release: logsearch
     consumes:
       elasticsearch: {from: elasticsearch_master}
+    properties:
+      elasticsearch:
+        heap_size: 1G
   - name: ingestor_syslog
     release: logsearch
     properties:
