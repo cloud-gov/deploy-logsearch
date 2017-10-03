@@ -55,8 +55,6 @@ jobs:
   serial_groups: [bosh-platform-development]
   plan:
   - aggregate:
-    - get: common
-      resource: master-bosh-root-cert
     - get: pipeline-tasks
     - get: logsearch-config
       resource: logsearch-config-development
@@ -111,7 +109,6 @@ jobs:
       LINTER_CONFIG: bosh-lint.yml
   - put: logsearch-platform-development-deployment
     params: &deploy-params-platform
-      cert: common/master-bosh.crt
       manifest: logsearch-manifest/manifest.yml
       releases:
       - logsearch-release/*.tgz
@@ -230,8 +227,6 @@ jobs:
   serial_groups: [bosh-platform-staging]
   plan:
   - aggregate:
-    - get: common
-      resource: master-bosh-root-cert
     - get: pipeline-tasks
     - get: logsearch-config
       trigger: true
@@ -266,7 +261,6 @@ jobs:
   - *lint-manifest
   - put: logsearch-platform-staging-deployment
     params: &deploy-params-platform
-      cert: common/master-bosh.crt
       manifest: logsearch-manifest/manifest.yml
       releases:
       - logsearch-release/*.tgz
@@ -382,8 +376,6 @@ jobs:
   serial_groups: [bosh-platform-production]
   plan:
   - aggregate:
-    - get: common
-      resource: master-bosh-root-cert
     - get: pipeline-tasks
     - get: logsearch-config
       passed: [deploy-logsearch-platform-staging]
@@ -425,7 +417,6 @@ jobs:
   - *lint-manifest
   - put: logsearch-platform-production-deployment
     params: &deploy-params-platform
-      cert: common/master-bosh.crt
       manifest: logsearch-manifest/manifest.yml
       releases:
       - logsearch-release/*.tgz
@@ -541,8 +532,6 @@ jobs:
   serial_groups: [bosh-development]
   plan:
   - aggregate:
-    - get: common
-      resource: master-bosh-root-cert
     - get: pipeline-tasks
     - get: logsearch-config
       resource: logsearch-config-development
@@ -583,7 +572,6 @@ jobs:
   - *lint-manifest
   - put: logsearch-development-deployment
     params: &deploy-params
-      cert: common/master-bosh.crt
       manifest: logsearch-manifest/manifest.yml
       releases:
       - logsearch-release/*.tgz
@@ -720,8 +708,6 @@ jobs:
   serial_groups: [bosh-staging]
   plan:
   - aggregate:
-    - get: common
-      resource: master-bosh-root-cert
     - get: pipeline-tasks
     - get: logsearch-config
       trigger: true
@@ -882,8 +868,6 @@ jobs:
   serial_groups: [bosh-production]
   plan:
   - aggregate:
-    - get: common
-      resource: master-bosh-root-cert
     - get: pipeline-tasks
     - get: logsearch-config
       passed: [deploy-logsearch-staging]
@@ -1166,43 +1150,46 @@ resources:
     name: bosh-aws-xen-hvm-ubuntu-trusty-go_agent
 
 - name: logsearch-development-deployment
-  type: 18f-bosh-deployment
+  type: bosh-deployment
   source: &bosh-params-development
     target: {{logsearch-development-deployment-bosh-target}}
-    username: {{logsearch-development-deployment-bosh-username}}
-    password: {{logsearch-development-deployment-bosh-password}}
+    client: {{logsearch-development-deployment-bosh-client}}
+    client_secret: {{logsearch-development-deployment-bosh-client-secret}}
+    ca_cert: {{logsearch-development-ca-cert}}
     deployment: logsearch
 
 - name: logsearch-staging-deployment
-  type: 18f-bosh-deployment
+  type: bosh-deployment
   source: &bosh-params-staging
     target: {{logsearch-staging-deployment-bosh-target}}
-    username: {{logsearch-staging-deployment-bosh-username}}
-    password: {{logsearch-staging-deployment-bosh-password}}
+    client: {{logsearch-staging-deployment-bosh-client}}
+    client_secret: {{logsearch-staging-deployment-bosh-client-secret}}
+    ca_cert: {{logsearch-staging-ca-cert}}
     deployment: logsearch
 
 - name: logsearch-production-deployment
-  type: 18f-bosh-deployment
+  type: bosh-deployment
   source: &bosh-params-production
     target: {{logsearch-production-deployment-bosh-target}}
-    username: {{logsearch-production-deployment-bosh-username}}
-    password: {{logsearch-production-deployment-bosh-password}}
+    client: {{logsearch-production-deployment-bosh-client}}
+    client_secret: {{logsearch-production-deployment-bosh-client-secret}}
+    ca_cert: {{logsearch-production-ca-cert}}
     deployment: logsearch
 
 - name: logsearch-platform-development-deployment
-  type: 18f-bosh-deployment
+  type: bosh-deployment
   source:
     <<: *bosh-params-development
     deployment: logsearch-platform
 
 - name: logsearch-platform-staging-deployment
-  type: 18f-bosh-deployment
+  type: bosh-deployment
   source:
     <<: *bosh-params-staging
     deployment: logsearch-platform
 
 - name: logsearch-platform-production-deployment
-  type: 18f-bosh-deployment
+  type: bosh-deployment
   source:
     <<: *bosh-params-production
     deployment: logsearch-platform
@@ -1255,10 +1242,10 @@ resource_types:
   source:
     repository: cfcommunity/slack-notification-resource
 
-- name: 18f-bosh-deployment
+- name: bosh-deployment
   type: docker-image
   source:
-    repository: 18fgsa/bosh-deployment-resource
+    repository: cloudfoundry/bosh-deployment-resource
 
 - name: cg-common
   type: docker-image
