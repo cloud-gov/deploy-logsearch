@@ -18,10 +18,13 @@ groups:
     - smoke-tests-production
     - smoke-tests-login-production
     - deploy-logsearch-platform-development
+    - upload-kibana-objects-platform-development
     - smoke-tests-platform-development
     - deploy-logsearch-platform-staging
+    - upload-kibana-objects-platform-staging
     - smoke-tests-platform-staging
     - deploy-logsearch-platform-production
+    - upload-kibana-objects-platform-production
     - smoke-tests-platform-production
   - name: development
     jobs:
@@ -68,6 +71,7 @@ jobs:
       resource: logsearch-for-cloudfoundry-release-development
     - get: elastalert-release
       resource: elastalert-release-development
+    - get: oauth2-proxy-release
     - get: logsearch-stemcell
       trigger: true
     - get: terraform-yaml
@@ -114,6 +118,7 @@ jobs:
       - logsearch-release/*.tgz
       - logsearch-for-cloudfoundry-release/*.tgz
       - elastalert-release/*.tgz
+      - oauth2-proxy-release/*.tgz
       stemcells:
       - logsearch-stemcell/*.tgz
   on_failure:
@@ -203,25 +208,25 @@ jobs:
 #         :white_check_mark: Login smoke tests for platform logsearch on development PASSED
 #         <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
 
-# - name: upload-kibana-objects-platform-development
-#   serial_groups: [bosh-platform-development]
-#   plan:
-#   - aggregate:
-#     - get: common
-#       resource: master-bosh-root-cert
-#     - get: pipeline-tasks
-#     - get: logsearch-platform-development-deployment
-#       passed: [deploy-logsearch-platform-development]
-#       trigger: true
-#   - task: upload-kibana-objects
-#     file: pipeline-tasks/bosh-errand.yml
-#     params:
-#       BOSH_TARGET: {{logsearch-development-deployment-bosh-target}}
-#       BOSH_USERNAME: {{logsearch-development-deployment-bosh-username}}
-#       BOSH_PASSWORD: {{logsearch-development-deployment-bosh-password}}
-#       BOSH_DEPLOYMENT_NAME: logsearch-platform
-#       BOSH_CACERT: common/master-bosh.crt
-#       BOSH_ERRAND: upload-kibana-objects
+- name: upload-kibana-objects-platform-development
+  serial_groups: [bosh-platform-development]
+  plan:
+  - aggregate:
+    - get: common
+      resource: master-bosh-root-cert
+    - get: pipeline-tasks
+    - get: logsearch-platform-development-deployment
+      passed: [deploy-logsearch-platform-development]
+      trigger: true
+  - task: upload-kibana-objects
+    file: pipeline-tasks/bosh-errand.yml
+    params:
+      BOSH_TARGET: {{logsearch-development-deployment-bosh-target}}
+      BOSH_USERNAME: {{logsearch-development-deployment-bosh-username}}
+      BOSH_PASSWORD: {{logsearch-development-deployment-bosh-password}}
+      BOSH_DEPLOYMENT_NAME: logsearch-platform
+      BOSH_CACERT: common/master-bosh.crt
+      BOSH_ERRAND: upload-kibana-objects
 
 - name: deploy-logsearch-platform-staging
   serial_groups: [bosh-platform-staging]
@@ -236,6 +241,7 @@ jobs:
     - get: logsearch-release
     - get: logsearch-for-cloudfoundry-release
     - get: elastalert-release
+    - get: oauth2-proxy-release
     - get: logsearch-stemcell
       trigger: true
     - get: terraform-yaml
@@ -254,20 +260,14 @@ jobs:
             logsearch-config/logsearch-platform-jobs.yml \
             logsearch-config/logsearch-platform-elastalert.yml \
             common-secrets/secrets.yml \
+            logsearch-config/logsearch-platform-staging.yml \
             terraform-yaml/state.yml \
             > logsearch-manifest/manifest.yml
       outputs:
       - name: logsearch-manifest
   - *lint-manifest
   - put: logsearch-platform-staging-deployment
-    params: &deploy-params-platform
-      manifest: logsearch-manifest/manifest.yml
-      releases:
-      - logsearch-release/*.tgz
-      - logsearch-for-cloudfoundry-release/*.tgz
-      - elastalert-release/*.tgz
-      stemcells:
-      - logsearch-stemcell/*.tgz
+    params: *deploy-params-platform
   on_failure:
     put: slack
     params:
@@ -352,25 +352,25 @@ jobs:
 #         :white_check_mark: Login smoke tests for platform logsearch on staging PASSED
 #         <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
 
-# - name: upload-kibana-objects-platform-staging
-#   serial_groups: [bosh-platform-staging]
-#   plan:
-#   - aggregate:
-#     - get: common
-#       resource: master-bosh-root-cert
-#     - get: pipeline-tasks
-#     - get: logsearch-platform-staging-deployment
-#       passed: [deploy-logsearch-platform-staging]
-#       trigger: true
-#   - task: upload-kibana-objects
-#     file: pipeline-tasks/bosh-errand.yml
-#     params:
-#       BOSH_TARGET: {{logsearch-staging-deployment-bosh-target}}
-#       BOSH_USERNAME: {{logsearch-staging-deployment-bosh-username}}
-#       BOSH_PASSWORD: {{logsearch-staging-deployment-bosh-password}}
-#       BOSH_DEPLOYMENT_NAME: logsearch-platform
-#       BOSH_CACERT: common/master-bosh.crt
-#       BOSH_ERRAND: upload-kibana-objects
+- name: upload-kibana-objects-platform-staging
+  serial_groups: [bosh-platform-staging]
+  plan:
+  - aggregate:
+    - get: common
+      resource: master-bosh-root-cert
+    - get: pipeline-tasks
+    - get: logsearch-platform-staging-deployment
+      passed: [deploy-logsearch-platform-staging]
+      trigger: true
+  - task: upload-kibana-objects
+    file: pipeline-tasks/bosh-errand.yml
+    params:
+      BOSH_TARGET: {{logsearch-staging-deployment-bosh-target}}
+      BOSH_USERNAME: {{logsearch-staging-deployment-bosh-username}}
+      BOSH_PASSWORD: {{logsearch-staging-deployment-bosh-password}}
+      BOSH_DEPLOYMENT_NAME: logsearch-platform
+      BOSH_CACERT: common/master-bosh.crt
+      BOSH_ERRAND: upload-kibana-objects
 
 - name: deploy-logsearch-platform-production
   serial_groups: [bosh-platform-production]
@@ -388,6 +388,8 @@ jobs:
     - get: logsearch-for-cloudfoundry-release
       passed: [deploy-logsearch-platform-staging]
     - get: elastalert-release
+      passed: [deploy-logsearch-platform-staging]
+    - get: oauth2-proxy-release
       passed: [deploy-logsearch-platform-staging]
     - get: logsearch-stemcell
       passed: [deploy-logsearch-platform-staging]
@@ -410,20 +412,14 @@ jobs:
             logsearch-config/logsearch-platform-jobs.yml \
             logsearch-config/logsearch-platform-elastalert.yml \
             common-secrets/secrets.yml \
+            logsearch-config/logsearch-platform-production.yml \
             terraform-yaml/state.yml \
             > logsearch-manifest/manifest.yml
       outputs:
       - name: logsearch-manifest
   - *lint-manifest
   - put: logsearch-platform-production-deployment
-    params: &deploy-params-platform
-      manifest: logsearch-manifest/manifest.yml
-      releases:
-      - logsearch-release/*.tgz
-      - logsearch-for-cloudfoundry-release/*.tgz
-      - elastalert-release/*.tgz
-      stemcells:
-      - logsearch-stemcell/*.tgz
+    params: *deploy-params-platform
   on_failure:
     put: slack
     params:
@@ -508,25 +504,25 @@ jobs:
 #         :white_check_mark: Login smoke tests for platform logsearch on production PASSED
 #         <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
 
-# - name: upload-kibana-objects-platform-production
-#   serial_groups: [bosh-platform-production]
-#   plan:
-#   - aggregate:
-#     - get: common
-#       resource: master-bosh-root-cert
-#     - get: pipeline-tasks
-#     - get: logsearch-platform-production-deployment
-#       passed: [deploy-logsearch-platform-production]
-#       trigger: true
-#   - task: upload-kibana-objects
-#     file: pipeline-tasks/bosh-errand.yml
-#     params:
-#       BOSH_TARGET: {{logsearch-production-deployment-bosh-target}}
-#       BOSH_USERNAME: {{logsearch-production-deployment-bosh-username}}
-#       BOSH_PASSWORD: {{logsearch-production-deployment-bosh-password}}
-#       BOSH_DEPLOYMENT_NAME: logsearch-platform
-#       BOSH_CACERT: common/master-bosh.crt
-#       BOSH_ERRAND: upload-kibana-objects
+- name: upload-kibana-objects-platform-production
+  serial_groups: [bosh-platform-production]
+  plan:
+  - aggregate:
+    - get: common
+      resource: master-bosh-root-cert
+    - get: pipeline-tasks
+    - get: logsearch-platform-production-deployment
+      passed: [deploy-logsearch-platform-production]
+      trigger: true
+  - task: upload-kibana-objects
+    file: pipeline-tasks/bosh-errand.yml
+    params:
+      BOSH_TARGET: {{logsearch-production-deployment-bosh-target}}
+      BOSH_USERNAME: {{logsearch-production-deployment-bosh-username}}
+      BOSH_PASSWORD: {{logsearch-production-deployment-bosh-password}}
+      BOSH_DEPLOYMENT_NAME: logsearch-platform
+      BOSH_CACERT: common/master-bosh.crt
+      BOSH_ERRAND: upload-kibana-objects
 
 - name: deploy-logsearch-development
   serial_groups: [bosh-development]
@@ -1124,6 +1120,13 @@ resources:
 
 - <<: *elastalert-release-tarball
   name: elastalert-release-development
+
+- name: oauth2-proxy-release
+  type: s3-iam
+  source:
+    bucket: {{cg-s3-bosh-releases-bucket}}
+    regexp: oauth2-proxy-(.*).tgz
+    region_name: {{aws-region}}
 
 - name: cg-s3-riemann-release
   type: s3-iam

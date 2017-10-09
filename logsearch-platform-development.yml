@@ -12,3 +12,9 @@ instance_groups:
       curator:
         purge_logs:
           retention_period: 7
+
+- name: kibana
+  jobs:
+  - name: oauth2-proxy
+    properties:
+      redirect_url: https://logs-platform.dev.us-gov-west-1.aws-us-gov.cloud.gov/oauth2/callback
