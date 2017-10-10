@@ -125,7 +125,7 @@ instance_groups:
     max_in_flight: 1 # Only update 1 ES data node at a time or risk downtime
 
 - name: kibana
-  instances: 0
+  instances: 2
   jobs:
   - name: elasticsearch
     release: logsearch
@@ -146,6 +146,17 @@ instance_groups:
         - NODE_ENV: production
         health:
           timeout: 600
+  - name: oauth2-proxy
+    release: oauth2-proxy
+    properties:
+      address: http://0.0.0.0:5600
+      upstream: http://127.0.0.1:5601
+      provider: oidc
+      client_id: (( param "specify oauth-proxy client" ))
+      client_secret: (( param "specify oauth-proxy client secret" ))
+      cookie_secret: (( param "specify oauth-proxy cookie secret" ))
+      oidc_issuer_url: https://opslogin.fr.cloud.gov/oauth/token
+      email_domain: gsa.gov
   vm_type: logsearch_kibana
   vm_extensions: [platform-kibana-lb]
   stemcell: default
