@@ -1,4 +1,7 @@
 instance_groups:
+- name: elasticsearch_data
+  instances: 4
+
 - name: kibana
   jobs:
   - name: oauth2-proxy
