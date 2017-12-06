@@ -686,7 +686,7 @@ jobs:
       BOSH_CACERT: common/master-bosh.crt
       BOSH_ERRAND: upload-kibana-objects
 
-- name: check-backup-development
+- name: check-backup-development-tenant
   plan:
   - aggregate:
     - get: check-backup-timer
@@ -701,7 +701,23 @@ jobs:
       ES_HOST: {{logsearch-development-check-backup-es-host}}
       GATEWAY_HOST: {{logsearch-development-check-backup-gateway-host}}
       BUCKET_NAME: logsearch-cf-development
-      ENVIRONMENT: development
+      ENVIRONMENT: development-tenant
+      INDEX_PATTERN: logs-app-*
+
+- name: check-backup-development-platform
+  plan:
+  - aggregate:
+    - get: check-backup-timer
+      trigger: true
+    - get: logsearch-config
+      resource: logsearch-config-development
+  - task: check-backup
+    file: logsearch-config/ci/check-backup.yml
+    params:
+      ES_HOST: {{logsearch-development-platform-check-backup-es-host}}
+      GATEWAY_HOST: {{logsearch-development-check-backup-gateway-host}}
+      ENVIRONMENT: development-platform
+      INDEX_PATTERN: logs-platform-*
 
 - name: deploy-logsearch-staging
   serial_groups: [bosh-staging]
@@ -861,7 +877,22 @@ jobs:
       ES_HOST: {{logsearch-staging-check-backup-es-host}}
       GATEWAY_HOST: {{logsearch-staging-check-backup-gateway-host}}
       BUCKET_NAME: logsearch-cf-staging
-      ENVIRONMENT: staging
+      ENVIRONMENT: staging-tenant
+      INDEX_PATTERN: logs-platform-*
+
+- name: check-backup-staging-platform
+  plan:
+  - aggregate:
+    - get: check-backup-timer
+      trigger: true
+    - get: logsearch-config
+  - task: check-backup
+    file: logsearch-config/ci/check-backup.yml
+    params:
+      ES_HOST: {{logsearch-staging-platform-check-backup-es-host}}
+      GATEWAY_HOST: {{logsearch-staging-check-backup-gateway-host}}
+      ENVIRONMENT: development-platform
+      INDEX_PATTERN: logs-platform-*
 
 - name: deploy-logsearch-production
   serial_groups: [bosh-production]
@@ -1027,7 +1058,22 @@ jobs:
       ES_HOST: {{logsearch-production-check-backup-es-host}}
       GATEWAY_HOST: {{logsearch-production-check-backup-gateway-host}}
       BUCKET_NAME: logsearch-cf-production
-      ENVIRONMENT: production
+      ENVIRONMENT: production-tenant
+      INDEX_PATTERN: logs-platform-*
+
+- name: check-backup-production-platform
+  plan:
+  - aggregate:
+    - get: check-backup-timer
+      trigger: true
+    - get: logsearch-config
+  - task: check-backup
+    file: logsearch-config/ci/check-backup.yml
+    params:
+      ES_HOST: {{logsearch-production-platform-check-backup-es-host}}
+      GATEWAY_HOST: {{logsearch-production-check-backup-gateway-host}}
+      ENVIRONMENT: production-platform
+      INDEX_PATTERN: logs-platform-*
 
 resources:
 - name: master-bosh-root-cert
