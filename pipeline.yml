@@ -4,17 +4,20 @@ groups:
     jobs:
     - deploy-logsearch-development
     - upload-kibana-objects-development
-    - check-backup-development
+    - check-backup-development-tenant
+    - check-backup-development-platform
     - smoke-tests-development
     - smoke-tests-login-development
     - deploy-logsearch-staging
     - upload-kibana-objects-staging
-    - check-backup-staging
+    - check-backup-staging-platform
+    - check-backup-staging-tenant
     - smoke-tests-staging
     - smoke-tests-login-staging
     - deploy-logsearch-production
     - upload-kibana-objects-production
-    - check-backup-production
+    - check-backup-production-tenant
+    - check-backup-production-platform
     - smoke-tests-production
     - smoke-tests-login-production
     - deploy-logsearch-platform-development
@@ -33,7 +36,8 @@ groups:
     - deploy-logsearch-development
     - upload-kibana-objects-development
     - upload-kibana-objects-platform-development
-    - check-backup-development
+    - check-backup-development-tenant
+    - check-backup-development-platform
     - smoke-tests-development
     - smoke-tests-login-development
   - name: staging
@@ -43,7 +47,8 @@ groups:
     - deploy-logsearch-staging
     - upload-kibana-objects-staging
     - upload-kibana-objects-platform-staging
-    - check-backup-staging
+    - check-backup-staging-tenant
+    - check-backup-staging-platform
     - smoke-tests-staging
     - smoke-tests-login-staging
   - name: production
@@ -53,7 +58,8 @@ groups:
     - deploy-logsearch-production
     - upload-kibana-objects-production
     - upload-kibana-objects-platform-production
-    - check-backup-production
+    - check-backup-production-tenant
+    - check-backup-production-platform
     - smoke-tests-production
     - smoke-tests-login-production
 jobs:
@@ -863,7 +869,7 @@ jobs:
       BOSH_CACERT: common/master-bosh.crt
       BOSH_ERRAND: upload-kibana-objects
 
-- name: check-backup-staging
+- name: check-backup-staging-tenant
   plan:
   - aggregate:
     - get: check-backup-timer
@@ -1044,7 +1050,7 @@ jobs:
       BOSH_CACERT: common/master-bosh.crt
       BOSH_ERRAND: upload-kibana-objects
 
-- name: check-backup-production
+- name: check-backup-production-tenant
   plan:
   - aggregate:
     - get: check-backup-timer
