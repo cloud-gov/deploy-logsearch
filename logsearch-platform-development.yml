@@ -3,7 +3,7 @@ instance_groups:
   instances: 3
 
 - name: ingestor
-  instances: 1
+  instances: 2
 
 - name: maintenance
   jobs:
