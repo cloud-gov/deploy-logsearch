@@ -42,4 +42,4 @@ logsearch_backup_file_count {environment="${ENVIRONMENT}"} ${file_count}
 EOF
 fi
 
-cat <<EOF | curl --data-binary @${tempfile} "${GATEWAY_HOST}:${GATEWAY_PORT:-9091}/metrics/job/logsearch_backup/instance/${ENVIRONMENT}"
+curl --data-binary @${tempfile} "${GATEWAY_HOST}:${GATEWAY_PORT:-9091}/metrics/job/logsearch_backup/instance/${ENVIRONMENT}"
