@@ -884,7 +884,7 @@ jobs:
       GATEWAY_HOST: {{logsearch-staging-check-backup-gateway-host}}
       BUCKET_NAME: logsearch-cf-staging
       ENVIRONMENT: staging-tenant
-      INDEX_PATTERN: logs-platform-*
+      INDEX_PATTERN: logs-app-*
 
 - name: check-backup-staging-platform
   plan:
@@ -1065,7 +1065,7 @@ jobs:
       GATEWAY_HOST: {{logsearch-production-check-backup-gateway-host}}
       BUCKET_NAME: logsearch-cf-production
       ENVIRONMENT: production-tenant
-      INDEX_PATTERN: logs-platform-*
+      INDEX_PATTERN: logs-app-*
 
 - name: check-backup-production-platform
   plan:
