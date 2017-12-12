@@ -80,6 +80,7 @@ jobs:
       resource: logsearch-for-cloudfoundry-release-development
     - get: elastalert-release
       resource: elastalert-release-development
+    - get: prometheus-release
     - get: oauth2-proxy-release
     - get: logsearch-stemcell
       trigger: true
@@ -127,6 +128,7 @@ jobs:
       - logsearch-release/*.tgz
       - logsearch-for-cloudfoundry-release/*.tgz
       - elastalert-release/*.tgz
+      - prometheus-release/*.tgz
       - oauth2-proxy-release/*.tgz
       stemcells:
       - logsearch-stemcell/*.tgz
@@ -250,6 +252,7 @@ jobs:
     - get: logsearch-release
     - get: logsearch-for-cloudfoundry-release
     - get: elastalert-release
+    - get: prometheus-release
     - get: oauth2-proxy-release
     - get: logsearch-stemcell
       trigger: true
@@ -397,6 +400,8 @@ jobs:
     - get: logsearch-for-cloudfoundry-release
       passed: [deploy-logsearch-platform-staging]
     - get: elastalert-release
+      passed: [deploy-logsearch-platform-staging]
+    - get: prometheus-release
       passed: [deploy-logsearch-platform-staging]
     - get: oauth2-proxy-release
       passed: [deploy-logsearch-platform-staging]
@@ -551,6 +556,8 @@ jobs:
     - get: elastalert-release
       resource: elastalert-release-development
     - get: cg-s3-riemann-release
+    - get: prometheus-release
+      trigger: true
     - get: logsearch-stemcell
       trigger: true
     - get: terraform-yaml
@@ -583,6 +590,7 @@ jobs:
       - logsearch-for-cloudfoundry-release/*.tgz
       - elastalert-release/*.tgz
       - cg-s3-riemann-release/*.tgz
+      - prometheus-release/*.tgz
       stemcells:
       - logsearch-stemcell/*.tgz
   on_failure:
@@ -739,6 +747,8 @@ jobs:
     - get: logsearch-for-cloudfoundry-release
     - get: elastalert-release
     - get: cg-s3-riemann-release
+    - get: prometheus-release
+      trigger: true
     - get: logsearch-stemcell
       trigger: true
     - get: terraform-yaml
@@ -918,6 +928,8 @@ jobs:
     - get: elastalert-release
       passed: [deploy-logsearch-staging]
     - get: cg-s3-riemann-release
+      passed: [deploy-logsearch-staging]
+    - get: prometheus-release
       passed: [deploy-logsearch-staging]
     - get: logsearch-stemcell
       passed: [deploy-logsearch-staging]
@@ -1189,6 +1201,11 @@ resources:
     bucket: {{cg-s3-bosh-releases-bucket}}
     regexp: riemann-(.*).tgz
     region_name: {{aws-region}}
+
+- name: prometheus-release
+  type: bosh-io-release
+  source:
+    repository: cloudfoundry-community/prometheus-boshrelease
 
 - name: logsearch-config
   type: git
