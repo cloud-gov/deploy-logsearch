@@ -19,4 +19,5 @@ releases:
 - {name: logsearch, version: latest}
 - {name: logsearch-for-cloudfoundry, version: latest}
 - {name: elastalert, version: latest}
+- {name: prometheus, version: latest}
 - {name: oauth2-proxy, version: latest}
