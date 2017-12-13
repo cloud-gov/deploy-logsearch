@@ -28,7 +28,7 @@ https://github.com/18F/cg-snort-boshrelease/blob/master/ci/config/snort-conf/sno
 ### Rule body:
 https://github.com/18F/cg-deploy-logsearch/blob/master/elastalert/logsearch-platform-elastalert.yml
 ### Guidance:
-Review the indicated instance, snort ID, and the contents of the snort rule which fired. Review relevant network/http logs if available for additional context.
+Review the indicated instance, snort ID, and the contents of the snort rule which fired. Review the relevent snort log (https://cloud.gov/docs/ops/runbook/troubleshooting-snort/). Review relevant network/http logs if available for additional context. 
 
 If you cannot positively confirm the alert to be a false positive or true positive/unaffected in the case of vulnerability scanning follow the security incident response guide.
 
