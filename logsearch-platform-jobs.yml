@@ -13,10 +13,10 @@ instance_groups:
       elasticsearch: {from: elasticsearch_master}
     properties:
       elasticsearch:
+        cluster_name: logsearch-platform
         node:
           allow_master: true
           allow_data: false
-        cluster_name: logsearch
         exec:
           environment:
             JAVA_OPTS: '"-Djava.io.tmpdir=${TMP_DIR}"'
