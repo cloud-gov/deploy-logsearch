@@ -13,7 +13,7 @@ instance_groups:
       elasticsearch: {from: elasticsearch_master}
     properties:
       elasticsearch:
-        cluster_name: logsearch-tenant
+        cluster_name: logsearch
         node:
           allow_master: true
           allow_data: false
