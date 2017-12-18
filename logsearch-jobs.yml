@@ -180,13 +180,14 @@ instance_groups:
     release: logsearch
     consumes:
       elasticsearch: {from: elasticsearch_master}
+    properties:
+      elasticsearch:
+        heap_size: 2G
   - name: kibana
     release: logsearch
     consumes:
       elasticsearch: {from: elasticsearch_master}
     properties:
-      elasticsearch:
-        heap_size: 2G
       kibana:
         memory_limit: 65
         default_app_id: "dashboard/App-Overview"
