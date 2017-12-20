@@ -1,4 +1,7 @@
 instance_groups:
+- name: elasticsearch_master
+  instances: 1
+
 - name: elasticsearch_data
   instances: 3
 
@@ -19,6 +22,7 @@ instance_groups:
         api_endpoint: https://api.dev.us-gov-west-1.aws-us-gov.cloud.gov
 
 - name: kibana
+  instances: 1
   jobs:
   - name: kibana-auth-plugin
     properties:

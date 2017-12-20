@@ -1,9 +1,12 @@
 instance_groups:
+- name: elasticsearch_master
+  instances: 1
+
 - name: elasticsearch_data
   instances: 3
 
 - name: ingestor
-  instances: 2
+  instances: 1
 
 - name: maintenance
   jobs:
@@ -14,6 +17,7 @@ instance_groups:
           retention_period: 7
 
 - name: kibana
+  instances: 1
   jobs:
   - name: oauth2-proxy
     properties:
