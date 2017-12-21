@@ -1,6 +1,11 @@
 instance_groups:
 - name: elasticsearch_master
   instances: 1
+  networks:
+  - name: services
+    static_ips:
+    - (( replace ))
+    - (( grab terraform_outputs.logsearch_static_ips.[0]))
 
 - name: elasticsearch_data
   instances: 3
