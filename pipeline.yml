@@ -555,7 +555,6 @@ jobs:
       resource: logsearch-for-cloudfoundry-release-development
     - get: elastalert-release
       resource: elastalert-release-development
-    - get: cg-s3-riemann-release
     - get: prometheus-release
       trigger: true
     - get: logsearch-stemcell
@@ -589,7 +588,6 @@ jobs:
       - logsearch-release/*.tgz
       - logsearch-for-cloudfoundry-release/*.tgz
       - elastalert-release/*.tgz
-      - cg-s3-riemann-release/*.tgz
       - prometheus-release/*.tgz
       stemcells:
       - logsearch-stemcell/*.tgz
@@ -746,7 +744,6 @@ jobs:
     - get: logsearch-release
     - get: logsearch-for-cloudfoundry-release
     - get: elastalert-release
-    - get: cg-s3-riemann-release
     - get: prometheus-release
       trigger: true
     - get: logsearch-stemcell
@@ -926,8 +923,6 @@ jobs:
     - get: logsearch-for-cloudfoundry-release
       passed: [deploy-logsearch-staging]
     - get: elastalert-release
-      passed: [deploy-logsearch-staging]
-    - get: cg-s3-riemann-release
       passed: [deploy-logsearch-staging]
     - get: prometheus-release
       passed: [deploy-logsearch-staging]
@@ -1193,13 +1188,6 @@ resources:
   source:
     bucket: {{cg-s3-bosh-releases-bucket}}
     regexp: oauth2-proxy-(.*).tgz
-    region_name: {{aws-region}}
-
-- name: cg-s3-riemann-release
-  type: s3-iam
-  source:
-    bucket: {{cg-s3-bosh-releases-bucket}}
-    regexp: riemann-(.*).tgz
     region_name: {{aws-region}}
 
 - name: prometheus-release
