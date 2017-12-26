@@ -26,15 +26,6 @@ instance_groups:
           timeout: 900
         recovery:
           delay_allocation_restart: "15m"
-  - name: riemann-emitter
-    release: riemann
-    properties:
-      riemann_emitter:
-        elastic:
-          host: 127.0.0.1
-          port: 9200
-  - name: riemann-checklogs
-    release: riemann
   - name: snort-config
     release: snort
     properties:
