@@ -36,6 +36,10 @@ instance_groups:
           api_endpoint: https://api.dev.us-gov-west-1.aws-us-gov.cloud.gov
           system_domain: dev.us-gov-west-1.aws-us-gov.cloud.gov
   - name: route_registrar
+    consumes:
+      nats:
+        from: nats
+        deployment: cf-development
     properties:
       route_registrar:
         routes:

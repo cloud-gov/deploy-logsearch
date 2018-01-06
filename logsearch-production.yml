@@ -24,6 +24,10 @@ instance_groups:
           api_endpoint: https://api.fr.cloud.gov
           system_domain: fr.cloud.gov
   - name: route_registrar
+    consumes:
+      nats:
+        from: nats
+        deployment: cf-staging
     properties:
       route_registrar:
         routes:
