@@ -27,7 +27,7 @@ instance_groups:
     consumes:
       nats:
         from: nats
-        deployment: cf-staging
+        deployment: cf-production
     properties:
       route_registrar:
         routes:
