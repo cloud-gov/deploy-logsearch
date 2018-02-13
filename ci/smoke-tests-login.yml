@@ -15,4 +15,4 @@ run:
   - -exc
   - |
     pip install requests
-    python logsearch-config/smoke-tests-login.py
+    python logsearch-config/ci/smoke-tests-login.py

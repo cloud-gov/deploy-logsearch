@@ -82,6 +82,7 @@ jobs:
       resource: elastalert-release-development
     - get: prometheus-release
     - get: oauth2-proxy-release
+    - get: secureproxy-release
     - get: logsearch-stemcell
       trigger: true
     - get: terraform-yaml
@@ -130,6 +131,7 @@ jobs:
       - elastalert-release/*.tgz
       - prometheus-release/*.tgz
       - oauth2-proxy-release/*.tgz
+      - secureproxy-release/*.tgz
       stemcells:
       - logsearch-stemcell/*.tgz
   on_failure:
@@ -254,6 +256,7 @@ jobs:
     - get: elastalert-release
     - get: prometheus-release
     - get: oauth2-proxy-release
+    - get: secureproxy-release
     - get: logsearch-stemcell
       trigger: true
     - get: terraform-yaml
@@ -404,6 +407,8 @@ jobs:
     - get: prometheus-release
       passed: [deploy-logsearch-platform-staging]
     - get: oauth2-proxy-release
+      passed: [deploy-logsearch-platform-staging]
+    - get: secureproxy-release
       passed: [deploy-logsearch-platform-staging]
     - get: logsearch-stemcell
       passed: [deploy-logsearch-platform-staging]
@@ -1188,6 +1193,13 @@ resources:
   source:
     bucket: {{cg-s3-bosh-releases-bucket}}
     regexp: oauth2-proxy-(.*).tgz
+    region_name: {{aws-region}}
+
+- name: secureproxy-release
+  type: s3-iam
+  source:
+    bucket: {{cg-s3-bosh-releases-bucket}}
+    regexp: secureproxy-(.*).tgz
     region_name: {{aws-region}}
 
 - name: prometheus-release
