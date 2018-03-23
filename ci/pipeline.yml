@@ -200,7 +200,7 @@ jobs:
 #     - get: tests-timer
 #       trigger: true
 #   - task: smoke-tests-login
-#     file: logsearch-config/smoke-tests-login.yml
+#     file: logsearch-config/ci/smoke-tests-login.yml
 #     params:
 #       CF_USERNAME: {{cf-username-development}}
 #       CF_PASSWORD: {{cf-password-development}}
@@ -346,7 +346,7 @@ jobs:
 #     - get: tests-timer
 #       trigger: true
 #   - task: smoke-tests-login
-#     file: logsearch-config/smoke-tests-login.yml
+#     file: logsearch-config/ci/smoke-tests-login.yml
 #     params:
 #       CF_USERNAME: {{cf-username-staging}}
 #       CF_PASSWORD: {{cf-password-staging}}
@@ -502,7 +502,7 @@ jobs:
 #     - get: tests-timer
 #       trigger: true
 #   - task: smoke-tests-login
-#     file: logsearch-config/smoke-tests-login.yml
+#     file: logsearch-config/ci/smoke-tests-login.yml
 #     params:
 #       CF_USERNAME: {{cf-username-production}}
 #       CF_PASSWORD: {{cf-password-production}}
@@ -662,7 +662,7 @@ jobs:
     - get: tests-timer
       trigger: true
   - task: smoke-tests-login
-    file: logsearch-config/smoke-tests-login.yml
+    file: logsearch-config/ci/smoke-tests-login.yml
     params:
       CF_USERNAME: {{cf-username-development}}
       CF_PASSWORD: {{cf-password-development}}
@@ -840,7 +840,7 @@ jobs:
     - get: tests-timer
       trigger: true
   - task: smoke-tests-login
-    file: logsearch-config/smoke-tests-login.yml
+    file: logsearch-config/ci/smoke-tests-login.yml
     params:
       CF_USERNAME: {{cf-username-staging}}
       CF_PASSWORD: {{cf-password-staging}}
@@ -1021,7 +1021,7 @@ jobs:
     - get: tests-timer
       trigger: true
   - task: smoke-tests-login
-    file: logsearch-config/smoke-tests-login.yml
+    file: logsearch-config/ci/smoke-tests-login.yml
     params:
       CF_USERNAME: {{cf-username-production}}
       CF_PASSWORD: {{cf-password-production}}
