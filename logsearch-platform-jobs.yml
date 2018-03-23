@@ -172,7 +172,7 @@ instance_groups:
         listen_port: 5600
         proxy_port: 5601
   vm_type: logsearch_kibana
-  vm_extensions: [platform-kibana-lb]
+  vm_extensions: [platform-kibana-lb, platform-kibana-target]
   stemcell: default
   azs: [z1]
   networks:
