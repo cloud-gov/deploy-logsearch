@@ -108,7 +108,7 @@ jobs:
             logsearch-config/logsearch-platform-deployment.yml \
             logsearch-config/logsearch-platform-jobs.yml \
             logsearch-config/elastalert/logsearch-platform-elastalert.yml \
-            common-secrets/secrets.yml \
+            common-secrets/logsearch-platform-development.yml \
             logsearch-config/logsearch-platform-development.yml \
             terraform-yaml/state.yml \
             > logsearch-manifest/manifest.yml
@@ -250,7 +250,6 @@ jobs:
       trigger: true
     - get: common-secrets
       resource: common-platform-staging
-      trigger: true
     - get: logsearch-release
     - get: logsearch-for-cloudfoundry-release
     - get: elastalert-release
@@ -274,7 +273,7 @@ jobs:
             logsearch-config/logsearch-platform-deployment.yml \
             logsearch-config/logsearch-platform-jobs.yml \
             logsearch-config/elastalert/logsearch-platform-elastalert.yml \
-            common-secrets/secrets.yml \
+            common-secrets/logsearch-platform.yml \
             logsearch-config/logsearch-platform-staging.yml \
             terraform-yaml/state.yml \
             > logsearch-manifest/manifest.yml
@@ -430,7 +429,7 @@ jobs:
             logsearch-config/logsearch-platform-deployment.yml \
             logsearch-config/logsearch-platform-jobs.yml \
             logsearch-config/elastalert/logsearch-platform-elastalert.yml \
-            common-secrets/secrets.yml \
+            common-secrets/logsearch-platform.yml \
             logsearch-config/logsearch-platform-production.yml \
             terraform-yaml/state.yml \
             > logsearch-manifest/manifest.yml
@@ -579,7 +578,7 @@ jobs:
             logsearch-config/logsearch-deployment.yml \
             logsearch-config/logsearch-jobs.yml \
             logsearch-config/elastalert/logsearch-elastalert.yml \
-            common-secrets/secrets.yml \
+            common-secrets/logsearch-development.yml \
             logsearch-config/logsearch-development.yml \
             terraform-yaml/state.yml \
             > logsearch-manifest/manifest.yml
@@ -768,7 +767,7 @@ jobs:
             logsearch-config/logsearch-deployment.yml \
             logsearch-config/logsearch-jobs.yml \
             logsearch-config/elastalert/logsearch-elastalert.yml \
-            common-secrets/secrets.yml \
+            common-secrets/logsearch.yml \
             logsearch-config/logsearch-staging.yml \
             terraform-yaml/state.yml \
             > logsearch-manifest/manifest.yml
@@ -951,7 +950,7 @@ jobs:
             logsearch-config/logsearch-deployment.yml \
             logsearch-config/logsearch-jobs.yml \
             logsearch-config/elastalert/logsearch-elastalert.yml \
-            common-secrets/secrets.yml \
+            common-secrets/logsearch.yml \
             logsearch-config/logsearch-production.yml \
             terraform-yaml/state.yml \
             > logsearch-manifest/manifest.yml
@@ -1102,58 +1101,46 @@ resources:
     versioned_file: master-bosh.crt
 
 - name: common-development
-  type: cg-common
+  type: s3-iam
   source:
-    bucket_name: {{logsearch-private-bucket-development}}
-    secrets_file: logsearch-development.yml
-    secrets_passphrase: {{logsearch-development-private-passphrase}}
-    bosh_cert: bosh.pem
-    region: {{aws-region}}
+    bucket: {{logsearch-private-bucket-development}}
+    versioned_file: logsearch-development.yml
+    region_name: {{aws-region}}
 
 - name: common-staging
-  type: cg-common
+  type: s3-iam
   source:
-    bucket_name: {{logsearch-private-bucket-staging}}
-    secrets_file: logsearch.yml
-    secrets_passphrase: {{logsearch-staging-private-passphrase}}
-    bosh_cert: bosh.pem
-    region: {{aws-region}}
+    bucket: {{logsearch-private-bucket-staging}}
+    versioned_file: logsearch.yml
+    region_name: {{aws-region}}
 
 - name: common-prod
-  type: cg-common
+  type: s3-iam
   source:
-    bucket_name: {{logsearch-private-bucket-production}}
-    secrets_file: logsearch.yml
-    secrets_passphrase: {{logsearch-production-private-passphrase}}
-    bosh_cert: bosh.pem
-    region: {{aws-region}}
+    bucket: {{logsearch-private-bucket-production}}
+    versioned_file: logsearch.yml
+    region_name: {{aws-region}}
 
 - name: common-platform-development
-  type: cg-common
+  type: s3-iam
   source:
-    bucket_name: {{logsearch-private-bucket-development}}
-    secrets_file: logsearch-platform-development.yml
-    secrets_passphrase: {{logsearch-platform-development-private-passphrase}}
-    bosh_cert: bosh.pem
-    region: {{aws-region}}
+    bucket: {{logsearch-private-bucket-development}}
+    versioned_file: logsearch-platform-development.yml
+    region_name: {{aws-region}}
 
 - name: common-platform-staging
-  type: cg-common
+  type: s3-iam
   source:
-    bucket_name: {{logsearch-private-bucket-staging}}
-    secrets_file: logsearch-platform.yml
-    secrets_passphrase: {{logsearch-platform-staging-private-passphrase}}
-    bosh_cert: bosh.pem
-    region: {{aws-region}}
+    bucket: {{logsearch-private-bucket-staging}}
+    versioned_file: logsearch-platform.yml
+    region_name: {{aws-region}}
 
 - name: common-platform-production
-  type: cg-common
+  type: s3-iam
   source:
-    bucket_name: {{logsearch-private-bucket-production}}
-    secrets_file: logsearch-platform.yml
-    secrets_passphrase: {{logsearch-platform-production-private-passphrase}}
-    bosh_cert: bosh.pem
-    region: {{aws-region}}
+    bucket: {{logsearch-private-bucket-production}}
+    versioned_file: logsearch-platform.yml
+    region_name: {{aws-region}}
 
 - &logsearch-release-tarball
   name: logsearch-release
@@ -1321,11 +1308,6 @@ resource_types:
   type: docker-image
   source:
     repository: cloudfoundry/bosh-deployment-resource
-
-- name: cg-common
-  type: docker-image
-  source:
-    repository: 18fgsa/cg-common-resource
 
 - name: s3-iam
   type: docker-image
