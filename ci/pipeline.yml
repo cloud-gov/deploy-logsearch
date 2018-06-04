@@ -108,7 +108,7 @@ jobs:
             logsearch-config/logsearch-platform-deployment.yml \
             logsearch-config/logsearch-platform-jobs.yml \
             logsearch-config/elastalert/logsearch-platform-elastalert.yml \
-            common-secrets/secrets.yml \
+            common-secrets/logsearch-platform-development.yml \
             logsearch-config/logsearch-platform-development.yml \
             terraform-yaml/state.yml \
             > logsearch-manifest/manifest.yml
@@ -273,7 +273,7 @@ jobs:
             logsearch-config/logsearch-platform-deployment.yml \
             logsearch-config/logsearch-platform-jobs.yml \
             logsearch-config/elastalert/logsearch-platform-elastalert.yml \
-            common-secrets/logsearch-platform-decrypted.yml \
+            common-secrets/logsearch-platform.yml \
             logsearch-config/logsearch-platform-staging.yml \
             terraform-yaml/state.yml \
             > logsearch-manifest/manifest.yml
@@ -429,7 +429,7 @@ jobs:
             logsearch-config/logsearch-platform-deployment.yml \
             logsearch-config/logsearch-platform-jobs.yml \
             logsearch-config/elastalert/logsearch-platform-elastalert.yml \
-            common-secrets/secrets.yml \
+            common-secrets/logsearch-platform.yml \
             logsearch-config/logsearch-platform-production.yml \
             terraform-yaml/state.yml \
             > logsearch-manifest/manifest.yml
@@ -578,7 +578,7 @@ jobs:
             logsearch-config/logsearch-deployment.yml \
             logsearch-config/logsearch-jobs.yml \
             logsearch-config/elastalert/logsearch-elastalert.yml \
-            common-secrets/secrets.yml \
+            common-secrets/logsearch-development.yml \
             logsearch-config/logsearch-development.yml \
             terraform-yaml/state.yml \
             > logsearch-manifest/manifest.yml
@@ -767,7 +767,7 @@ jobs:
             logsearch-config/logsearch-deployment.yml \
             logsearch-config/logsearch-jobs.yml \
             logsearch-config/elastalert/logsearch-elastalert.yml \
-            common-secrets/logsearch-decrypted.yml \
+            common-secrets/logsearch.yml \
             logsearch-config/logsearch-staging.yml \
             terraform-yaml/state.yml \
             > logsearch-manifest/manifest.yml
@@ -950,7 +950,7 @@ jobs:
             logsearch-config/logsearch-deployment.yml \
             logsearch-config/logsearch-jobs.yml \
             logsearch-config/elastalert/logsearch-elastalert.yml \
-            common-secrets/secrets.yml \
+            common-secrets/logsearch.yml \
             logsearch-config/logsearch-production.yml \
             terraform-yaml/state.yml \
             > logsearch-manifest/manifest.yml
