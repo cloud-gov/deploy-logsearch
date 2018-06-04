@@ -248,9 +248,7 @@ jobs:
     - get: pipeline-tasks
     - get: logsearch-config
       trigger: true
-    - get: common-secrets
-      resource: common-platform-staging
-      trigger: true
+    - get: common-platform-staging
     - get: logsearch-release
     - get: logsearch-for-cloudfoundry-release
     - get: elastalert-release
@@ -274,7 +272,7 @@ jobs:
             logsearch-config/logsearch-platform-deployment.yml \
             logsearch-config/logsearch-platform-jobs.yml \
             logsearch-config/elastalert/logsearch-platform-elastalert.yml \
-            common-secrets/secrets.yml \
+            common-platform-staging/logsearch-decrypted.yml \
             logsearch-config/logsearch-platform-staging.yml \
             terraform-yaml/state.yml \
             > logsearch-manifest/manifest.yml
@@ -743,8 +741,7 @@ jobs:
     - get: pipeline-tasks
     - get: logsearch-config
       trigger: true
-    - get: common-secrets
-      resource: common-staging
+    - get: common-staging
       trigger: true
     - get: logsearch-release
     - get: logsearch-for-cloudfoundry-release
@@ -768,7 +765,7 @@ jobs:
             logsearch-config/logsearch-deployment.yml \
             logsearch-config/logsearch-jobs.yml \
             logsearch-config/elastalert/logsearch-elastalert.yml \
-            common-secrets/secrets.yml \
+            common-staging/logsearch-decrypted.yml \
             logsearch-config/logsearch-staging.yml \
             terraform-yaml/state.yml \
             > logsearch-manifest/manifest.yml
@@ -1111,13 +1108,11 @@ resources:
     region: {{aws-region}}
 
 - name: common-staging
-  type: cg-common
+  type: s3-iam
   source:
-    bucket_name: {{logsearch-private-bucket-staging}}
-    secrets_file: logsearch.yml
-    secrets_passphrase: {{logsearch-staging-private-passphrase}}
-    bosh_cert: bosh.pem
-    region: {{aws-region}}
+    bucket: {{logsearch-private-bucket-staging}}
+    versioned_file: logsearch-staging.yml
+    region_name: {{aws-region}}
 
 - name: common-prod
   type: cg-common
@@ -1138,13 +1133,11 @@ resources:
     region: {{aws-region}}
 
 - name: common-platform-staging
-  type: cg-common
+  type: s3-iam
   source:
-    bucket_name: {{logsearch-private-bucket-staging}}
-    secrets_file: logsearch-platform.yml
-    secrets_passphrase: {{logsearch-platform-staging-private-passphrase}}
-    bosh_cert: bosh.pem
-    region: {{aws-region}}
+    bucket: {{logsearch-private-bucket-staging}}
+    secrets_file: logsearch-platform-decrypted.yml
+    region_name: {{aws-region}}
 
 - name: common-platform-production
   type: cg-common
