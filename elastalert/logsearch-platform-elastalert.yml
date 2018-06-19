@@ -80,9 +80,7 @@ instance_groups:
               - "signature_name"
               - "file_path"
               filter:
-              - bool:
-                  must:
-                  - term:
-                      "@source.component": "clamd"
-                  - match:
-                      "event_type": "ScanOnAccess"
+              - query:
+                  query_string:
+                    query: "@source.component:clamd AND ScanOnAccess AND FOUND"
+
