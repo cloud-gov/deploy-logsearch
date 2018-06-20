@@ -39,14 +39,14 @@ instance_groups:
               - "syslog_sd_params.id"
               realert:
                 hours: 1
-              alert_subject: "Snort alert on host {0}:{3}/{4} (IP: {5}). sid:{1}; rev:{2}"
+              alert_subject: "Snort alert on {0}:{1}/{2} (IP: {3}). sid:{4}; rev:{5}"
               alert_subject_args:
-              - "@source.host"
-              - "sid"
-              - "rev"
               - "syslog_sd_params.deployment"
               - "syslog_sd_params.group"
               - "syslog_sd_params.id"
+              - "@source.host"
+              - "sid"
+              - "rev"
               alert_text: "{0}"
               alert_text_args:
               - "@message"
@@ -75,14 +75,14 @@ instance_groups:
               - "syslog_sd_params.id"
               realert:
                 hours: 1
-              alert_subject: "ClamAV alert on host {0}:{3}/{4} (IP: {5}). sig:{1}; path:{2}"
+              alert_subject: "ClamAV alert on {0}:{1}/{2} (IP: {3}): file: {5} sig: {4}"
               alert_subject_args:
-              - "@source.host"
-              - "signature_name"
-              - "file_path"
               - "syslog_sd_params.deployment"
               - "syslog_sd_params.group"
               - "syslog_sd_params.id"
+              - "@source.host"
+              - "signature_name"
+              - "file_path"
               alert_text: "{0}"
               alert_text_args:
               - "@message"
