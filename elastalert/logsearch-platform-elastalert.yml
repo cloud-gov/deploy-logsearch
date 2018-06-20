@@ -31,13 +31,19 @@ instance_groups:
               type: any
               index: logs-platform-*
               query_key:
+              - "syslog_sd_params.deployment"
+              - "syslog_sd_params.group"
+              - "syslog_sd_params.id"
               - "@source.host"
               - "sid"
               - "rev"
               realert:
                 hours: 1
-              alert_subject: "Snort alert on host {0}. sid:{1}; rev:{2}"
+              alert_subject: "Snort alert on {0}:{1}/{2} (IP: {3}). sid:{4}; rev:{5}"
               alert_subject_args:
+              - "syslog_sd_params.deployment"
+              - "syslog_sd_params.group"
+              - "syslog_sd_params.id"
               - "@source.host"
               - "sid"
               - "rev"
@@ -60,11 +66,17 @@ instance_groups:
               type: any
               index: logs-platform-*
               query_key:
+              - "syslog_sd_params.deployment"
+              - "syslog_sd_params.group"
+              - "syslog_sd_params.id"
               - "@source.host"
               realert:
                 hours: 1
-              alert_subject: "ClamAV alert on host {0}."
+              alert_subject: "ClamAV alert on {0}:{1}/{2} (IP: {3})."
               alert_subject_args:
+              - "syslog_sd_params.deployment"
+              - "syslog_sd_params.group"
+              - "syslog_sd_params.id"
               - "@source.host"
               alert_text: "{0}"
               alert_text_args:
