@@ -233,6 +233,8 @@ instance_groups:
       logstash:
         queue:
           max_bytes: 30gb
+      logstash_archiver:
+        files: 16384
       logstash_ingestor:
         outputs:
         - plugin: s3
