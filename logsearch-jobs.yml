@@ -249,7 +249,9 @@ instance_groups:
     properties:
       cloudfoundry:
         firehose_subscription_id: logsearch-archiver
-        firehose_events: "LogMessage,ContainerMetric"
+        firehose_events:
+        - LogMessage
+        - ContainerMetric
         firehose_client_id: logsearch_firehose_ingestor
         skip_ssl_validation: false
       syslog:
@@ -293,7 +295,9 @@ instance_groups:
     properties:
       cloudfoundry:
         firehose_subscription_id: logsearch-ingestor
-        firehose_events: "LogMessage,ContainerMetric"
+        firehose_events:
+        - LogMessage
+        - ContainerMetric
         firehose_client_id: logsearch_firehose_ingestor
         skip_ssl_validation: false
       syslog:
@@ -344,7 +348,9 @@ instance_groups:
       elasticsearch: {from: elasticsearch_master}
     properties:
       cloudfoundry:
-        firehose_events: "LogMessage,ContainerMetric"
+        firehose_events:
+        - LogMessage
+        - ContainerMetric
       kibana_objects:
         upload_patterns:
         - {type: index-pattern, pattern: "/var/vcap/jobs/upload-kibana-objects/kibana-objects/index-pattern/*.json"}
