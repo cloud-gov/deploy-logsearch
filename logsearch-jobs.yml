@@ -322,7 +322,7 @@ instance_groups:
   lifecycle: errand
   release: logsearch
   jobs:
-  - name: smoke-tests
+  - name: smoke_tests
     release: logsearch
     consumes:
       elasticsearch: {from: elasticsearch_master}
