@@ -255,6 +255,7 @@ instance_groups:
         - LogMessage
         - ContainerMetric
         firehose_client_id: logsearch_firehose_ingestor
+        firehose_cc_pull_interval: 300s
         skip_ssl_validation: false
       syslog:
         host: 127.0.0.1
@@ -301,6 +302,7 @@ instance_groups:
         - LogMessage
         - ContainerMetric
         firehose_client_id: logsearch_firehose_ingestor
+        firehose_cc_pull_interval: 300s
         skip_ssl_validation: false
       syslog:
         host: 127.0.0.1
