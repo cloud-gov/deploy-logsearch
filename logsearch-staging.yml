@@ -1,4 +1,7 @@
 instance_groups:
+- name: elasticsearch_data
+  instances: 3
+
 - name: archiver
   instances: 1
   jobs:
