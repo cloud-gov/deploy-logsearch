@@ -715,7 +715,7 @@ jobs:
     params:
       AWS_DEFAULT_REGION: {{aws-region}}
       ES_HOST: {{logsearch-development-check-backup-es-host}}
-      GATEWAY_HOST: {{logsearch-development-check-backup-gateway-host}}
+      GATEWAY_HOST: prometheus-staging.service.cf.internal
       BUCKET_NAME: logsearch-cf-development
       ENVIRONMENT: development-tenant
       INDEX_PATTERN: logs-app-*
@@ -731,7 +731,7 @@ jobs:
     file: logsearch-config/ci/check-backup.yml
     params:
       ES_HOST: {{logsearch-development-platform-check-backup-es-host}}
-      GATEWAY_HOST: {{logsearch-development-check-backup-gateway-host}}
+      GATEWAY_HOST: prometheus-staging.service.cf.internal
       ENVIRONMENT: development-platform
       INDEX_PATTERN: logs-platform-*
 
@@ -892,7 +892,7 @@ jobs:
     params:
       AWS_DEFAULT_REGION: {{aws-region}}
       ES_HOST: {{logsearch-staging-check-backup-es-host}}
-      GATEWAY_HOST: {{logsearch-staging-check-backup-gateway-host}}
+      GATEWAY_HOST: prometheus-staging.service.cf.internal
       BUCKET_NAME: logsearch-cf-staging
       ENVIRONMENT: staging-tenant
       INDEX_PATTERN: logs-app-*
@@ -907,7 +907,7 @@ jobs:
     file: logsearch-config/ci/check-backup.yml
     params:
       ES_HOST: {{logsearch-staging-platform-check-backup-es-host}}
-      GATEWAY_HOST: {{logsearch-staging-check-backup-gateway-host}}
+      GATEWAY_HOST: prometheus-staging.service.cf.internal
       ENVIRONMENT: development-platform
       INDEX_PATTERN: logs-platform-*
 
@@ -1073,7 +1073,7 @@ jobs:
     params:
       AWS_DEFAULT_REGION: {{aws-region}}
       ES_HOST: {{logsearch-production-check-backup-es-host}}
-      GATEWAY_HOST: {{logsearch-production-check-backup-gateway-host}}
+      GATEWAY_HOST: prometheus-production.service.cf.internal
       BUCKET_NAME: logsearch-cf-production
       ENVIRONMENT: production-tenant
       INDEX_PATTERN: logs-app-*
@@ -1088,7 +1088,7 @@ jobs:
     file: logsearch-config/ci/check-backup.yml
     params:
       ES_HOST: {{logsearch-production-platform-check-backup-es-host}}
-      GATEWAY_HOST: {{logsearch-production-check-backup-gateway-host}}
+      GATEWAY_HOST: prometheus-production.service.cf.internal
       ENVIRONMENT: production-platform
       INDEX_PATTERN: logs-platform-*
 
