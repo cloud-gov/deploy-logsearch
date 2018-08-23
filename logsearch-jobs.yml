@@ -174,7 +174,6 @@ instance_groups:
     properties:
       elasticsearch:
         heap_size: 2G
-        config_options: 'thread_pool.search.queue_size: 10000'
   - name: kibana
     release: logsearch
     consumes:
