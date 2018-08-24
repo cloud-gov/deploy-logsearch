@@ -74,6 +74,7 @@ instance_groups:
       elasticsearch: {from: elasticsearch_master}
     properties:
       elasticsearch_config:
+        app_index_prefix: logs-platform
         templates:
         - shards-and-replicas: /var/vcap/jobs/elasticsearch_config/index-templates/shards-and-replicas.json
         - index-settings: /var/vcap/jobs/elasticsearch_config/index-templates/index-settings.json
@@ -197,7 +198,7 @@ instance_groups:
       logstash_parser:
         elasticsearch:
           # Use per-day indexing strategy
-          index: "logs-%{@index_type}-%{+YYYY.MM.dd}"
+          index: "logs-platform-%{+YYYY.MM.dd}"
           index_type: "%{@type}"
         filters:
         - path: /var/vcap/packages/logsearch-config-logstash-filters/logstash-filters-default.conf
@@ -264,6 +265,8 @@ instance_groups:
     consumes:
       elasticsearch: {from: elasticsearch_master}
     properties:
+      elasticsearch_config:
+        app_index_prefix: logs-platform
       kibana_objects:
         upload_patterns:
         - {type: index-pattern, pattern: "/var/vcap/jobs/upload-kibana-objects/kibana-objects/index-pattern/*.json"}
