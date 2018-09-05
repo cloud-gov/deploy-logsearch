@@ -98,3 +98,6 @@ instance_groups:
                       "@source.component": "clamd"
                   - match:
                       "event_type": "ScanOnAccess"
+                  - not:
+                      term:
+                        "signature_name": "null"
