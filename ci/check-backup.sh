@@ -8,7 +8,7 @@ now=$(date -u)
 
 tempfile=$(mktemp)
 
-log_count=$(curl -s "${ES_HOST}:${ES_PORT:-9200}/${INDEX_PATTERN}/_search?size=0" -d @<(cat <<EOF
+log_count=$(curl -s "${ES_HOST}:${ES_PORT:-9200}/${INDEX_PATTERN}/_search?size=0" -H 'Content-Type: application/json' -d @<(cat <<EOF
 {
   "query": {
     "range": {
