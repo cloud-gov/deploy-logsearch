@@ -83,7 +83,7 @@ jobs:
     - get: prometheus-release
     - get: oauth2-proxy-release
     - get: secureproxy-release
-    - get: logsearch-stemcell
+    - get: logsearch-stemcell-xenial
       trigger: true
     - get: terraform-yaml
       resource: terraform-yaml-development
@@ -133,7 +133,7 @@ jobs:
       - oauth2-proxy-release/*.tgz
       - secureproxy-release/*.tgz
       stemcells:
-      - logsearch-stemcell/*.tgz
+      - logsearch-stemcell-xenial/*.tgz
   on_failure:
     put: slack
     params: &slack-params
@@ -256,7 +256,7 @@ jobs:
     - get: prometheus-release
     - get: oauth2-proxy-release
     - get: secureproxy-release
-    - get: logsearch-stemcell
+    - get: logsearch-stemcell-xenial
       trigger: true
     - get: terraform-yaml
       resource: terraform-yaml-staging
@@ -409,7 +409,7 @@ jobs:
       passed: [deploy-logsearch-platform-staging]
     - get: secureproxy-release
       passed: [deploy-logsearch-platform-staging]
-    - get: logsearch-stemcell
+    - get: logsearch-stemcell-xenial
       passed: [deploy-logsearch-platform-staging]
       trigger: true
     - get: logsearch-platform-staging-deployment
@@ -561,7 +561,7 @@ jobs:
       resource: elastalert-release-development
     - get: prometheus-release
       trigger: true
-    - get: logsearch-stemcell
+    - get: logsearch-stemcell-xenial
       trigger: true
     - get: terraform-yaml
       resource: terraform-yaml-development
@@ -594,7 +594,7 @@ jobs:
       - elastalert-release/*.tgz
       - prometheus-release/*.tgz
       stemcells:
-      - logsearch-stemcell/*.tgz
+      - logsearch-stemcell-xenial/*.tgz
   on_failure:
     put: slack
     params: &slack-params
@@ -750,7 +750,7 @@ jobs:
     - get: elastalert-release
     - get: prometheus-release
       trigger: true
-    - get: logsearch-stemcell
+    - get: logsearch-stemcell-xenial
       trigger: true
     - get: terraform-yaml
       resource: terraform-yaml-staging
@@ -930,7 +930,7 @@ jobs:
       passed: [deploy-logsearch-staging]
     - get: prometheus-release
       passed: [deploy-logsearch-staging]
-    - get: logsearch-stemcell
+    - get: logsearch-stemcell-xenial
       passed: [deploy-logsearch-staging]
       trigger: true
     - get: logsearch-staging-deployment
@@ -1206,10 +1206,10 @@ resources:
     uri: {{cg-deploy-logsearch-development-git-url}}
     branch: {{cg-deploy-logsearch-development-git-branch}}
 
-- name: logsearch-stemcell
+- name: logsearch-stemcell-xenial
   type: bosh-io-stemcell
   source:
-    name: bosh-aws-xen-hvm-ubuntu-trusty-go_agent
+    name: bosh-aws-xen-hvm-ubuntu-xenial-go_agent
 
 - name: logsearch-development-deployment
   type: bosh-deployment
