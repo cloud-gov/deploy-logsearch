@@ -26,6 +26,8 @@ instance_groups:
           timeout: 900
         recovery:
           delay_allocation_restart: "15m"
+        plugins:
+        - opendistro-alerting: https://d3g5vo6xdbdb9a.cloudfront.net/downloads/elasticsearch-plugins/opendistro-alerting/opendistro_alerting-0.7.0.0.zip
   - name: snort-config
     release: snort
     properties:
@@ -180,10 +182,11 @@ instance_groups:
       elasticsearch: {from: elasticsearch_master}
     properties:
       kibana:
-        memory_limit: 65
+        memory_limit: 75
         default_app_id: "dashboard/App-Overview"
         plugins:
         - auth: /var/vcap/packages/kibana-auth-plugin/kibana-auth-plugin.zip
+        - opendistro-alerting: https://d3g5vo6xdbdb9a.cloudfront.net/downloads/kibana-plugins/opendistro-alerting/opendistro-alerting-0.7.0.0.zip
         config_options: |-
           console.enabled: false
         env:
