@@ -186,7 +186,6 @@ instance_groups:
         default_app_id: "dashboard/App-Overview"
         plugins:
         - auth: /var/vcap/packages/kibana-auth-plugin/kibana-auth-plugin.zip
-        - opendistro-alerting: https://d3g5vo6xdbdb9a.cloudfront.net/downloads/kibana-plugins/opendistro-alerting/opendistro-alerting-0.7.0.0.zip
         config_options: |-
           console.enabled: false
         env:
