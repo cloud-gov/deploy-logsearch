@@ -125,6 +125,8 @@ instance_groups:
           timeout: 900
         recovery:
           delay_allocation_restart: "15m"
+        plugins:
+        - opendistro-alerting: https://d3g5vo6xdbdb9a.cloudfront.net/downloads/elasticsearch-plugins/opendistro-alerting/opendistro_alerting-0.7.0.0.zip
   vm_type: logsearch_es_data
   persistent_disk_type: logsearch_es_platform_data
   stemcell: default
