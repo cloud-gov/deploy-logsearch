@@ -26,8 +26,6 @@ instance_groups:
           timeout: 900
         recovery:
           delay_allocation_restart: "15m"
-        plugins:
-        - opendistro-alerting: https://d3g5vo6xdbdb9a.cloudfront.net/downloads/elasticsearch-plugins/opendistro-alerting/opendistro_alerting-0.7.0.0.zip
   - name: snort-config
     release: snort
     properties:
