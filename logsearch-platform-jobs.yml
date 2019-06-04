@@ -149,7 +149,7 @@ instance_groups:
     properties:
       kibana:
         port: 5602
-        memory_limit: 65
+        memory_limit: 75
         default_app_id: "dashboard/Platform-Overview"
         env:
         - NODE_ENV: production

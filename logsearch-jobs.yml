@@ -180,7 +180,7 @@ instance_groups:
       elasticsearch: {from: elasticsearch_master}
     properties:
       kibana:
-        memory_limit: 65
+        memory_limit: 75
         default_app_id: "dashboard/App-Overview"
         plugins:
         - auth: /var/vcap/packages/kibana-auth-plugin/kibana-auth-plugin.zip
