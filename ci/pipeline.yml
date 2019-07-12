@@ -67,26 +67,30 @@ jobs:
   serial_groups: [bosh-platform-development]
   plan:
   - in_parallel:
+    - get: common-development
     - get: pipeline-tasks
     - get: logsearch-config
-      resource: logsearch-config-development
       trigger: true
     - get: common-secrets
       resource: common-platform-development
       trigger: true
-    - get: logsearch-release
-      resource: logsearch-release-development
-      trigger: true
     - get: logsearch-for-cloudfoundry-release
       resource: logsearch-for-cloudfoundry-release-development
       trigger: true
+    - get: logsearch-release
+      resource: logsearch-release-development
+      trigger: true
     - get: prometheus-release
+      trigger: true
     - get: oauth2-proxy-release
+      trigger: true
     - get: secureproxy-release
+      trigger: true
     - get: logsearch-stemcell-xenial
       trigger: true
     - get: terraform-yaml
       resource: terraform-yaml-development
+      trigger: true
   - task: logsearch-manifest
     config: &manifest-config
       platform: linux
@@ -158,11 +162,31 @@ jobs:
     - get: common
       resource: master-bosh-root-cert
     - get: pipeline-tasks
-      passed: [deploy-logsearch-platform-development]
-    - get: logsearch-platform-development-deployment
-      trigger: true
     - get: tests-timer
       trigger: true
+    - get: prometheus-release
+      trigger: true
+      passed: [deploy-logsearch-platform-development]
+    - get: oauth2-proxy-release
+      trigger: true
+      passed: [deploy-logsearch-platform-development]
+    - get: secureproxy-release
+      trigger: true
+      passed: [deploy-logsearch-platform-development]
+    - get: logsearch-release
+      resource: logsearch-release-development
+      trigger: true
+      passed: [deploy-logsearch-platform-development]
+    - get: logsearch-for-cloudfoundry-release
+      resource: logsearch-for-cloudfoundry-release-development
+      trigger: true
+      passed: [deploy-logsearch-platform-development]
+    - get: logsearch-stemcell-xenial
+      trigger: true
+      passed: [deploy-logsearch-platform-development]
+    - get: logsearch-config
+      trigger: true
+      passed: [deploy-logsearch-platform-development]
   - task: smoke-tests
     file: pipeline-tasks/bosh-errand.yml
     params:
@@ -196,9 +220,9 @@ jobs:
     - get: common
       resource: master-bosh-root-cert
     - get: pipeline-tasks
-      passed: [deploy-logsearch-platform-development]
     - get: logsearch-platform-development-deployment
       trigger: true
+      passed: [deploy-logsearch-platform-development]
   - task: upload-kibana-objects
     file: pipeline-tasks/bosh-errand.yml
     params:
@@ -209,27 +233,227 @@ jobs:
       BOSH_CACERT: common/master-bosh.crt
       BOSH_ERRAND: upload-kibana-objects
 
+- name: deploy-logsearch-development
+  serial_groups: [bosh-development]
+  plan:
+  - in_parallel:
+    - get: pipeline-tasks
+    - get: common-secrets
+      resource: common-development
+      trigger: true
+    - get: logsearch-config
+      trigger: true
+      passed: [smoke-tests-platform-development]
+    - get: logsearch-for-cloudfoundry-release
+      resource: logsearch-for-cloudfoundry-release-development
+      trigger: true
+      passed: [smoke-tests-platform-development]
+    - get: logsearch-stemcell-xenial
+      trigger: true
+      passed: [smoke-tests-platform-development]
+    - get: terraform-yaml
+      resource: terraform-yaml-development
+    - get: prometheus-release
+      trigger: true
+      passed: [smoke-tests-platform-development]
+    - get: oauth2-proxy-release
+      trigger: true
+      passed: [smoke-tests-platform-development]
+    - get: secureproxy-release
+      trigger: true
+      passed: [smoke-tests-platform-development]
+  - task: logsearch-manifest
+    config:
+      <<: *manifest-config
+      run:
+        path: sh
+        args:
+        - -exc
+        - |
+          SPRUCE_FILE_BASE_PATH=logsearch-config spruce merge \
+            --prune terraform_outputs \
+            logsearch-config/logsearch-deployment.yml \
+            logsearch-config/logsearch-jobs.yml \
+            common-secrets/logsearch-development.yml \
+            logsearch-config/logsearch-development.yml \
+            terraform-yaml/state.yml \
+            > logsearch-manifest/manifest.yml
+      outputs:
+      - name: logsearch-manifest
+  - *lint-manifest
+  - put: logsearch-development-deployment
+    params: &deploy-params
+      manifest: logsearch-manifest/manifest.yml
+      releases:
+      - logsearch-release/*.tgz
+      - logsearch-for-cloudfoundry-release/*.tgz
+      - prometheus-release/*.tgz
+      stemcells:
+      - logsearch-stemcell-xenial/*.tgz
+      recreate: true
+  on_failure:
+    put: slack
+    params: &slack-params
+      text: |
+        :x: FAILED to deploy logsearch on development
+        <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
+      channel: {{slack-channel}}
+      username: {{slack-username}}
+      icon_url: {{slack-icon-url}}
+  on_success:
+    put: slack
+    params:
+      <<: *slack-params
+      text: |
+        :white_check_mark: Successfully deployed logsearch on development
+        <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
+
+- name: smoke-tests-development
+  serial_groups: [bosh-development]
+  plan:
+  - in_parallel:
+    - get: tests-timer
+      trigger: true
+    - get: common
+      resource: master-bosh-root-cert
+    - get: pipeline-tasks
+    - get: prometheus-release
+      trigger: true
+      passed: [deploy-logsearch-development]
+    - get: oauth2-proxy-release
+      trigger: true
+      passed: [deploy-logsearch-development]
+    - get: secureproxy-release
+      trigger: true
+      passed: [deploy-logsearch-development]
+    - get: logsearch-for-cloudfoundry-release
+      resource: logsearch-for-cloudfoundry-release-development
+      trigger: true
+      passed: [deploy-logsearch-development]
+    - get: logsearch-stemcell-xenial
+      trigger: true
+      passed: [deploy-logsearch-development]
+    - get: logsearch-config
+      passed: [deploy-logsearch-development]
+  - task: smoke-tests
+    file: pipeline-tasks/bosh-errand.yml
+    params:
+      BOSH_TARGET: {{logsearch-development-deployment-bosh-target}}
+      BOSH_USERNAME: {{logsearch-development-deployment-bosh-username}}
+      BOSH_PASSWORD: {{logsearch-development-deployment-bosh-password}}
+      BOSH_DEPLOYMENT_NAME: logsearch
+      BOSH_CACERT: common/master-bosh.crt
+      BOSH_ERRAND: smoke-tests
+      BOSH_FLAGS: "--keep-alive"
+  on_failure:
+    put: slack
+    params:
+      <<: *slack-params
+      text: |
+        :x: Smoke tests for logsearch on development FAILED
+        <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
+  on_success:
+    put: slack
+    params:
+      <<: *slack-params
+      channel: {{slack-news-channel}}
+      text: |
+        :white_check_mark: Smoke tests for logsearch on development PASSED
+        <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
+
+- name: smoke-tests-login-development
+  serial_groups: [bosh-development]
+  plan:
+  - in_parallel:
+    - get: pipeline-tasks
+    - get: logsearch-config
+      trigger: true
+      passed: [deploy-logsearch-development]
+    - get: logsearch-for-cloudfoundry-release
+      resource: logsearch-for-cloudfoundry-release-development
+      trigger: true
+      passed: [deploy-logsearch-development]
+    - get: logsearch-stemcell-xenial
+      trigger: true
+      passed: [deploy-logsearch-development]
+    - get: logsearch-development-deployment
+      trigger: true
+    - get: tests-timer
+      trigger: true
+  - task: smoke-tests-login
+    file: logsearch-config/ci/smoke-tests-login.yml
+    params:
+      CF_USERNAME: {{cf-username-development}}
+      CF_PASSWORD: {{cf-password-development}}
+      CF_SYSTEM_DOMAIN: {{cf-system-domain-development}}
+  on_failure:
+    put: slack
+    params:
+      <<: *slack-params
+      text: |
+        :x: Login smoke tests for logsearch on development FAILED
+        <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
+  on_success:
+    put: slack
+    params:
+      <<: *slack-params
+      channel: {{slack-news-channel}}
+      text: |
+        :white_check_mark: Login smoke tests for logsearch on development PASSED
+        <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
+
+- name: upload-kibana-objects-development
+  serial_groups: [bosh-development]
+  plan:
+  - in_parallel:
+    - get: common
+      resource: master-bosh-root-cert
+    - get: pipeline-tasks
+      passed: [deploy-logsearch-development]
+    - get: logsearch-development-deployment
+      trigger: true
+  - task: upload-kibana-objects
+    file: pipeline-tasks/bosh-errand.yml
+    params:
+      BOSH_TARGET: {{logsearch-development-deployment-bosh-target}}
+      BOSH_USERNAME: {{logsearch-development-deployment-bosh-username}}
+      BOSH_PASSWORD: {{logsearch-development-deployment-bosh-password}}
+      BOSH_DEPLOYMENT_NAME: logsearch
+      BOSH_CACERT: common/master-bosh.crt
+      BOSH_ERRAND: upload-kibana-objects
+
 - name: deploy-logsearch-platform-staging
   serial_groups: [bosh-platform-staging]
   plan:
   - in_parallel:
     - get: pipeline-tasks
-      passed: [smoke-tests-development, smoke-tests-login-development, upload-kibana-objects-development]
-    - get: logsearch-config
-      trigger: true
     - get: common-secrets
       resource: common-platform-staging
-    - get: logsearch-release
       trigger: true
+    - get: logsearch-config
+      trigger: true
+      passed: [smoke-tests-development]
     - get: logsearch-for-cloudfoundry-release
       trigger: true
+      passed: [smoke-tests-development]
+    - get: logsearch-release
+      trigger: true
+      passed: [smoke-tests-development]
     - get: prometheus-release
+      trigger: true
+      passed: [smoke-tests-development]
     - get: oauth2-proxy-release
+      trigger: true
+      passed: [smoke-tests-development]
     - get: secureproxy-release
+      trigger: true
+      passed: [smoke-tests-development]
     - get: logsearch-stemcell-xenial
       trigger: true
+      passed: [smoke-tests-development]
     - get: terraform-yaml
       resource: terraform-yaml-staging
+      trigger: true
   - task: logsearch-manifest
     config:
       <<: *manifest-config
@@ -439,175 +663,12 @@ jobs:
       BOSH_CACERT: common/master-bosh.crt
       BOSH_ERRAND: upload-kibana-objects
 
-- name: deploy-logsearch-development
-  serial_groups: [bosh-development]
-  plan:
-  - in_parallel:
-    - get: pipeline-tasks
-      passed: [smoke-tests-platform-development, upload-kibana-objects-platform-development]
-    - get: logsearch-config
-      resource: logsearch-config-development
-      trigger: true
-    - get: common-secrets
-      resource: common-development
-      trigger: true
-    - get: logsearch-release
-      resource: logsearch-release-development
-      trigger: true
-    - get: logsearch-for-cloudfoundry-release
-      resource: logsearch-for-cloudfoundry-release-development
-      trigger: true
-    - get: prometheus-release
-      trigger: true
-    - get: logsearch-stemcell-xenial
-      trigger: true
-    - get: terraform-yaml
-      resource: terraform-yaml-development
-  - task: logsearch-manifest
-    config:
-      <<: *manifest-config
-      run:
-        path: sh
-        args:
-        - -exc
-        - |
-          SPRUCE_FILE_BASE_PATH=logsearch-config spruce merge \
-            --prune terraform_outputs \
-            logsearch-config/logsearch-deployment.yml \
-            logsearch-config/logsearch-jobs.yml \
-            common-secrets/logsearch-development.yml \
-            logsearch-config/logsearch-development.yml \
-            terraform-yaml/state.yml \
-            > logsearch-manifest/manifest.yml
-      outputs:
-      - name: logsearch-manifest
-  - *lint-manifest
-  - put: logsearch-development-deployment
-    params: &deploy-params
-      manifest: logsearch-manifest/manifest.yml
-      releases:
-      - logsearch-release/*.tgz
-      - logsearch-for-cloudfoundry-release/*.tgz
-      - prometheus-release/*.tgz
-      stemcells:
-      - logsearch-stemcell-xenial/*.tgz
-      recreate: true
-  on_failure:
-    put: slack
-    params: &slack-params
-      text: |
-        :x: FAILED to deploy logsearch on development
-        <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
-      channel: {{slack-channel}}
-      username: {{slack-username}}
-      icon_url: {{slack-icon-url}}
-  on_success:
-    put: slack
-    params:
-      <<: *slack-params
-      text: |
-        :white_check_mark: Successfully deployed logsearch on development
-        <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
-
-- name: smoke-tests-development
-  serial_groups: [bosh-development]
-  plan:
-  - in_parallel:
-    - get: common
-      resource: master-bosh-root-cert
-    - get: pipeline-tasks
-      passed: [deploy-logsearch-development]
-    - get: logsearch-development-deployment
-      trigger: true
-    - get: tests-timer
-      trigger: true
-  - task: smoke-tests
-    file: pipeline-tasks/bosh-errand.yml
-    params:
-      BOSH_TARGET: {{logsearch-development-deployment-bosh-target}}
-      BOSH_USERNAME: {{logsearch-development-deployment-bosh-username}}
-      BOSH_PASSWORD: {{logsearch-development-deployment-bosh-password}}
-      BOSH_DEPLOYMENT_NAME: logsearch
-      BOSH_CACERT: common/master-bosh.crt
-      BOSH_ERRAND: smoke-tests
-      BOSH_FLAGS: "--keep-alive"
-  on_failure:
-    put: slack
-    params:
-      <<: *slack-params
-      text: |
-        :x: Smoke tests for logsearch on development FAILED
-        <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
-  on_success:
-    put: slack
-    params:
-      <<: *slack-params
-      channel: {{slack-news-channel}}
-      text: |
-        :white_check_mark: Smoke tests for logsearch on development PASSED
-        <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
-
-- name: smoke-tests-login-development
-  serial_groups: [bosh-development]
-  plan:
-  - in_parallel:
-    - get: pipeline-tasks
-      passed: [deploy-logsearch-development]
-    - get: logsearch-config
-      resource: logsearch-config-development
-    - get: logsearch-development-deployment
-      trigger: true
-    - get: tests-timer
-      trigger: true
-  - task: smoke-tests-login
-    file: logsearch-config/ci/smoke-tests-login.yml
-    params:
-      CF_USERNAME: {{cf-username-development}}
-      CF_PASSWORD: {{cf-password-development}}
-      CF_SYSTEM_DOMAIN: {{cf-system-domain-development}}
-  on_failure:
-    put: slack
-    params:
-      <<: *slack-params
-      text: |
-        :x: Login smoke tests for logsearch on development FAILED
-        <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
-  on_success:
-    put: slack
-    params:
-      <<: *slack-params
-      channel: {{slack-news-channel}}
-      text: |
-        :white_check_mark: Login smoke tests for logsearch on development PASSED
-        <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
-
-- name: upload-kibana-objects-development
-  serial_groups: [bosh-development]
-  plan:
-  - in_parallel:
-    - get: common
-      resource: master-bosh-root-cert
-    - get: pipeline-tasks
-      passed: [deploy-logsearch-development]
-    - get: logsearch-development-deployment
-      trigger: true
-  - task: upload-kibana-objects
-    file: pipeline-tasks/bosh-errand.yml
-    params:
-      BOSH_TARGET: {{logsearch-development-deployment-bosh-target}}
-      BOSH_USERNAME: {{logsearch-development-deployment-bosh-username}}
-      BOSH_PASSWORD: {{logsearch-development-deployment-bosh-password}}
-      BOSH_DEPLOYMENT_NAME: logsearch
-      BOSH_CACERT: common/master-bosh.crt
-      BOSH_ERRAND: upload-kibana-objects
-
 - name: check-backup-development-tenant
   plan:
   - in_parallel:
     - get: check-backup-timer
       trigger: true
     - get: logsearch-config
-      resource: logsearch-config-development
   - task: check-backup
     file: logsearch-config/ci/check-backup.yml
     tags: [iaas]
@@ -625,7 +686,6 @@ jobs:
     - get: check-backup-timer
       trigger: true
     - get: logsearch-config
-      resource: logsearch-config-development
   - task: check-backup
     file: logsearch-config/ci/check-backup.yml
     params:
@@ -1082,12 +1142,6 @@ resources:
   source:
     uri: {{cg-deploy-logsearch-git-url}}
     branch: {{cg-deploy-logsearch-git-branch}}
-
-- name: logsearch-config-development
-  type: git
-  source:
-    uri: {{cg-deploy-logsearch-development-git-url}}
-    branch: {{cg-deploy-logsearch-development-git-branch}}
 
 - name: logsearch-stemcell-xenial
   type: bosh-io-stemcell
