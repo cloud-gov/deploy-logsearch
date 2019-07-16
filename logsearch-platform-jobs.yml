@@ -267,6 +267,10 @@ instance_groups:
     properties:
       elasticsearch_config:
         app_index_prefix: logs-platform
+      cloudfoundry:
+        system_domain: (( grab $CF_SYSTEM_DOMAIN ))
+        user: (( grab $CF_USERNAME ))
+        password: (( grab $CF_PASSWORD ))
       kibana_objects:
         upload_patterns:
         - {type: index-pattern, pattern: "/var/vcap/jobs/upload-kibana-objects/kibana-objects/index-pattern/*.json"}

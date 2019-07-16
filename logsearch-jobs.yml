@@ -350,7 +350,6 @@ instance_groups:
     release: logsearch-for-cloudfoundry
     consumes:
       elasticsearch: {from: elasticsearch_master}
-      cloud_controller: {from: cloud_controller}
     properties:
       cloudfoundry:
         firehose_events:
