@@ -350,11 +350,15 @@ instance_groups:
     release: logsearch-for-cloudfoundry
     consumes:
       elasticsearch: {from: elasticsearch_master}
+      cloud_controller: {from: cloud_controller}
     properties:
       cloudfoundry:
         firehose_events:
         - LogMessage
         - ContainerMetric
+        system_domain: (( grab $CF_SYSTEM_DOMAIN ))
+        user: (( grab $CF_USERNAME ))
+        password: (( grab $CF_PASSWORD ))
       kibana_objects:
         upload_patterns:
         - {type: index-pattern, pattern: "/var/vcap/jobs/upload-kibana-objects/kibana-objects/index-pattern/*.json"}
