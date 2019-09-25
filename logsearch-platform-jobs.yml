@@ -235,9 +235,9 @@ instance_groups:
 
           ELB_INGESTOR_BUCKET: "(( grab terraform_outputs.elb_log_bucket ))"
 
-          ELB_INGESTOR_DONE_PREFIX: "(( grab terraform.stack_description ))-done"
-          ELB_INGESTOR_SEARCH_PREFIX: "(( grab terraform.stack_description ))"
-          ELB_INGESTOR_WORKING_PREFIX:  "(( grab terraform.stack_description ))-working"
+          ELB_INGESTOR_DONE_PREFIX: "(( grab terraform_outputs.stack_description ))-done"
+          ELB_INGESTOR_SEARCH_PREFIX: "(( grab terraform_outputs.stack_description ))"
+          ELB_INGESTOR_WORKING_PREFIX:  "(( grab terraform_outputs.stack_description ))-working"
 
           ELB_INGESTOR_ELASTICSEARCH_HOSTS: localhost:9200
           ELB_INGESTOR_INDEX_PATTERN: "logs-platform-%{+YYYY.MM.dd}"
