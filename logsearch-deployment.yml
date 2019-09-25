@@ -22,3 +22,4 @@ releases:
 - {name: cf, version: latest}
 - {name: snort, version: latest}
 - {name: cron, version: latest}
+- {name: elb-log-ingestor, version: latest}
