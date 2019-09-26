@@ -117,6 +117,10 @@ jobs:
             > logsearch-manifest/manifest.yml
       outputs:
       - name: logsearch-manifest
+      params:	
+        CF_USERNAME: {{cf-username-development}}	
+        CF_PASSWORD: {{cf-password-development}}	
+        CF_SYSTEM_DOMAIN: {{cf-system-domain-development}}
   - &lint-manifest
     task: lint-manifest
     file: pipeline-tasks/lint-manifest.yml
@@ -283,6 +287,10 @@ jobs:
             > logsearch-manifest/manifest.yml
       outputs:
       - name: logsearch-manifest
+      params:	
+        CF_USERNAME: {{cf-username-development}}	
+        CF_PASSWORD: {{cf-password-development}}	
+        CF_SYSTEM_DOMAIN: {{cf-system-domain-development}}
   - *lint-manifest
   - put: logsearch-development-deployment
     params: &deploy-params
@@ -493,6 +501,10 @@ jobs:
             > logsearch-manifest/manifest.yml
       outputs:
       - name: logsearch-manifest
+      params:	
+        CF_USERNAME: {{cf-username-staging}}	
+        CF_PASSWORD: {{cf-password-staging}}	
+        CF_SYSTEM_DOMAIN: {{cf-system-domain-staging}}
   - *lint-manifest
   - put: logsearch-platform-staging-deployment
     params: *deploy-params-platform
@@ -642,6 +654,10 @@ jobs:
             > logsearch-manifest/manifest.yml
       outputs:
       - name: logsearch-manifest
+      params:	
+        CF_USERNAME: {{cf-username-staging}}	
+        CF_PASSWORD: {{cf-password-staging}}	
+        CF_SYSTEM_DOMAIN: {{cf-system-domain-staging}}
   - *lint-manifest
   - put: logsearch-staging-deployment
     params: *deploy-params
@@ -846,6 +862,10 @@ jobs:
             > logsearch-manifest/manifest.yml
       outputs:
       - name: logsearch-manifest
+      params:	
+        CF_USERNAME: {{cf-username-production}}	
+        CF_PASSWORD: {{cf-password-production}}	
+        CF_SYSTEM_DOMAIN: {{cf-system-domain-production}}
   - *lint-manifest
   - put: logsearch-platform-production-deployment
     params: *deploy-params-platform
@@ -994,6 +1014,10 @@ jobs:
             logsearch-config/logsearch-production.yml \
             terraform-yaml/state.yml \
             > logsearch-manifest/manifest.yml
+      params:	
+        CF_USERNAME: {{cf-username-production}}	
+        CF_PASSWORD: {{cf-password-production}}	
+        CF_SYSTEM_DOMAIN: {{cf-system-domain-production}}
   - *lint-manifest
   - put: logsearch-production-deployment
     params: *deploy-params
