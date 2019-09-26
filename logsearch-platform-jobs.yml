@@ -222,7 +222,7 @@ instance_groups:
         - /var/vcap/jobs/parser-config-lfc/config/deployment_lookup.yml
   - name: parser-config-lfc
     release: logsearch-for-cloudfoundry
-  _ name:  elb_log_ingestor
+  - name:  elb_log_ingestor
     release: elb-log-ingestor
     consumes:
       elasticsearch: {from: elasticsearch_master}
