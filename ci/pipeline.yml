@@ -117,10 +117,10 @@ jobs:
             > logsearch-manifest/manifest.yml
       outputs:
       - name: logsearch-manifest
-      params:	
-        CF_USERNAME: {{cf-username-development}}	
-        CF_PASSWORD: {{cf-password-development}}	
-        CF_SYSTEM_DOMAIN: {{cf-system-domain-development}}
+      params:
+        CF_USERNAME: ((cf-username-development))
+        CF_PASSWORD: ((cf-password-development))
+        CF_SYSTEM_DOMAIN: ((cf-system-domain-development))
   - &lint-manifest
     task: lint-manifest
     file: pipeline-tasks/lint-manifest.yml
@@ -148,9 +148,9 @@ jobs:
       text: |
         :x: FAILED to deploy platform logsearch on development
         <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
-      channel: {{slack-channel}}
-      username: {{slack-username}}
-      icon_url: {{slack-icon-url}}
+      channel: ((slack-channel))
+      username: ((slack-username))
+      icon_url: ((slack-icon-url))
   on_success:
     put: slack
     params:
@@ -194,9 +194,9 @@ jobs:
   - task: smoke-tests
     file: pipeline-tasks/bosh-errand.yml
     params:
-      BOSH_TARGET: {{logsearch-development-deployment-bosh-target}}
-      BOSH_USERNAME: {{logsearch-development-deployment-bosh-username}}
-      BOSH_PASSWORD: {{logsearch-development-deployment-bosh-password}}
+      BOSH_TARGET: ((logsearch-development-deployment-bosh-target))
+      BOSH_USERNAME: ((logsearch-development-deployment-bosh-username))
+      BOSH_PASSWORD: ((logsearch-development-deployment-bosh-password))
       BOSH_DEPLOYMENT_NAME: logsearch-platform
       BOSH_CACERT: common/master-bosh.crt
       BOSH_ERRAND: smoke-tests
@@ -212,7 +212,7 @@ jobs:
     put: slack
     params:
       <<: *slack-params
-      channel: {{slack-news-channel}}
+      channel: ((slack-news-channel))
       text: |
         :white_check_mark: Smoke tests for platform logsearch on development PASSED
         <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
@@ -230,9 +230,9 @@ jobs:
   - task: upload-kibana-objects
     file: pipeline-tasks/bosh-errand.yml
     params:
-      BOSH_TARGET: {{logsearch-development-deployment-bosh-target}}
-      BOSH_USERNAME: {{logsearch-development-deployment-bosh-username}}
-      BOSH_PASSWORD: {{logsearch-development-deployment-bosh-password}}
+      BOSH_TARGET: ((logsearch-development-deployment-bosh-target))
+      BOSH_USERNAME: ((logsearch-development-deployment-bosh-username))
+      BOSH_PASSWORD: ((logsearch-development-deployment-bosh-password))
       BOSH_DEPLOYMENT_NAME: logsearch-platform
       BOSH_CACERT: common/master-bosh.crt
       BOSH_ERRAND: upload-kibana-objects
@@ -288,10 +288,10 @@ jobs:
             > logsearch-manifest/manifest.yml
       outputs:
       - name: logsearch-manifest
-      params:	
-        CF_USERNAME: {{cf-username-development}}	
-        CF_PASSWORD: {{cf-password-development}}	
-        CF_SYSTEM_DOMAIN: {{cf-system-domain-development}}
+      params:
+        CF_USERNAME: ((cf-username-development))
+        CF_PASSWORD: ((cf-password-development))
+        CF_SYSTEM_DOMAIN: ((cf-system-domain-development))
   - *lint-manifest
   - put: logsearch-development-deployment
     params: &deploy-params
@@ -309,9 +309,9 @@ jobs:
       text: |
         :x: FAILED to deploy logsearch on development
         <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
-      channel: {{slack-channel}}
-      username: {{slack-username}}
-      icon_url: {{slack-icon-url}}
+      channel: ((slack-channel))
+      username: ((slack-username))
+      icon_url: ((slack-icon-url))
   on_success:
     put: slack
     params:
@@ -354,9 +354,9 @@ jobs:
   - task: smoke-tests
     file: pipeline-tasks/bosh-errand.yml
     params:
-      BOSH_TARGET: {{logsearch-development-deployment-bosh-target}}
-      BOSH_USERNAME: {{logsearch-development-deployment-bosh-username}}
-      BOSH_PASSWORD: {{logsearch-development-deployment-bosh-password}}
+      BOSH_TARGET: ((logsearch-development-deployment-bosh-target))
+      BOSH_USERNAME: ((logsearch-development-deployment-bosh-username))
+      BOSH_PASSWORD: ((logsearch-development-deployment-bosh-password))
       BOSH_DEPLOYMENT_NAME: logsearch
       BOSH_CACERT: common/master-bosh.crt
       BOSH_ERRAND: smoke-tests
@@ -372,7 +372,7 @@ jobs:
     put: slack
     params:
       <<: *slack-params
-      channel: {{slack-news-channel}}
+      channel: ((slack-news-channel))
       text: |
         :white_check_mark: Smoke tests for logsearch on development PASSED
         <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
@@ -411,9 +411,9 @@ jobs:
   - task: smoke-tests-login
     file: logsearch-config/ci/smoke-tests-login.yml
     params:
-      CF_USERNAME: {{cf-username-development}}
-      CF_PASSWORD: {{cf-password-development}}
-      CF_SYSTEM_DOMAIN: {{cf-system-domain-development}}
+      CF_USERNAME: ((cf-username-development))
+      CF_PASSWORD: ((cf-password-development))
+      CF_SYSTEM_DOMAIN: ((cf-system-domain-development))
   on_failure:
     put: slack
     params:
@@ -425,7 +425,7 @@ jobs:
     put: slack
     params:
       <<: *slack-params
-      channel: {{slack-news-channel}}
+      channel: ((slack-news-channel))
       text: |
         :white_check_mark: Login smoke tests for logsearch on development PASSED
         <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
@@ -443,9 +443,9 @@ jobs:
   - task: upload-kibana-objects
     file: pipeline-tasks/bosh-errand.yml
     params:
-      BOSH_TARGET: {{logsearch-development-deployment-bosh-target}}
-      BOSH_USERNAME: {{logsearch-development-deployment-bosh-username}}
-      BOSH_PASSWORD: {{logsearch-development-deployment-bosh-password}}
+      BOSH_TARGET: ((logsearch-development-deployment-bosh-target))
+      BOSH_USERNAME: ((logsearch-development-deployment-bosh-username))
+      BOSH_PASSWORD: ((logsearch-development-deployment-bosh-password))
       BOSH_DEPLOYMENT_NAME: logsearch
       BOSH_CACERT: common/master-bosh.crt
       BOSH_ERRAND: upload-kibana-objects
@@ -502,10 +502,10 @@ jobs:
             > logsearch-manifest/manifest.yml
       outputs:
       - name: logsearch-manifest
-      params:	
-        CF_USERNAME: {{cf-username-staging}}	
-        CF_PASSWORD: {{cf-password-staging}}	
-        CF_SYSTEM_DOMAIN: {{cf-system-domain-staging}}
+      params:
+        CF_USERNAME: ((cf-username-staging))
+        CF_PASSWORD: ((cf-password-staging))
+        CF_SYSTEM_DOMAIN: ((cf-system-domain-staging))
   - *lint-manifest
   - put: logsearch-platform-staging-deployment
     params: *deploy-params-platform
@@ -561,9 +561,9 @@ jobs:
   - task: smoke-tests
     file: pipeline-tasks/bosh-errand.yml
     params:
-      BOSH_TARGET: {{logsearch-staging-deployment-bosh-target}}
-      BOSH_USERNAME: {{logsearch-staging-deployment-bosh-username}}
-      BOSH_PASSWORD: {{logsearch-staging-deployment-bosh-password}}
+      BOSH_TARGET: ((logsearch-staging-deployment-bosh-target))
+      BOSH_USERNAME: ((logsearch-staging-deployment-bosh-username))
+      BOSH_PASSWORD: ((logsearch-staging-deployment-bosh-password))
       BOSH_DEPLOYMENT_NAME: logsearch-platform
       BOSH_CACERT: common/master-bosh.crt
       BOSH_ERRAND: smoke-tests
@@ -579,7 +579,7 @@ jobs:
     put: slack
     params:
       <<: *slack-params
-      channel: {{slack-news-channel}}
+      channel: ((slack-news-channel))
       text: |
         :white_check_mark: Smoke tests for platform logsearch on staging PASSED
         <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
@@ -597,9 +597,9 @@ jobs:
   - task: upload-kibana-objects
     file: pipeline-tasks/bosh-errand.yml
     params:
-      BOSH_TARGET: {{logsearch-staging-deployment-bosh-target}}
-      BOSH_USERNAME: {{logsearch-staging-deployment-bosh-username}}
-      BOSH_PASSWORD: {{logsearch-staging-deployment-bosh-password}}
+      BOSH_TARGET: ((logsearch-staging-deployment-bosh-target))
+      BOSH_USERNAME: ((logsearch-staging-deployment-bosh-username))
+      BOSH_PASSWORD: ((logsearch-staging-deployment-bosh-password))
       BOSH_DEPLOYMENT_NAME: logsearch-platform
       BOSH_CACERT: common/master-bosh.crt
       BOSH_ERRAND: upload-kibana-objects
@@ -655,10 +655,10 @@ jobs:
             > logsearch-manifest/manifest.yml
       outputs:
       - name: logsearch-manifest
-      params:	
-        CF_USERNAME: {{cf-username-staging}}	
-        CF_PASSWORD: {{cf-password-staging}}	
-        CF_SYSTEM_DOMAIN: {{cf-system-domain-staging}}
+      params:
+        CF_USERNAME: ((cf-username-staging))
+        CF_PASSWORD: ((cf-password-staging))
+        CF_SYSTEM_DOMAIN: ((cf-system-domain-staging))
   - *lint-manifest
   - put: logsearch-staging-deployment
     params: *deploy-params
@@ -714,9 +714,9 @@ jobs:
   - task: smoke-tests
     file: pipeline-tasks/bosh-errand.yml
     params:
-      BOSH_TARGET: {{logsearch-staging-deployment-bosh-target}}
-      BOSH_USERNAME: {{logsearch-staging-deployment-bosh-username}}
-      BOSH_PASSWORD: {{logsearch-staging-deployment-bosh-password}}
+      BOSH_TARGET: ((logsearch-staging-deployment-bosh-target))
+      BOSH_USERNAME: ((logsearch-staging-deployment-bosh-username))
+      BOSH_PASSWORD: ((logsearch-staging-deployment-bosh-password))
       BOSH_DEPLOYMENT_NAME: logsearch
       BOSH_CACERT: common/master-bosh.crt
       BOSH_ERRAND: smoke-tests
@@ -732,7 +732,7 @@ jobs:
     put: slack
     params:
       <<: *slack-params
-      channel: {{slack-news-channel}}
+      channel: ((slack-news-channel))
       text: |
         :white_check_mark: Smoke tests for logsearch on staging PASSED
         <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
@@ -772,9 +772,9 @@ jobs:
   - task: smoke-tests-login
     file: logsearch-config/ci/smoke-tests-login.yml
     params:
-      CF_USERNAME: {{cf-username-staging}}
-      CF_PASSWORD: {{cf-password-staging}}
-      CF_SYSTEM_DOMAIN: {{cf-system-domain-staging}}
+      CF_USERNAME: ((cf-username-staging))
+      CF_PASSWORD: ((cf-password-staging))
+      CF_SYSTEM_DOMAIN: ((cf-system-domain-staging))
   on_failure:
     put: slack
     params:
@@ -786,7 +786,7 @@ jobs:
     put: slack
     params:
       <<: *slack-params
-      channel: {{slack-news-channel}}
+      channel: ((slack-news-channel))
       text: |
         :white_check_mark: Login smoke tests for logsearch on staging PASSED
         <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
@@ -804,9 +804,9 @@ jobs:
   - task: upload-kibana-objects
     file: pipeline-tasks/bosh-errand.yml
     params:
-      BOSH_TARGET: {{logsearch-staging-deployment-bosh-target}}
-      BOSH_USERNAME: {{logsearch-staging-deployment-bosh-username}}
-      BOSH_PASSWORD: {{logsearch-staging-deployment-bosh-password}}
+      BOSH_TARGET: ((logsearch-staging-deployment-bosh-target))
+      BOSH_USERNAME: ((logsearch-staging-deployment-bosh-username))
+      BOSH_PASSWORD: ((logsearch-staging-deployment-bosh-password))
       BOSH_DEPLOYMENT_NAME: logsearch
       BOSH_CACERT: common/master-bosh.crt
       BOSH_ERRAND: upload-kibana-objects
@@ -863,10 +863,10 @@ jobs:
             > logsearch-manifest/manifest.yml
       outputs:
       - name: logsearch-manifest
-      params:	
-        CF_USERNAME: {{cf-username-production}}	
-        CF_PASSWORD: {{cf-password-production}}	
-        CF_SYSTEM_DOMAIN: {{cf-system-domain-production}}
+      params:
+        CF_USERNAME: ((cf-username-production))
+        CF_PASSWORD: ((cf-password-production))
+        CF_SYSTEM_DOMAIN: ((cf-system-domain-production))
   - *lint-manifest
   - put: logsearch-platform-production-deployment
     params: *deploy-params-platform
@@ -922,9 +922,9 @@ jobs:
   - task: smoke-tests
     file: pipeline-tasks/bosh-errand.yml
     params:
-      BOSH_TARGET: {{logsearch-production-deployment-bosh-target}}
-      BOSH_USERNAME: {{logsearch-production-deployment-bosh-username}}
-      BOSH_PASSWORD: {{logsearch-production-deployment-bosh-password}}
+      BOSH_TARGET: ((logsearch-production-deployment-bosh-target))
+      BOSH_USERNAME: ((logsearch-production-deployment-bosh-username))
+      BOSH_PASSWORD: ((logsearch-production-deployment-bosh-password))
       BOSH_DEPLOYMENT_NAME: logsearch-platform
       BOSH_CACERT: common/master-bosh.crt
       BOSH_ERRAND: smoke-tests
@@ -940,7 +940,7 @@ jobs:
     put: slack
     params:
       <<: *slack-params
-      channel: {{slack-news-channel}}
+      channel: ((slack-news-channel))
       text: |
         :white_check_mark: Smoke tests for platform logsearch on production PASSED
         <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
@@ -958,9 +958,9 @@ jobs:
   - task: upload-kibana-objects
     file: pipeline-tasks/bosh-errand.yml
     params:
-      BOSH_TARGET: {{logsearch-production-deployment-bosh-target}}
-      BOSH_USERNAME: {{logsearch-production-deployment-bosh-username}}
-      BOSH_PASSWORD: {{logsearch-production-deployment-bosh-password}}
+      BOSH_TARGET: ((logsearch-production-deployment-bosh-target))
+      BOSH_USERNAME: ((logsearch-production-deployment-bosh-username))
+      BOSH_PASSWORD: ((logsearch-production-deployment-bosh-password))
       BOSH_DEPLOYMENT_NAME: logsearch-platform
       BOSH_CACERT: common/master-bosh.crt
       BOSH_ERRAND: upload-kibana-objects
@@ -1015,10 +1015,10 @@ jobs:
             logsearch-config/logsearch-production.yml \
             terraform-yaml/state.yml \
             > logsearch-manifest/manifest.yml
-      params:	
-        CF_USERNAME: {{cf-username-production}}	
-        CF_PASSWORD: {{cf-password-production}}	
-        CF_SYSTEM_DOMAIN: {{cf-system-domain-production}}
+      params:
+        CF_USERNAME: ((cf-username-production))
+        CF_PASSWORD: ((cf-password-production))
+        CF_SYSTEM_DOMAIN: ((cf-system-domain-production))
   - *lint-manifest
   - put: logsearch-production-deployment
     params: *deploy-params
@@ -1074,9 +1074,9 @@ jobs:
   - task: smoke-tests
     file: pipeline-tasks/bosh-errand.yml
     params:
-      BOSH_TARGET: {{logsearch-production-deployment-bosh-target}}
-      BOSH_USERNAME: {{logsearch-production-deployment-bosh-username}}
-      BOSH_PASSWORD: {{logsearch-production-deployment-bosh-password}}
+      BOSH_TARGET: ((logsearch-production-deployment-bosh-target))
+      BOSH_USERNAME: ((logsearch-production-deployment-bosh-username))
+      BOSH_PASSWORD: ((logsearch-production-deployment-bosh-password))
       BOSH_DEPLOYMENT_NAME: logsearch
       BOSH_CACERT: common/master-bosh.crt
       BOSH_ERRAND: smoke-tests
@@ -1092,7 +1092,7 @@ jobs:
     put: slack
     params:
       <<: *slack-params
-      channel: {{slack-news-channel}}
+      channel: ((slack-news-channel))
       text: |
         :white_check_mark: Smoke tests for logsearch on production PASSED
         <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
@@ -1132,9 +1132,9 @@ jobs:
   - task: smoke-tests-login
     file: logsearch-config/ci/smoke-tests-login.yml
     params:
-      CF_USERNAME: {{cf-username-production}}
-      CF_PASSWORD: {{cf-password-production}}
-      CF_SYSTEM_DOMAIN: {{cf-system-domain-production}}
+      CF_USERNAME: ((cf-username-production))
+      CF_PASSWORD: ((cf-password-production))
+      CF_SYSTEM_DOMAIN: ((cf-system-domain-production))
   on_failure:
     put: slack
     params:
@@ -1146,7 +1146,7 @@ jobs:
     put: slack
     params:
       <<: *slack-params
-      channel: {{slack-news-channel}}
+      channel: ((slack-news-channel))
       text: |
         :white_check_mark: Login smoke tests for logsearch on production PASSED
         <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
@@ -1164,9 +1164,9 @@ jobs:
   - task: upload-kibana-objects
     file: pipeline-tasks/bosh-errand.yml
     params:
-      BOSH_TARGET: {{logsearch-production-deployment-bosh-target}}
-      BOSH_USERNAME: {{logsearch-production-deployment-bosh-username}}
-      BOSH_PASSWORD: {{logsearch-production-deployment-bosh-password}}
+      BOSH_TARGET: ((logsearch-production-deployment-bosh-target))
+      BOSH_USERNAME: ((logsearch-production-deployment-bosh-username))
+      BOSH_PASSWORD: ((logsearch-production-deployment-bosh-password))
       BOSH_DEPLOYMENT_NAME: logsearch
       BOSH_CACERT: common/master-bosh.crt
       BOSH_ERRAND: upload-kibana-objects
@@ -1181,8 +1181,8 @@ jobs:
     file: logsearch-config/ci/check-backup.yml
     tags: [iaas]
     params:
-      AWS_DEFAULT_REGION: {{aws-region}}
-      ES_HOST: {{logsearch-development-check-backup-es-host}}
+      AWS_DEFAULT_REGION: ((aws-region))
+      ES_HOST: ((logsearch-development-check-backup-es-host))
       GATEWAY_HOST: prometheus-staging.service.cf.internal
       BUCKET_NAME: logsearch-cf-development
       ENVIRONMENT: development-tenant
@@ -1197,7 +1197,7 @@ jobs:
   - task: check-backup
     file: logsearch-config/ci/check-backup.yml
     params:
-      ES_HOST: {{logsearch-development-platform-check-backup-es-host}}
+      ES_HOST: ((logsearch-development-platform-check-backup-es-host))
       GATEWAY_HOST: prometheus-staging.service.cf.internal
       ENVIRONMENT: development-platform
       INDEX_PATTERN: logs-platform-*
@@ -1212,8 +1212,8 @@ jobs:
     file: logsearch-config/ci/check-backup.yml
     tags: [iaas]
     params:
-      AWS_DEFAULT_REGION: {{aws-region}}
-      ES_HOST: {{logsearch-staging-check-backup-es-host}}
+      AWS_DEFAULT_REGION: ((aws-region))
+      ES_HOST: ((logsearch-staging-check-backup-es-host))
       GATEWAY_HOST: prometheus-staging.service.cf.internal
       BUCKET_NAME: logsearch-cf-staging
       ENVIRONMENT: staging-tenant
@@ -1228,7 +1228,7 @@ jobs:
   - task: check-backup
     file: logsearch-config/ci/check-backup.yml
     params:
-      ES_HOST: {{logsearch-staging-platform-check-backup-es-host}}
+      ES_HOST: ((logsearch-staging-platform-check-backup-es-host))
       GATEWAY_HOST: prometheus-staging.service.cf.internal
       ENVIRONMENT: development-platform
       INDEX_PATTERN: logs-platform-*
@@ -1243,8 +1243,8 @@ jobs:
     file: logsearch-config/ci/check-backup.yml
     tags: [iaas]
     params:
-      AWS_DEFAULT_REGION: {{aws-region}}
-      ES_HOST: {{logsearch-production-check-backup-es-host}}
+      AWS_DEFAULT_REGION: ((aws-region))
+      ES_HOST: ((logsearch-production-check-backup-es-host))
       GATEWAY_HOST: prometheus-production.service.cf.internal
       BUCKET_NAME: logsearch-cf-production
       ENVIRONMENT: production-tenant
@@ -1259,7 +1259,7 @@ jobs:
   - task: check-backup
     file: logsearch-config/ci/check-backup.yml
     params:
-      ES_HOST: {{logsearch-production-platform-check-backup-es-host}}
+      ES_HOST: ((logsearch-production-platform-check-backup-es-host))
       GATEWAY_HOST: prometheus-production.service.cf.internal
       ENVIRONMENT: production-platform
       INDEX_PATTERN: logs-platform-*
@@ -1268,86 +1268,86 @@ resources:
 - name: master-bosh-root-cert
   type: s3-iam
   source:
-    bucket: {{logsearch-private-bucket}}
-    region_name: {{aws-region}}
+    bucket: ((logsearch-private-bucket))
+    region_name: ((aws-region))
     versioned_file: master-bosh.crt
 
 - name: common-development
   type: s3-iam
   source:
-    bucket: {{logsearch-private-bucket}}
+    bucket: ((logsearch-private-bucket))
     versioned_file: logsearch-development.yml
-    region_name: {{aws-region}}
+    region_name: ((aws-region))
 
 - name: common-staging
   type: s3-iam
   source:
-    bucket: {{logsearch-private-bucket}}
+    bucket: ((logsearch-private-bucket))
     versioned_file: logsearch-staging.yml
-    region_name: {{aws-region}}
+    region_name: ((aws-region))
 
 - name: common-prod
   type: s3-iam
   source:
-    bucket: {{logsearch-private-bucket}}
+    bucket: ((logsearch-private-bucket))
     versioned_file: logsearch-production.yml
-    region_name: {{aws-region}}
+    region_name: ((aws-region))
 
 - name: common-platform-development
   type: s3-iam
   source:
-    bucket: {{logsearch-private-bucket}}
+    bucket: ((logsearch-private-bucket))
     versioned_file: logsearch-platform-development.yml
-    region_name: {{aws-region}}
+    region_name: ((aws-region))
 
 - name: common-platform-staging
   type: s3-iam
   source:
-    bucket: {{logsearch-private-bucket}}
+    bucket: ((logsearch-private-bucket))
     versioned_file: logsearch-platform-staging.yml
-    region_name: {{aws-region}}
+    region_name: ((aws-region))
 
 - name: common-platform-production
   type: s3-iam
   source:
-    bucket: {{logsearch-private-bucket}}
+    bucket: ((logsearch-private-bucket))
     versioned_file: logsearch-platform-production.yml
-    region_name: {{aws-region}}
+    region_name: ((aws-region))
 
 - name: elb-log-ingestor-release
   type: s3-iam
   source:
-    bucket: {{cg-s3-bosh-releases-bucket}}
+    bucket: ((cg-s3-bosh-releases-bucket))
     regexp: elb-log-ingestor-(.*).tgz
-    region_name: {{aws-region}}
+    region_name: ((aws-region))
 
 - name: logsearch-release
   type: s3-iam
   source:
-    bucket: {{cg-s3-bosh-releases-bucket}}
+    bucket: ((cg-s3-bosh-releases-bucket))
     regexp: logsearch-([\d\.]*).tgz
-    region_name: {{aws-region}}
+    region_name: ((aws-region))
 
 - name: logsearch-for-cloudfoundry-release
   type: s3-iam
   source:
-    bucket: {{cg-s3-bosh-releases-bucket}}
+    bucket: ((cg-s3-bosh-releases-bucket))
     regexp: logsearch-for-cloudfoundry-(.*).tgz
-    region_name: {{aws-region}}
+    region_name: ((aws-region))
 
 - name: oauth2-proxy-release
   type: s3-iam
   source:
-    bucket: {{cg-s3-bosh-releases-bucket}}
+    bucket: ((cg-s3-bosh-releases-bucket))
     regexp: oauth2-proxy-(.*).tgz
-    region_name: {{aws-region}}
+    region_name: ((aws-region))
 
 - name: secureproxy-release
   type: s3-iam
   source:
-    bucket: {{cg-s3-bosh-releases-bucket}}
+    bucket: ((cg-s3-bosh-releases-bucket))
     regexp: secureproxy-(.*).tgz
-    region_name: {{aws-region}}
+    region_name: ((aws-region))
 
 - name: prometheus-release
   type: bosh-io-release
@@ -1357,8 +1357,8 @@ resources:
 - name: logsearch-config
   type: git
   source:
-    uri: {{cg-deploy-logsearch-git-url}}
-    branch: {{cg-deploy-logsearch-git-branch}}
+    uri: ((cg-deploy-logsearch-git-url))
+    branch: ((cg-deploy-logsearch-git-branch))
 
 - name: logsearch-stemcell-xenial
   type: bosh-io-stemcell
@@ -1368,28 +1368,28 @@ resources:
 - name: logsearch-development-deployment
   type: bosh-deployment
   source: &bosh-params-development
-    target: {{logsearch-development-deployment-bosh-target}}
-    client: {{logsearch-development-deployment-bosh-client}}
-    client_secret: {{logsearch-development-deployment-bosh-client-secret}}
-    ca_cert: {{logsearch-development-ca-cert}}
+    target: ((logsearch-development-deployment-bosh-target))
+    client: ((logsearch-development-deployment-bosh-client))
+    client_secret: ((logsearch-development-deployment-bosh-client-secret))
+    ca_cert: ((logsearch-development-ca-cert))
     deployment: logsearch
 
 - name: logsearch-staging-deployment
   type: bosh-deployment
   source: &bosh-params-staging
-    target: {{logsearch-staging-deployment-bosh-target}}
-    client: {{logsearch-staging-deployment-bosh-client}}
-    client_secret: {{logsearch-staging-deployment-bosh-client-secret}}
-    ca_cert: {{logsearch-staging-ca-cert}}
+    target: ((logsearch-staging-deployment-bosh-target))
+    client: ((logsearch-staging-deployment-bosh-client))
+    client_secret: ((logsearch-staging-deployment-bosh-client-secret))
+    ca_cert: ((logsearch-staging-ca-cert))
     deployment: logsearch
 
 - name: logsearch-production-deployment
   type: bosh-deployment
   source: &bosh-params-production
-    target: {{logsearch-production-deployment-bosh-target}}
-    client: {{logsearch-production-deployment-bosh-client}}
-    client_secret: {{logsearch-production-deployment-bosh-client-secret}}
-    ca_cert: {{logsearch-production-ca-cert}}
+    target: ((logsearch-production-deployment-bosh-target))
+    client: ((logsearch-production-deployment-bosh-client))
+    client_secret: ((logsearch-production-deployment-bosh-client-secret))
+    ca_cert: ((logsearch-production-ca-cert))
     deployment: logsearch
 
 - name: logsearch-platform-development-deployment
@@ -1413,13 +1413,13 @@ resources:
 - name: pipeline-tasks
   type: git
   source:
-    uri: {{pipeline-tasks-git-url}}
-    branch: {{pipeline-tasks-git-branch}}
+    uri: ((pipeline-tasks-git-url))
+    branch: ((pipeline-tasks-git-branch))
 
 - name: slack
   type: slack-notification
   source:
-    url: {{slack-webhook-url}}
+    url: ((slack-webhook-url))
 
 - name: tests-timer
   type: time
@@ -1434,23 +1434,23 @@ resources:
 - name: terraform-yaml-development
   type: s3-iam
   source:
-    bucket: {{tf-state-bucket-development}}
-    versioned_file: {{tf-state-file-development}}
-    region_name: {{aws-region}}
+    bucket: ((tf-state-bucket-development))
+    versioned_file: ((tf-state-file-development))
+    region_name: ((aws-region))
 
 - name: terraform-yaml-staging
   type: s3-iam
   source:
-    bucket: {{tf-state-bucket-staging}}
-    versioned_file: {{tf-state-file-staging}}
-    region_name: {{aws-region}}
+    bucket: ((tf-state-bucket-staging))
+    versioned_file: ((tf-state-file-staging))
+    region_name: ((aws-region))
 
 - name: terraform-yaml-production
   type: s3-iam
   source:
-    bucket: {{tf-state-bucket-production}}
-    versioned_file: {{tf-state-file-production}}
-    region_name: {{aws-region}}
+    bucket: ((tf-state-bucket-production))
+    versioned_file: ((tf-state-file-production))
+    region_name: ((aws-region))
 
 resource_types:
 - name: slack-notification
