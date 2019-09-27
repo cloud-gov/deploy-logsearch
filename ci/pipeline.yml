@@ -133,7 +133,8 @@ jobs:
   - put: logsearch-platform-development-deployment
     params: &deploy-params-platform
       manifest: logsearch-manifest/manifest.yml
-      releases:
+      releases: 
+      - elb-log-ingestor-release/*.tgz
       - logsearch-release/*.tgz
       - logsearch-for-cloudfoundry-release/*.tgz
       - prometheus-release/*.tgz

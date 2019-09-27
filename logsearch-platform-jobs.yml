@@ -222,7 +222,7 @@ instance_groups:
         - /var/vcap/jobs/parser-config-lfc/config/deployment_lookup.yml
   - name: parser-config-lfc
     release: logsearch-for-cloudfoundry
-  - name:  elb-log-ingestor
+  - name:  elb_log_ingestor
     release: elb-log-ingestor
     consumes:
       elasticsearch: {from: elasticsearch_master}
@@ -233,11 +233,11 @@ instance_groups:
           # AWS_SECRET_ACCESS_KEY:
           # AWS_DEFAULT_REGION: 
 
-          ELB_INGESTOR_BUCKET: "(( grab terraform_outputs.elb_log_bucket ))"
+          ELB_INGESTOR_BUCKET: (( grab terraform_outputs.elb_log_bucket ))
 
-          ELB_INGESTOR_DONE_PREFIX: "(( grab terraform_outputs.stack_description ))-done"
-          ELB_INGESTOR_SEARCH_PREFIX: "(( grab terraform_outputs.stack_description ))"
-          ELB_INGESTOR_WORKING_PREFIX:  "(( grab terraform_outputs.stack_description ))-working"
+          ELB_INGESTOR_DONE_PREFIX: (( concat terraform_outputs.stack_description "-done/" ))
+          ELB_INGESTOR_SEARCH_PREFIX: (( concat terraform_outputs.stack_description "/" ))
+          ELB_INGESTOR_WORKING_PREFIX:  (( concat terraform_outputs.stack_description "-working/" ))
 
           ELB_INGESTOR_ELASTICSEARCH_HOSTS: localhost:9200
           ELB_INGESTOR_INDEX_PATTERN: "logs-platform-%{+YYYY.MM.dd}"
