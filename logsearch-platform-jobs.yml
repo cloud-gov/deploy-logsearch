@@ -26,6 +26,7 @@ instance_groups:
           timeout: 900
         recovery:
           delay_allocation_restart: "15m"
+        config_options: {"xpack.monitoring.enabled": false}
   vm_type: logsearch_es_master
   persistent_disk_type: logsearch_es_master
   stemcell: default
@@ -60,6 +61,7 @@ instance_groups:
     properties:
       elasticsearch:
         heap_size: 2G
+        config_options: {"xpack.monitoring.enabled": false}
   - name: curator
     release: logsearch
     consumes:
@@ -123,6 +125,7 @@ instance_groups:
           timeout: 900
         recovery:
           delay_allocation_restart: "15m"
+        config_options: {"xpack.monitoring.enabled": false}
   vm_type: logsearch_es_data
   persistent_disk_type: logsearch_es_platform_data
   stemcell: default
@@ -189,6 +192,7 @@ instance_groups:
     properties:
       elasticsearch:
         heap_size: 1G
+        config_options: {"xpack.monitoring.enabled": false}
   - name: ingestor_syslog
     release: logsearch
     consumes: 
