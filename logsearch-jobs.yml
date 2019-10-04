@@ -280,7 +280,7 @@ instance_groups:
   - name: ingestor_syslog
     release: logsearch
     consumes:
-      elasticsearch: nil
+      elasticsearch: {from: elasticsearch_master}
     properties:
       logstash:
         queue:
