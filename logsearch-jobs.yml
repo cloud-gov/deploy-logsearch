@@ -279,6 +279,8 @@ instance_groups:
         heap_size: 1G
   - name: ingestor_syslog
     release: logsearch
+    consumes:
+      elasticsearch: nil
     properties:
       logstash:
         queue:
