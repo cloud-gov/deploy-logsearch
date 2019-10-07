@@ -7,9 +7,6 @@ instance_groups:
     - (( replace ))
     - (( grab terraform_outputs.logsearch_static_ips.[7]))
 
-- name: elasticsearch_data
-  instances: 3
-
 - name: ingestor
   instances: 1
 
