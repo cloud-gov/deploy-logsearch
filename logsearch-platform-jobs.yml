@@ -53,6 +53,7 @@ instance_groups:
 
 - name: maintenance
   instances: 1
+  vm_extensions: [errand-profile]
   jobs:
   - name: elasticsearch
     release: logsearch
