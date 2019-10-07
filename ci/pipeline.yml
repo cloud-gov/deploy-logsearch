@@ -1424,12 +1424,12 @@ resources:
 - name: tests-timer
   type: time
   source:
-    interval: 10m
+    interval: 30m
 
 - name: check-backup-timer
   type: time
   source:
-    interval: 10m
+    interval: 30m
 
 - name: terraform-yaml-development
   type: s3-iam
