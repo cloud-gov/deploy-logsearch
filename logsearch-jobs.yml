@@ -65,6 +65,7 @@ instance_groups:
 
 - name: maintenance
   instances: 1
+  vm_extensions: [errand-profile]
   jobs:
   - name: elasticsearch
     release: logsearch
@@ -104,6 +105,25 @@ instance_groups:
         es:
           uri: http://localhost:9200
           all: true
+  - name: upload-kibana-objects
+    release: logsearch-for-cloudfoundry
+    consumes:
+      elasticsearch: {from: elasticsearch_master}
+    properties:
+      cloudfoundry:
+        firehose_events:
+        - LogMessage
+        - ContainerMetric
+        system_domain: (( grab $CF_SYSTEM_DOMAIN ))
+        user: (( grab $CF_USERNAME ))
+        password: (( grab $CF_PASSWORD ))
+      kibana_objects:
+        upload_patterns:
+        - {type: index-pattern, pattern: "/var/vcap/jobs/upload-kibana-objects/kibana-objects/index-pattern/*.json"}
+        - {type: config, pattern: "/var/vcap/jobs/upload-kibana-objects/kibana-objects/config/*.json"}
+        - {type: search, pattern: "/var/vcap/jobs/upload-kibana-objects/kibana-objects/search/app-*.json"}
+        - {type: visualization, pattern: "/var/vcap/jobs/upload-kibana-objects/kibana-objects/visualization/App-*.json"}
+        - {type: dashboard, pattern: "/var/vcap/jobs/upload-kibana-objects/kibana-objects/dashboard/App-*.json"}
   # TODO: Drop after https://github.com/cloudfoundry-community/logsearch-for-cloudfoundry/pull/267 is merged
   - name: cron
     release: cron
@@ -336,34 +356,3 @@ instance_groups:
     release: logsearch
     consumes:
       elasticsearch: {from: elasticsearch_master}
-
-- name: upload-kibana-objects
-  instances: 1
-  vm_type: errand_small
-  vm_extensions: [errand-profile]
-  stemcell: default
-  azs: [z1]
-  networks:
-  - name: services
-  lifecycle: errand
-  release: logsearch-for-cloudfoundry
-  jobs:
-  - name: upload-kibana-objects
-    release: logsearch-for-cloudfoundry
-    consumes:
-      elasticsearch: {from: elasticsearch_master}
-    properties:
-      cloudfoundry:
-        firehose_events:
-        - LogMessage
-        - ContainerMetric
-        system_domain: (( grab $CF_SYSTEM_DOMAIN ))
-        user: (( grab $CF_USERNAME ))
-        password: (( grab $CF_PASSWORD ))
-      kibana_objects:
-        upload_patterns:
-        - {type: index-pattern, pattern: "/var/vcap/jobs/upload-kibana-objects/kibana-objects/index-pattern/*.json"}
-        - {type: config, pattern: "/var/vcap/jobs/upload-kibana-objects/kibana-objects/config/*.json"}
-        - {type: search, pattern: "/var/vcap/jobs/upload-kibana-objects/kibana-objects/search/app-*.json"}
-        - {type: visualization, pattern: "/var/vcap/jobs/upload-kibana-objects/kibana-objects/visualization/App-*.json"}
-        - {type: dashboard, pattern: "/var/vcap/jobs/upload-kibana-objects/kibana-objects/dashboard/App-*.json"}
