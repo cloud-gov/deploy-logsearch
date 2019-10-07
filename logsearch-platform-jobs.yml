@@ -292,15 +292,3 @@ instance_groups:
     release: logsearch
     consumes:
       elasticsearch: {from: elasticsearch_master}
-
-- name: upload-kibana-objects
-  instances: 1
-  vm_type: errand_small
-  vm_extensions: [errand-profile]
-  stemcell: default
-  azs: [z1]
-  networks:
-  - name: services
-  lifecycle: errand
-  release: logsearch-for-cloudfoundry
-  jobs:
