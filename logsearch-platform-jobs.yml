@@ -224,6 +224,7 @@ instance_groups:
           # Use per-day indexing strategy
           index: "logs-platform-%{+YYYY.MM.dd}"
           index_type: "%{@type}"
+          data_hosts: [127.0.0.1]
         filters:
         - path: /var/vcap/packages/logsearch-config-logstash-filters/logstash-filters-default.conf
         - content: |
