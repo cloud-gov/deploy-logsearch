@@ -204,7 +204,7 @@ instance_groups:
         default_app_id: "dashboard/App-Overview"
         plugins:
         - auth: /var/vcap/packages/kibana-auth-plugin/kibana-auth-plugin.zip
-        config_options: |-
+        config_options: 
           console.enabled: false
         env:
         - NODE_ENV: production
