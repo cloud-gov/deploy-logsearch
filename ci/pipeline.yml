@@ -1331,9 +1331,10 @@ resources:
 - name: logsearch-for-cloudfoundry-release
   type: s3-iam
   source:
-    bucket: ((cg-s3-bosh-releases-bucket))
+    bucket: logsearch
     regexp: logsearch-for-cloudfoundry-(.*).tgz
-    region_name: ((aws-region))
+    region_name: us-east-1
+    private: false
 
 - name: oauth2-proxy-release
   type: s3-iam

@@ -177,6 +177,17 @@ instance_groups:
         - NODE_ENV: production
         health:
           timeout: 600
+        config_options:
+          "xpack.searchprofiler.enabled": false
+          "xpack.grokdebugger.enabled": false
+          "xpack.apm.ui.enabled": false
+          # set reporting key for load balanced scenarios
+          # "xpack.reporting.encryptionKey": secret
+          "xpack.monitoring.enabled": false
+          "xpack.graph.enabled": false
+          "xpack.ml.enabled": false
+          "xpack.security.enabled": false
+          "xpack.watcher.enabled": false
   - name: oauth2-proxy
     release: oauth2-proxy
     properties:
