@@ -14,6 +14,7 @@ instance_groups:
     properties:
       elasticsearch:
         cluster_name: logsearch
+        migrate_data_path: true
         node:
           allow_master: true
           allow_data: false
@@ -74,6 +75,7 @@ instance_groups:
     properties:
       elasticsearch:
         heap_size: 2G
+        migrate_data_path: true
   - name: curator
     release: logsearch
     # nil the link and use the colocated instance when https://github.com/cloudfoundry-community/logsearch-boshrelease/pull/90 is merged
@@ -175,6 +177,7 @@ instance_groups:
           timeout: 900
         recovery:
           delay_allocation_restart: "15m"
+        migrate_data_path: true
   vm_type: logsearch_es_data
   persistent_disk_type: logsearch_es_data
   stemcell: default

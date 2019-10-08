@@ -27,6 +27,7 @@ instance_groups:
         recovery:
           delay_allocation_restart: "15m"
         config_options: {"xpack.monitoring.enabled": false}
+        migrate_data_path: true
   vm_type: logsearch_es_master
   persistent_disk_type: logsearch_es_master
   stemcell: default
@@ -145,6 +146,7 @@ instance_groups:
         recovery:
           delay_allocation_restart: "15m"
         config_options: {"xpack.monitoring.enabled": false}
+        migrate_data_path: true
   vm_type: logsearch_es_data
   persistent_disk_type: logsearch_es_platform_data
   stemcell: default
@@ -164,6 +166,7 @@ instance_groups:
     properties:
       elasticsearch:
         heap_size: 2G
+        migrate_data_path: true
   - name: kibana
     release: logsearch
     consumes:
@@ -212,6 +215,7 @@ instance_groups:
       elasticsearch:
         heap_size: 1G
         config_options: {"xpack.monitoring.enabled": false}
+        migrate_data_path: true
   - name: ingestor_syslog
     release: logsearch
     consumes: 
