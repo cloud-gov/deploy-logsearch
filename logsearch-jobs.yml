@@ -197,6 +197,7 @@ instance_groups:
     properties:
       elasticsearch:
         heap_size: 2G
+        migrate_data_path: true
   - name: kibana
     release: logsearch
     consumes:
