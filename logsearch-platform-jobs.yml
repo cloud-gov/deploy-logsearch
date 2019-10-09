@@ -64,6 +64,7 @@ instance_groups:
       elasticsearch:
         heap_size: 2G
         config_options: {"xpack.monitoring.enabled": false}
+        migrate_data_path: true
   - name: curator
     release: logsearch
     consumes:
