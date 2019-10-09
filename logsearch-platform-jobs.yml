@@ -101,6 +101,9 @@ instance_groups:
     consumes:
       elasticsearch: {from: elasticsearch_master}
     properties:
+      kibana_objects:
+        login_host_name: opslogin
+        host_name: logs-platform
       elasticsearch_config:
         app_index_prefix: logs-platform
       cloudfoundry:
