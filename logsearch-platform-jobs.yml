@@ -101,9 +101,6 @@ instance_groups:
     consumes:
       elasticsearch: {from: elasticsearch_master}
     properties:
-      kibana_objects:
-        login_host_name: opslogin
-        host_name: logs-platform
       elasticsearch_config:
         app_index_prefix: logs-platform
       cloudfoundry:
@@ -111,6 +108,8 @@ instance_groups:
         user: (( grab $CF_USERNAME ))
         password: (( grab $CF_PASSWORD ))
       kibana_objects:
+        host_name: logs-platform
+        login_host_name: opslogin
         upload_patterns:
         - {type: index-pattern, pattern: "/var/vcap/jobs/upload-kibana-objects/kibana-objects/index-pattern/*.json"}
         - {type: config, pattern: "/var/vcap/jobs/upload-kibana-objects/kibana-objects/config/*.json"}
