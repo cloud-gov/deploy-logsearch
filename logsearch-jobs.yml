@@ -250,6 +250,7 @@ instance_groups:
     properties:
       elasticsearch:
         heap_size: 1G
+        migrate_data_path: true
   - name: archiver_syslog
     release: logsearch
     properties:
@@ -300,6 +301,7 @@ instance_groups:
     properties:
       elasticsearch:
         heap_size: 1G
+        migrate_data_path: true
   - name: ingestor_syslog
     release: logsearch
     consumes:
