@@ -23,5 +23,5 @@ if __name__ == "__main__":
         },
     )
     print(login.url, login.status_code)
-    assert login.url == 'https://logs.{}/'.format(os.environ['CF_SYSTEM_DOMAIN'])
+    assert login.url == 'https://logs.{}/app/kibana'.format(os.environ['CF_SYSTEM_DOMAIN'])
     assert login.status_code == 200
