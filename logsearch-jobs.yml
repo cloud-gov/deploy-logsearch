@@ -311,6 +311,7 @@ instance_groups:
       logstash:
         queue:
           max_bytes: 30gb
+          data_hosts: [127.0.0.1]
       logstash_parser:
         elasticsearch:
           # Use per-day indexing strategy
