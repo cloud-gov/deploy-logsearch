@@ -175,7 +175,6 @@ instance_groups:
           fd: 131072  # 2 ** 17
         health:
           timeout: 900
-          disable_post_start: true
         recovery:
           delay_allocation_restart: "15m"
         migrate_data_path: true
