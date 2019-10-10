@@ -109,7 +109,7 @@ instance_groups:
         password: (( grab $CF_PASSWORD ))
       kibana_objects:
         host_name: logs-platform
-        login_host_name: opslogin
+        login_fqdn: opslogin.fr.cloud.gov
         upload_patterns:
         - {type: index-pattern, pattern: "/var/vcap/jobs/upload-kibana-objects/kibana-objects/index-pattern/*.json"}
         - {type: config, pattern: "/var/vcap/jobs/upload-kibana-objects/kibana-objects/config/*.json"}
