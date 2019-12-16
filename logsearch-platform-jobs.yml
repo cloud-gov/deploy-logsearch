@@ -216,7 +216,7 @@ instance_groups:
       elasticsearch: {from: elasticsearch_master}
     properties:
       elasticsearch:
-        heap_size: 4G
+        heap_size: 1G
         config_options: {"xpack.monitoring.enabled": false}
         migrate_data_path: true
   - name: ingestor_syslog
