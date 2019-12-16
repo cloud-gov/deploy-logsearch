@@ -208,7 +208,7 @@ instance_groups:
   - name: services
 
 - name: ingestor
-  instances: 3
+  instances: 5
   jobs:
   - name: elasticsearch
     release: logsearch
@@ -216,7 +216,7 @@ instance_groups:
       elasticsearch: {from: elasticsearch_master}
     properties:
       elasticsearch:
-        heap_size: 1G
+        heap_size: 4G
         config_options: {"xpack.monitoring.enabled": false}
         migrate_data_path: true
   - name: ingestor_syslog

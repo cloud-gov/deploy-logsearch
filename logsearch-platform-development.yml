@@ -21,3 +21,11 @@ instance_groups:
   - name: oauth2-proxy
     properties:
       redirect_url: https://logs-platform.dev.us-gov-west-1.aws-us-gov.cloud.gov/oauth2/callback
+
+- name: ingestor
+  instances: 3
+  jobs:
+  - name: elasticsearch
+    properties:
+      elasticsearch:
+        heap_size: 1G
