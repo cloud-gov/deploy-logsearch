@@ -351,6 +351,7 @@ jobs:
       passed: [deploy-logsearch-development]
     - get: logsearch-config
       passed: [deploy-logsearch-development]
+      trigger: true
   - task: smoke-tests
     file: pipeline-tasks/bosh-errand.yml
     params:
