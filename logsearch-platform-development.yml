@@ -24,8 +24,3 @@ instance_groups:
 
 - name: ingestor
   instances: 3
-  jobs:
-  - name: elasticsearch
-    properties:
-      elasticsearch:
-        heap_size: 1G
