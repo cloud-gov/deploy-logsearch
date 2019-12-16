@@ -395,6 +395,7 @@ jobs:
       passed: [deploy-logsearch-development]
     - get: logsearch-config
       passed: [deploy-logsearch-development]
+      trigger: true
     - get: logsearch-development-deployment
       trigger: true
     - get: prometheus-release
