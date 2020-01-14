@@ -194,13 +194,13 @@ jobs:
   - task: smoke-tests
     file: pipeline-tasks/bosh-errand.yml
     params:
-      BOSH_TARGET: ((logsearch-development-deployment-bosh-target))
-      BOSH_USERNAME: ((logsearch-development-deployment-bosh-username))
-      BOSH_PASSWORD: ((logsearch-development-deployment-bosh-password))
-      BOSH_DEPLOYMENT_NAME: logsearch-platform
-      BOSH_CACERT: common/master-bosh.crt
-      BOSH_ERRAND: smoke-tests
+      BOSH_ENVIRONMENT: ((bosh.development.environment))
+      BOSH_CLIENT: ((bosh.development.client))
+      BOSH_CLIENT_SECRET: ((bosh.development.client-secret))
+      BOSH_DEPLOYMENT: ((logsearch-platform.development.name))
+      BOSH_ERRAND: ((logsearch-platform.development.smoke-tests))
       BOSH_FLAGS: "--keep-alive"
+      BOSH_CA_CERT: common/master-bosh.crt
   on_failure:
     put: slack
     params:
@@ -355,13 +355,13 @@ jobs:
   - task: smoke-tests
     file: pipeline-tasks/bosh-errand.yml
     params:
-      BOSH_TARGET: ((logsearch-development-deployment-bosh-target))
-      BOSH_USERNAME: ((logsearch-development-deployment-bosh-username))
-      BOSH_PASSWORD: ((logsearch-development-deployment-bosh-password))
-      BOSH_DEPLOYMENT_NAME: logsearch
-      BOSH_CACERT: common/master-bosh.crt
-      BOSH_ERRAND: smoke-tests
+      BOSH_ENVIRONMENT: ((bosh.development.environment))
+      BOSH_CLIENT: ((bosh.development.client))
+      BOSH_CLIENT_SECRET: ((bosh.development.client-secret))
+      BOSH_DEPLOYMENT: ((logsearch.development.name))
+      BOSH_ERRAND: ((logsearch.development.smoke-tests))
       BOSH_FLAGS: "--keep-alive"
+      BOSH_CA_CERT: common/master-bosh.crt
   on_failure:
     put: slack
     params:
@@ -563,13 +563,13 @@ jobs:
   - task: smoke-tests
     file: pipeline-tasks/bosh-errand.yml
     params:
-      BOSH_TARGET: ((logsearch-staging-deployment-bosh-target))
-      BOSH_USERNAME: ((logsearch-staging-deployment-bosh-username))
-      BOSH_PASSWORD: ((logsearch-staging-deployment-bosh-password))
-      BOSH_DEPLOYMENT_NAME: logsearch-platform
-      BOSH_CACERT: common/master-bosh.crt
-      BOSH_ERRAND: smoke-tests
+      BOSH_ENVIRONMENT: ((bosh.staging.environment))
+      BOSH_CLIENT: ((bosh.staging.client))
+      BOSH_CLIENT_SECRET: ((bosh.staging.client-secret))
+      BOSH_DEPLOYMENT: ((logsearch-platform.staging.name))
+      BOSH_ERRAND: ((logsearch-platform.staging.smoke-tests))
       BOSH_FLAGS: "--keep-alive"
+      BOSH_CA_CERT: common/master-bosh.crt
   on_failure:
     put: slack
     params:
@@ -716,13 +716,13 @@ jobs:
   - task: smoke-tests
     file: pipeline-tasks/bosh-errand.yml
     params:
-      BOSH_TARGET: ((logsearch-staging-deployment-bosh-target))
-      BOSH_USERNAME: ((logsearch-staging-deployment-bosh-username))
-      BOSH_PASSWORD: ((logsearch-staging-deployment-bosh-password))
-      BOSH_DEPLOYMENT_NAME: logsearch
-      BOSH_CACERT: common/master-bosh.crt
-      BOSH_ERRAND: smoke-tests
+      BOSH_ENVIRONMENT: ((bosh.staging.environment))
+      BOSH_CLIENT: ((bosh.staging.client))
+      BOSH_CLIENT_SECRET: ((bosh.staging.client-secret))
+      BOSH_DEPLOYMENT: ((logsearch.staging.name))
+      BOSH_ERRAND: ((logsearch.staging.smoke-tests))
       BOSH_FLAGS: "--keep-alive"
+      BOSH_CA_CERT: common/master-bosh.crt
   on_failure:
     put: slack
     params:
@@ -924,13 +924,13 @@ jobs:
   - task: smoke-tests
     file: pipeline-tasks/bosh-errand.yml
     params:
-      BOSH_TARGET: ((logsearch-production-deployment-bosh-target))
-      BOSH_USERNAME: ((logsearch-production-deployment-bosh-username))
-      BOSH_PASSWORD: ((logsearch-production-deployment-bosh-password))
-      BOSH_DEPLOYMENT_NAME: logsearch-platform
-      BOSH_CACERT: common/master-bosh.crt
-      BOSH_ERRAND: smoke-tests
+      BOSH_ENVIRONMENT: ((bosh.production.environment))
+      BOSH_CLIENT: ((bosh.production.client))
+      BOSH_CLIENT_SECRET: ((bosh.production.client-secret))
+      BOSH_DEPLOYMENT: ((logsearch-platform.production.name))
+      BOSH_ERRAND: ((logsearch-platform.production.smoke-tests))
       BOSH_FLAGS: "--keep-alive"
+      BOSH_CA_CERT: common/master-bosh.crt
   on_failure:
     put: slack
     params:
@@ -1076,13 +1076,13 @@ jobs:
   - task: smoke-tests
     file: pipeline-tasks/bosh-errand.yml
     params:
-      BOSH_TARGET: ((logsearch-production-deployment-bosh-target))
-      BOSH_USERNAME: ((logsearch-production-deployment-bosh-username))
-      BOSH_PASSWORD: ((logsearch-production-deployment-bosh-password))
-      BOSH_DEPLOYMENT_NAME: logsearch
-      BOSH_CACERT: common/master-bosh.crt
-      BOSH_ERRAND: smoke-tests
+      BOSH_ENVIRONMENT: ((bosh.production.environment))
+      BOSH_CLIENT: ((bosh.production.client))
+      BOSH_CLIENT_SECRET: ((bosh.production.client-secret))
+      BOSH_DEPLOYMENT: ((logsearch.production.name))
+      BOSH_ERRAND: ((logsearch.production.smoke-tests))
       BOSH_FLAGS: "--keep-alive"
+      BOSH_CA_CERT: common/master-bosh.crt
   on_failure:
     put: slack
     params:
