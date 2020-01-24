@@ -4,3 +4,11 @@ instance_groups:
   - name: oauth2-proxy
     properties:
       redirect_url: https://logs-platform.fr.cloud.gov/oauth2/callback
+- name: ingestor
+  jobs:
+  - name: ingestor_syslog
+    properties:
+      logstash_ingestor:
+        health:
+          timeout: 900
+
