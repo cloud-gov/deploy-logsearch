@@ -24,3 +24,7 @@ instance_groups:
 
 - name: ingestor
   instances: 3
+
+
+- name: elasticsearch_data
+  instances: 5
