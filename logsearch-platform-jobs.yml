@@ -96,6 +96,9 @@ instance_groups:
         es:
           uri: http://localhost:9200
           all: true
+      elasticsearch_config:
+        app_index_settings:
+          index.mapping.total_fields.limit: 2000
   - name: upload-kibana-objects
     release: logsearch-for-cloudfoundry
     consumes:
