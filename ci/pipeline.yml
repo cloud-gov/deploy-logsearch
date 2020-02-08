@@ -230,11 +230,11 @@ jobs:
   - task: upload-kibana-objects
     file: pipeline-tasks/bosh-errand.yml
     params:
-      BOSH_TARGET: ((logsearch-development-deployment-bosh-target))
-      BOSH_USERNAME: ((logsearch-development-deployment-bosh-username))
-      BOSH_PASSWORD: ((logsearch-development-deployment-bosh-password))
-      BOSH_DEPLOYMENT_NAME: logsearch-platform
-      BOSH_CACERT: common/master-bosh.crt
+      BOSH_ENVIRONMENT: ((bosh.development.environment))
+      BOSH_CLIENT: ((bosh.development.client))
+      BOSH_CLIENT_SECRET: ((bosh.development.client-secret))
+      BOSH_DEPLOYMENT: ((logsearch-platform.development.name))
+      BOSH_CA_CERT: common/master-bosh.crt
       BOSH_ERRAND: upload-kibana-objects
 
 - name: deploy-logsearch-development
@@ -444,11 +444,11 @@ jobs:
   - task: upload-kibana-objects
     file: pipeline-tasks/bosh-errand.yml
     params:
-      BOSH_TARGET: ((logsearch-development-deployment-bosh-target))
-      BOSH_USERNAME: ((logsearch-development-deployment-bosh-username))
-      BOSH_PASSWORD: ((logsearch-development-deployment-bosh-password))
-      BOSH_DEPLOYMENT_NAME: logsearch
-      BOSH_CACERT: common/master-bosh.crt
+      BOSH_ENVIRONMENT: ((bosh.development.environment))
+      BOSH_CLIENT: ((bosh.development.client))
+      BOSH_CLIENT_SECRET: ((bosh.development.client-secret))
+      BOSH_DEPLOYMENT: ((logsearch.development.name))
+      BOSH_CA_CERT: common/master-bosh.crt
       BOSH_ERRAND: upload-kibana-objects
 
 - name: deploy-logsearch-platform-staging
@@ -598,11 +598,11 @@ jobs:
   - task: upload-kibana-objects
     file: pipeline-tasks/bosh-errand.yml
     params:
-      BOSH_TARGET: ((logsearch-staging-deployment-bosh-target))
-      BOSH_USERNAME: ((logsearch-staging-deployment-bosh-username))
-      BOSH_PASSWORD: ((logsearch-staging-deployment-bosh-password))
-      BOSH_DEPLOYMENT_NAME: logsearch-platform
-      BOSH_CACERT: common/master-bosh.crt
+      BOSH_ENVIRONMENT: ((bosh.staging.environment))
+      BOSH_CLIENT: ((bosh.staging.client))
+      BOSH_CLIENT_SECRET: ((bosh.staging.client-secret))
+      BOSH_DEPLOYMENT: ((logsearch-platform.staging.name))
+      BOSH_CA_CERT: common/master-bosh.crt
       BOSH_ERRAND: upload-kibana-objects
 
 - name: deploy-logsearch-staging
@@ -805,11 +805,11 @@ jobs:
   - task: upload-kibana-objects
     file: pipeline-tasks/bosh-errand.yml
     params:
-      BOSH_TARGET: ((logsearch-staging-deployment-bosh-target))
-      BOSH_USERNAME: ((logsearch-staging-deployment-bosh-username))
-      BOSH_PASSWORD: ((logsearch-staging-deployment-bosh-password))
-      BOSH_DEPLOYMENT_NAME: logsearch
-      BOSH_CACERT: common/master-bosh.crt
+      BOSH_ENVIRONMENT: ((bosh.staging.environment))
+      BOSH_CLIENT: ((bosh.staging.client))
+      BOSH_CLIENT_SECRET: ((bosh.staging.client-secret))
+      BOSH_DEPLOYMENT: ((logsearch.staging.name))
+      BOSH_CA_CERT: common/master-bosh.crt
       BOSH_ERRAND: upload-kibana-objects
 
 - name: deploy-logsearch-platform-production
@@ -959,11 +959,11 @@ jobs:
   - task: upload-kibana-objects
     file: pipeline-tasks/bosh-errand.yml
     params:
-      BOSH_TARGET: ((logsearch-production-deployment-bosh-target))
-      BOSH_USERNAME: ((logsearch-production-deployment-bosh-username))
-      BOSH_PASSWORD: ((logsearch-production-deployment-bosh-password))
-      BOSH_DEPLOYMENT_NAME: logsearch-platform
-      BOSH_CACERT: common/master-bosh.crt
+      BOSH_ENVIRONMENT: ((bosh.production.environment))
+      BOSH_CLIENT: ((bosh.production.client))
+      BOSH_CLIENT_SECRET: ((bosh.production.client-secret))
+      BOSH_DEPLOYMENT: ((logsearch-platform.production.name))
+      BOSH_CA_CERT: common/master-bosh.crt
       BOSH_ERRAND: upload-kibana-objects
 
 - name: deploy-logsearch-production
@@ -1165,11 +1165,11 @@ jobs:
   - task: upload-kibana-objects
     file: pipeline-tasks/bosh-errand.yml
     params:
-      BOSH_TARGET: ((logsearch-production-deployment-bosh-target))
-      BOSH_USERNAME: ((logsearch-production-deployment-bosh-username))
-      BOSH_PASSWORD: ((logsearch-production-deployment-bosh-password))
-      BOSH_DEPLOYMENT_NAME: logsearch
-      BOSH_CACERT: common/master-bosh.crt
+      BOSH_ENVIRONMENT: ((bosh.production.environment))
+      BOSH_CLIENT: ((bosh.production.client))
+      BOSH_CLIENT_SECRET: ((bosh.production.client-secret))
+      BOSH_DEPLOYMENT: ((logsearch.production.name))
+      BOSH_CA_CERT: common/master-bosh.crt
       BOSH_ERRAND: upload-kibana-objects
 
 - name: check-backup-development-tenant
