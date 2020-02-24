@@ -1,0 +1,19 @@
+---
+- type: replace
+  path: /instance_groups/name=elasticsearch_master/instances
+  value: 1
+- type: replace
+  path: /instance_groups/name=elasticsearch_master/maintenance
+  value: 1
+- type: replace
+  path: /instance_groups/name=elasticsearch_data/instances
+  value: 5
+- type: replace
+  path: /instance_groups/name=kibana/instances
+  value: 1
+- type: replace
+  path: /instance_groups/name=ingestor/instances
+  value: 3
+- type: replace
+  path: /instance_groups/name=smoke-tests/instances
+  value: 1

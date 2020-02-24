@@ -1,0 +1,13 @@
+---
+- type: replace
+  path: /instance_groups/name=ingestor/jobs/name=elb_log_ingestor/properties/env/
+  value:
+    AWS_ACCESS_KEY_ID: ((aws-access-key-id))
+    AWS_DEFAULT_REGION: us-gov-west-1
+    AWS_SECRET_ACCESS_KEY: ((aws-secret-access-key))
+    ELB_INGESTOR_BUCKET: ((elb-ingestor-bucket))
+    ELB_INGESTOR_DONE_PREFIX: ((elb-ingestor-done-prefix))
+    ELB_INGESTOR_ELASTICSEARCH_HOSTS: localhost:9200
+    ELB_INGESTOR_INDEX_PATTERN: logs-platform-%{+YYYY.MM.dd}
+    ELB_INGESTOR_SEARCH_PREFIX: ((elb-ingestor-search-prefix))
+    ELB_INGESTOR_WORKING_PREFIX: ((elb-ingestor-working-prefix))
