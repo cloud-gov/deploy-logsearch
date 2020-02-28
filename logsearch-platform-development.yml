@@ -23,8 +23,7 @@ instance_groups:
       redirect_url: https://logs-platform.dev.us-gov-west-1.aws-us-gov.cloud.gov/oauth2/callback
 
 - name: ingestor
-  instances: 3
-
+  instances: 1
 
 - name: elasticsearch_data
-  instances: 5
+  instances: 1

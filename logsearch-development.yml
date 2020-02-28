@@ -8,7 +8,7 @@ instance_groups:
     - (( grab terraform_outputs.logsearch_static_ips.[0]))
 
 - name: elasticsearch_data
-  instances: 3
+  instances: 1
 
 - name: archiver
   instances: 1
