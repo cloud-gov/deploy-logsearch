@@ -26,4 +26,5 @@ instance_groups:
   instances: 1
 
 - name: elasticsearch_data
-  instances: 1
+  instances: 3
+  instance_type: t3.medium
