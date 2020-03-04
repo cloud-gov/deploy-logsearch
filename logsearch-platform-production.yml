@@ -1,10 +1,19 @@
 instance_groups:
+- name: elasticsearch_master
+  vm_type: t2.xlarge
+
+- name: maintenance
+  vm_type: t2.large
+
 - name: kibana
+  vm_type: t2.large
   jobs:
   - name: oauth2-proxy
     properties:
       redirect_url: https://logs-platform.fr.cloud.gov/oauth2/callback
+
 - name: ingestor
+  vm_type: r4.large
   jobs:
   - name: ingestor_syslog
     properties:
@@ -12,3 +21,9 @@ instance_groups:
         health:
           timeout: 900
 
+- name: elasticsearch_data
+  vm_type: r4.xlarge
+
+- name: redis
+  instances: 1
+  vm_type: t2.medium
