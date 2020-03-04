@@ -1,9 +1,17 @@
 instance_groups:
+- name: elasticsearch_master
+  vm_type: t3.medium
+
 - name: elasticsearch_data
   instances: 3
+  vm_type: t2.large
+
+- name: redis
+  vm_type: t2.medium
 
 - name: archiver
   instances: 1
+  vm_type: r4.large
   jobs:
   - name: ingestor_cloudfoundry-firehose
     properties:
@@ -12,6 +20,7 @@ instance_groups:
 
 - name: ingestor
   instances: 1
+  vm_type: r4.large
   jobs:
   - name: ingestor_cloudfoundry-firehose
     properties:
@@ -19,6 +28,7 @@ instance_groups:
         api_endpoint: https://api.fr-stage.cloud.gov
 
 - name: kibana
+  vm_type: t2.large
   jobs:
   - name: kibana-auth-plugin
     properties:
