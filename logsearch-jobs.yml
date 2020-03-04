@@ -39,7 +39,6 @@ instance_groups:
         - (( concat "suppress gen_id 1, sig_id 343080004, track by_src, ip " instance_groups.maintenance.networks.services.static_ips.[0] ))
         - 'alert tcp any any -> any 9200 (msg:"Unexpected logsearch action"; content:"DELETE"; http_method; content: "logs-platform"; http_uri; classtype:web-application-attack; sid:343080005; rev:1;)'
         - (( concat "suppress gen_id 1, sig_id 343080005, track by_src, ip " instance_groups.maintenance.networks.services.static_ips.[0] ))
-  vm_type: logsearch_es_master
   persistent_disk_type: logsearch_es_master
   stemcell: default
   azs: [z1]
@@ -57,7 +56,6 @@ instance_groups:
   instances: 1
   jobs:
   - {name: redis, release: logsearch-for-cloudfoundry}
-  vm_type: logsearch_redis
   persistent_disk_type: logsearch_redis
   stemcell: default
   azs: [z1]
@@ -143,7 +141,6 @@ instance_groups:
           month: "*"
           wday: "*"
           user: root
-  vm_type: logsearch_maintenance
   stemcell: default
   azs: [z1]
   networks:
@@ -178,7 +175,6 @@ instance_groups:
         recovery:
           delay_allocation_restart: "15m"
         migrate_data_path: true
-  vm_type: logsearch_es_data
   persistent_disk_type: logsearch_es_data
   stemcell: default
   azs: [z1]
@@ -236,7 +232,6 @@ instance_groups:
             name: kibana-up
             script_path: /var/vcap/jobs/kibana/bin/post-start
           timeout: 1s
-  vm_type: logsearch_kibana
   stemcell: default
   azs: [z1]
   networks:
@@ -285,7 +280,6 @@ instance_groups:
       syslog:
         host: 127.0.0.1
         port: 5514
-  vm_type: logsearch_ingestor
   persistent_disk_type: logsearch_ingestor
   stemcell: default
   azs: [z1]
@@ -338,7 +332,6 @@ instance_groups:
         port: 5514
   - name: parser-config-lfc
     release: logsearch-for-cloudfoundry
-  vm_type: logsearch_ingestor
   persistent_disk_type: logsearch_ingestor
   stemcell: default
   azs: [z1]
@@ -350,7 +343,6 @@ instance_groups:
 ###########################
 - name: smoke-tests
   instances: 1
-  vm_type: errand_small
   vm_extensions: [errand-profile]
   stemcell: default
   azs: [z1]

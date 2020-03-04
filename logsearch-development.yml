@@ -1,5 +1,6 @@
 instance_groups:
 - name: elasticsearch_master
+  vm_type: t3.medium
   instances: 1
   networks:
   - name: services
@@ -9,9 +10,14 @@ instance_groups:
 
 - name: elasticsearch_data
   instances: 3
-  instance_type: t3.medium
+  vm_type: t3.medium
+
+- name: redis
+  instances: 1
+  vm_type: t3.nano
 
 - name: archiver
+  vm_type: t3.small
   instances: 1
   jobs:
   - name: ingestor_cloudfoundry-firehose
@@ -20,6 +26,7 @@ instance_groups:
         api_endpoint: https://api.dev.us-gov-west-1.aws-us-gov.cloud.gov
 
 - name: ingestor
+  vm_type: t3.small
   instances: 1
   jobs:
   - name: ingestor_cloudfoundry-firehose
@@ -28,6 +35,7 @@ instance_groups:
         api_endpoint: https://api.dev.us-gov-west-1.aws-us-gov.cloud.gov
 
 - name: kibana
+  vm_type: t3.small
   instances: 1
   jobs:
   - name: kibana-auth-plugin
