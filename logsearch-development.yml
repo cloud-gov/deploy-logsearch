@@ -14,7 +14,7 @@ instance_groups:
 
 - name: redis
   instances: 1
-  vm_type: t3.nano
+  vm_type: t3.small
 
 - name: archiver
   vm_type: t3.small
