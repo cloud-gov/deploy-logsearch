@@ -57,3 +57,6 @@ instance_groups:
         routes:
         - name: logsearch
           uris: [logs.dev.us-gov-west-1.aws-us-gov.cloud.gov]
+
+- name: smoke-tests
+  vm_type: t3.small
