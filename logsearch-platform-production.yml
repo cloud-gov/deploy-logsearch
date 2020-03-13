@@ -13,7 +13,7 @@ instance_groups:
       redirect_url: https://logs-platform.fr.cloud.gov/oauth2/callback
 
 - name: ingestor
-  vm_type: r4.large
+  vm_type: c5.xlarge
   jobs:
   - name: ingestor_syslog
     properties:

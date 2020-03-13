@@ -31,7 +31,7 @@ instance_groups:
 
 - name: elasticsearch_data
   instances: 3
-  vm_type: t3.medium
+  vm_type: t3.large
 
 - name: redis
   instances: 1
