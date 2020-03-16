@@ -495,25 +495,25 @@ jobs:
       trigger: true
     - get: logsearch-config
       trigger: true
-      passed: [smoke-tests-development, smoke-tests-login-development]
+      passed: [smoke-tests-platform-development]
     - get: logsearch-release
       trigger: true
-      passed: [smoke-tests-development, smoke-tests-login-development]
+      passed: [smoke-tests-platform-development]
     - get: logsearch-for-cloudfoundry-release
       trigger: true
-      passed: [smoke-tests-development, smoke-tests-login-development]
+      passed: [smoke-tests-platform-development]
     - get: prometheus-release
       trigger: true
-      passed: [smoke-tests-development, smoke-tests-login-development]
+      passed: [smoke-tests-platform-development]
     - get: oauth2-proxy-release
       trigger: true
-      passed: [smoke-tests-development, smoke-tests-login-development]
+      passed: [smoke-tests-platform-development]
     - get: secureproxy-release
       trigger: true
-      passed: [smoke-tests-development, smoke-tests-login-development]
+      passed: [smoke-tests-platform-development]
     - get: logsearch-stemcell-xenial
       trigger: true
-      passed: [smoke-tests-development, smoke-tests-login-development]
+      passed: [smoke-tests-platform-development]
     - get: terraform-yaml
       resource: terraform-yaml-staging
       trigger: true
@@ -856,25 +856,25 @@ jobs:
       trigger: true
     - get: logsearch-config
       trigger: true
-      passed: [smoke-tests-staging, smoke-tests-login-staging]
+      passed: [smoke-tests-platform-staging]
     - get: logsearch-release
       trigger: true
-      passed: [smoke-tests-staging, smoke-tests-login-staging]
+      passed: [smoke-tests-platform-staging]
     - get: logsearch-for-cloudfoundry-release
       trigger: true
-      passed: [smoke-tests-staging, smoke-tests-login-staging]
+      passed: [smoke-tests-platform-staging]
     - get: prometheus-release
       trigger: true
-      passed: [smoke-tests-staging, smoke-tests-login-staging]
+      passed: [smoke-tests-platform-staging]
     - get: oauth2-proxy-release
       trigger: true
-      passed: [smoke-tests-staging, smoke-tests-login-staging]
+      passed: [smoke-tests-platform-staging]
     - get: secureproxy-release
       trigger: true
-      passed: [smoke-tests-staging, smoke-tests-login-staging]
+      passed: [smoke-tests-platform-staging]
     - get: logsearch-stemcell-xenial
       trigger: true
-      passed: [smoke-tests-staging, smoke-tests-login-staging]
+      passed: [smoke-tests-platform-staging]
     - get: logsearch-platform-staging-deployment
     - get: terraform-yaml
       resource: terraform-yaml-production
