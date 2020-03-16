@@ -29,39 +29,77 @@ groups:
     - deploy-logsearch-platform-production
     - upload-kibana-objects-platform-production
     - smoke-tests-platform-production
-  - name: development
+  - name: tenant-development
+    jobs:
+    - deploy-logsearch-development
+    - upload-kibana-objects-development
+    - check-backup-development-tenant
+    - smoke-tests-development
+    - smoke-tests-login-development
+  - name: platform-development
     jobs:
     - deploy-logsearch-platform-development
     - smoke-tests-platform-development
-    - deploy-logsearch-development
-    - upload-kibana-objects-development
     - upload-kibana-objects-platform-development
-    - check-backup-development-tenant
     - check-backup-development-platform
-    - smoke-tests-development
-    - smoke-tests-login-development
-  - name: staging
+  - name: tenant-staging
+    jobs:
+    - deploy-logsearch-staging
+    - upload-kibana-objects-staging
+    - check-backup-staging-tenant
+    - smoke-tests-staging
+    - smoke-tests-login-staging
+  - name: platform-staging
     jobs:
     - deploy-logsearch-platform-staging
     - smoke-tests-platform-staging
-    - deploy-logsearch-staging
-    - upload-kibana-objects-staging
     - upload-kibana-objects-platform-staging
-    - check-backup-staging-tenant
     - check-backup-staging-platform
-    - smoke-tests-staging
-    - smoke-tests-login-staging
-  - name: production
+  - name: tenant-production
+    jobs:
+    - deploy-logsearch-production
+    - upload-kibana-objects-production
+    - check-backup-production-tenant
+    - smoke-tests-production
+    - smoke-tests-login-production
+  - name: platform-production
     jobs:
     - deploy-logsearch-platform-production
     - smoke-tests-platform-production
+    - upload-kibana-objects-platform-production
+    - check-backup-production-platform
+  - name: tenant
+    jobs:
+    - deploy-logsearch-development
+    - upload-kibana-objects-development
+    - check-backup-development-tenant
+    - smoke-tests-development
+    - smoke-tests-login-development
+    - deploy-logsearch-staging
+    - upload-kibana-objects-staging
+    - check-backup-staging-tenant
+    - smoke-tests-staging
+    - smoke-tests-login-staging
     - deploy-logsearch-production
     - upload-kibana-objects-production
-    - upload-kibana-objects-platform-production
     - check-backup-production-tenant
-    - check-backup-production-platform
     - smoke-tests-production
     - smoke-tests-login-production
+  - name: platform
+    jobs:
+    - deploy-logsearch-platform-development
+    - smoke-tests-platform-development
+    - upload-kibana-objects-platform-development
+    - check-backup-development-platform
+    - deploy-logsearch-platform-staging
+    - smoke-tests-platform-staging
+    - upload-kibana-objects-platform-staging
+    - check-backup-staging-platform
+    - deploy-logsearch-platform-production
+    - smoke-tests-platform-production
+    - upload-kibana-objects-platform-production
+    - check-backup-production-platform
+
 jobs:
 - name: deploy-logsearch-platform-development
   serial_groups: [bosh-platform-development]
