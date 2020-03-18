@@ -72,7 +72,6 @@ instance_groups:
       elasticsearch: {from: elasticsearch_master}
     properties:
       elasticsearch:
-        heap_size: 2G
         migrate_data_path: true
   - name: curator
     release: logsearch
@@ -248,7 +247,6 @@ instance_groups:
       elasticsearch: {from: elasticsearch_master}
     properties:
       elasticsearch:
-        heap_size: 1G
         migrate_data_path: true
   - name: archiver_syslog
     release: logsearch
