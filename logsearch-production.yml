@@ -22,7 +22,7 @@ instance_groups:
 
 - name: ingestor
   instances: 5
-  vm_type: r5.large
+  vm_type: r5.xlarge.logsearch.ingestor
   jobs:
   - name: ingestor_cloudfoundry-firehose
     properties:
