@@ -21,3 +21,6 @@ instance_groups:
   - name: oauth2-proxy
     properties:
       redirect_url: https://logs-platform.fr-stage.cloud.gov/oauth2/callback
+
+- name: smoke-tests
+  vm_type: t3.small
