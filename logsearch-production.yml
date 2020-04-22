@@ -6,7 +6,7 @@ instance_groups:
   vm_type: r5.xlarge
 
 - name: maintenance
-  vm_type: t3.medium
+  vm_type: t3.large
 
 - name: redis
   vm_type: t3.medium
