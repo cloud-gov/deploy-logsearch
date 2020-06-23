@@ -304,7 +304,6 @@ jobs:
       - prometheus-release/*.tgz
       stemcells:
       - logsearch-stemcell-xenial/*.tgz
-      recreate: true
   on_failure:
     put: slack
     params: &slack-params
