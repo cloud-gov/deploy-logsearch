@@ -103,8 +103,6 @@ jobs:
     - get: common-secrets
       resource: common-platform-development
       trigger: true
-    - get: elb-log-ingestor-release
-      trigger: true
     - get: logsearch-for-cloudfoundry-release
       trigger: true
     - get: logsearch-release
@@ -163,7 +161,6 @@ jobs:
     params: &deploy-params-platform
       manifest: logsearch-manifest/manifest.yml
       releases: 
-      - elb-log-ingestor-release/*.tgz
       - logsearch-release/*.tgz
       - logsearch-for-cloudfoundry-release/*.tgz
       - prometheus-release/*.tgz
@@ -195,8 +192,6 @@ jobs:
     - get: common
       resource: master-bosh-root-cert
     - get: pipeline-tasks
-    - get: elb-log-ingestor-release
-      trigger: true
     - get: tests-timer
       trigger: true
     - get: prometheus-release
@@ -253,8 +248,6 @@ jobs:
     - get: pipeline-tasks
     - get: common-secrets
       resource: common-development
-      trigger: true
-    - get: elb-log-ingestor-release
       trigger: true
     - get: logsearch-config
       trigger: true
@@ -329,8 +322,6 @@ jobs:
       trigger: true
     - get: common
       resource: master-bosh-root-cert
-    - get: elb-log-ingestor-release
-      trigger: true
     - get: pipeline-tasks
     - get: prometheus-release
       trigger: true
@@ -384,8 +375,6 @@ jobs:
   plan:
   - in_parallel:
     - get: pipeline-tasks
-    - get: elb-log-ingestor-release
-      trigger: true
     - get: logsearch-for-cloudfoundry-release
       trigger: true
       passed: [deploy-logsearch-development]
@@ -461,8 +450,6 @@ jobs:
     - get: common-secrets
       resource: common-platform-staging
       trigger: true
-    - get: elb-log-ingestor-release
-      trigger: true
     - get: logsearch-config
       trigger: true
       passed: [smoke-tests-platform-development]
@@ -533,8 +520,6 @@ jobs:
   - in_parallel:
     - get: common
       resource: master-bosh-root-cert
-    - get: elb-log-ingestor-release
-      trigger: true
     - get: pipeline-tasks
     - get: logsearch-config
       trigger: true
@@ -594,8 +579,6 @@ jobs:
     - get: pipeline-tasks
     - get: common-secrets
       resource: common-staging
-      trigger: true
-    - get: elb-log-ingestor-release
       trigger: true
     - get: logsearch-config
       trigger: true
@@ -666,8 +649,6 @@ jobs:
   - in_parallel:
     - get: common
       resource: master-bosh-root-cert
-    - get: elb-log-ingestor-release
-      trigger: true
     - get: pipeline-tasks
     - get: logsearch-config
       trigger: true
@@ -725,8 +706,6 @@ jobs:
   plan:
   - in_parallel:
     - get: pipeline-tasks
-    - get: elb-log-ingestor-release
-      trigger: true
     - get: logsearch-config
       trigger: true
       passed: [deploy-logsearch-staging]
@@ -802,8 +781,6 @@ jobs:
     - get: common-secrets
       resource: common-platform-production
       trigger: true
-    - get: elb-log-ingestor-release
-      trigger: true
     - get: logsearch-config
       trigger: true
       passed: [smoke-tests-platform-staging]
@@ -874,8 +851,6 @@ jobs:
   - in_parallel:
     - get: common
       resource: master-bosh-root-cert
-    - get: elb-log-ingestor-release
-      trigger: true
     - get: pipeline-tasks
     - get: logsearch-config
       trigger: true
@@ -935,8 +910,6 @@ jobs:
     - get: pipeline-tasks
     - get: common-secrets
       resource: common-prod
-      trigger: true
-    - get: elb-log-ingestor-release
       trigger: true
     - get: logsearch-config
       trigger: true
@@ -1007,8 +980,6 @@ jobs:
     - get: pipeline-tasks
     - get: common
       resource: master-bosh-root-cert
-    - get: elb-log-ingestor-release
-      trigger: true
     - get: logsearch-config
       trigger: true
       passed: [deploy-logsearch-production]
@@ -1064,8 +1035,6 @@ jobs:
   serial_groups: [bosh-production]
   plan:
   - in_parallel:
-    - get: elb-log-ingestor-release
-      trigger: true
     - get: pipeline-tasks
     - get: logsearch-config
       trigger: true
@@ -1275,13 +1244,6 @@ resources:
   source:
     bucket: ((logsearch-private-bucket))
     versioned_file: logsearch-platform-production.yml
-    region_name: ((aws-region))
-
-- name: elb-log-ingestor-release
-  type: s3-iam
-  source:
-    bucket: ((cg-s3-bosh-releases-bucket))
-    regexp: elb-log-ingestor-(.*).tgz
     region_name: ((aws-region))
 
 - name: logsearch-release
