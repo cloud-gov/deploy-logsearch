@@ -21,3 +21,4 @@ releases:
 - {name: prometheus, version: latest}
 - {name: oauth2-proxy, version: latest}
 - {name: secureproxy, version: latest}
+- {name: bpm, version: latest}
