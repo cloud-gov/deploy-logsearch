@@ -88,8 +88,6 @@ instance_groups:
           retention_period: 180
   - name: elasticsearch_config
     release: logsearch
-    consumes:
-      elasticsearch: {from: elasticsearch_master}
     properties:
       elasticsearch_config:
         templates:
