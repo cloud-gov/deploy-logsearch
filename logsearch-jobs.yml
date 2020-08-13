@@ -82,8 +82,6 @@ instance_groups:
   - name: curator
     release: logsearch
     # nil the link and use the colocated instance when https://github.com/cloudfoundry-community/logsearch-boshrelease/pull/90 is merged
-    consumes:
-      elasticsearch: {from: elasticsearch_master}
     properties:
       curator:
         purge_logs:
