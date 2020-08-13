@@ -57,6 +57,8 @@ instance_groups:
 - name: redis
   instances: 1
   jobs:
+  - name: bpm
+    release: bpm
   - {name: redis, release: logsearch-for-cloudfoundry}
   persistent_disk_type: logsearch_redis
   stemcell: default
