@@ -318,6 +318,8 @@ instance_groups:
     release: logsearch
     consumes:
       elasticsearch: {from: elasticsearch_master}
+    provides:
+      ingestor: {as: ingestor_link}
     properties:
       logstash:
         queue:
@@ -372,3 +374,4 @@ instance_groups:
     release: logsearch
     consumes:
       elasticsearch: {from: elasticsearch_master}
+      ingestor_link: {from: ingestor_syslog}
