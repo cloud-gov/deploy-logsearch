@@ -116,7 +116,6 @@ instance_groups:
         login_fqdn: opslogin.fr.cloud.gov
         upload_patterns:
         - {type: index-pattern, pattern: "/var/vcap/jobs/upload-kibana-objects/kibana-objects/index-pattern/*.json"}
-        - {type: config, pattern: "/var/vcap/jobs/upload-kibana-objects/kibana-objects/config/*.json"}
         - {type: search, pattern: "/var/vcap/jobs/upload-kibana-objects/kibana-objects/search/platform-*.json"}
         - {type: visualization, pattern: "/var/vcap/jobs/upload-kibana-objects/kibana-objects/visualization/Platform-*.json"}
         - {type: dashboard, pattern: "/var/vcap/jobs/upload-kibana-objects/kibana-objects/dashboard/Platform-*.json"}
