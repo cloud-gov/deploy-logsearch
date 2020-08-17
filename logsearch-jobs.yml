@@ -121,6 +121,7 @@ instance_groups:
         system_domain: (( grab $CF_SYSTEM_DOMAIN ))
         user: (( grab $CF_USERNAME ))
         password: (( grab $CF_PASSWORD ))
+        logs_hostname: logs
       kibana_objects:
         upload_patterns:
         - {type: index-pattern, pattern: "/var/vcap/jobs/upload-kibana-objects/kibana-objects/index-pattern/*.json"}
