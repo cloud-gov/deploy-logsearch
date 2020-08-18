@@ -113,6 +113,8 @@ jobs:
       trigger: true
     - get: secureproxy-release
       trigger: true
+    - get: bpm-release
+      trigger: true
     - get: logsearch-stemcell-xenial
       trigger: true
     - get: terraform-yaml
@@ -166,6 +168,7 @@ jobs:
       - prometheus-release/*.tgz
       - oauth2-proxy-release/*.tgz
       - secureproxy-release/*.tgz
+      - bpm-release/*.tgz
       stemcells:
       - logsearch-stemcell-xenial/*.tgz
   on_failure:
@@ -207,6 +210,9 @@ jobs:
       trigger: true
       passed: [deploy-logsearch-platform-development]
     - get: logsearch-for-cloudfoundry-release
+      trigger: true
+      passed: [deploy-logsearch-platform-development]
+    - get: bpm-release
       trigger: true
       passed: [deploy-logsearch-platform-development]
     - get: logsearch-stemcell-xenial
@@ -265,6 +271,8 @@ jobs:
       trigger: true
     - get: secureproxy-release
       trigger: true
+    - get: bpm-release
+      trigger: true
   - task: logsearch-manifest
     config:
       <<: *manifest-config
@@ -295,6 +303,7 @@ jobs:
       - logsearch-release/*.tgz
       - logsearch-for-cloudfoundry-release/*.tgz
       - prometheus-release/*.tgz
+      - bpm-release/*.tgz
       stemcells:
       - logsearch-stemcell-xenial/*.tgz
   on_failure:
@@ -338,6 +347,9 @@ jobs:
     - get: logsearch-release
       trigger: true
       passed: [deploy-logsearch-development]
+    - get: bpm-release
+      passed: [deploy-logsearch-development]
+      trigger: true
     - get: logsearch-stemcell-xenial
       trigger: true
       passed: [deploy-logsearch-development]
@@ -398,6 +410,9 @@ jobs:
     - get: secureproxy-release
       trigger: true
       passed: [deploy-logsearch-development]
+    - get: bpm-release
+      passed: [deploy-logsearch-development]
+      trigger: true
     - get: tests-timer
       trigger: true
   - task: smoke-tests-login
@@ -466,6 +481,9 @@ jobs:
       trigger: true
       passed: [smoke-tests-platform-development]
     - get: secureproxy-release
+      trigger: true
+      passed: [smoke-tests-platform-development]
+    - get: bpm-release
       trigger: true
       passed: [smoke-tests-platform-development]
     - get: logsearch-stemcell-xenial
@@ -539,6 +557,9 @@ jobs:
     - get: secureproxy-release
       trigger: true
       passed: [deploy-logsearch-platform-staging]
+    - get: bpm-release
+      trigger: true
+      passed: [deploy-logsearch-platform-staging]
     - get: logsearch-stemcell-xenial
       trigger: true
       passed: [deploy-logsearch-platform-staging]
@@ -596,6 +617,9 @@ jobs:
       trigger: true
       passed: [smoke-tests-development]
     - get: secureproxy-release
+      trigger: true
+      passed: [smoke-tests-development]
+    - get: bpm-release
       trigger: true
       passed: [smoke-tests-development]
     - get: logsearch-stemcell-xenial
@@ -668,6 +692,9 @@ jobs:
     - get: secureproxy-release
       trigger: true
       passed: [deploy-logsearch-staging]
+    - get: bpm-release
+      trigger: true
+      passed: [deploy-logsearch-staging]
     - get: logsearch-stemcell-xenial
       trigger: true
       passed: [deploy-logsearch-staging]
@@ -722,6 +749,9 @@ jobs:
       trigger: true
       passed: [deploy-logsearch-staging]
     - get: secureproxy-release
+      trigger: true
+      passed: [deploy-logsearch-staging]
+    - get: bpm-release
       trigger: true
       passed: [deploy-logsearch-staging]
     - get: logsearch-stemcell-xenial
@@ -799,6 +829,9 @@ jobs:
     - get: secureproxy-release
       trigger: true
       passed: [smoke-tests-platform-staging]
+    - get: bpm-release
+      trigger: true
+      passed: [smoke-tests-platform-staging]
     - get: logsearch-stemcell-xenial
       trigger: true
       passed: [smoke-tests-platform-staging]
@@ -870,6 +903,9 @@ jobs:
     - get: secureproxy-release
       trigger: true
       passed: [deploy-logsearch-platform-production]
+    - get: bpm-release
+      trigger: true
+      passed: [deploy-logsearch-platform-production]
     - get: logsearch-stemcell-xenial
       trigger: true
       passed: [deploy-logsearch-platform-production]
@@ -927,6 +963,9 @@ jobs:
       trigger: true
       passed: [smoke-tests-staging]
     - get: secureproxy-release
+      trigger: true
+      passed: [smoke-tests-staging]
+    - get: bpm-release
       trigger: true
       passed: [smoke-tests-staging]
     - get: logsearch-stemcell-xenial
@@ -998,6 +1037,9 @@ jobs:
     - get: secureproxy-release
       trigger: true
       passed: [deploy-logsearch-production]
+    - get: bpm-release
+      trigger: true
+      passed: [deploy-logsearch-production]
     - get: logsearch-stemcell-xenial
       trigger: true
       passed: [deploy-logsearch-production]
@@ -1052,6 +1094,9 @@ jobs:
       trigger: true
       passed: [deploy-logsearch-production]
     - get: secureproxy-release
+      trigger: true
+      passed: [deploy-logsearch-production]
+    - get: bpm-release
       trigger: true
       passed: [deploy-logsearch-production]
     - get: logsearch-stemcell-xenial
@@ -1278,6 +1323,11 @@ resources:
   type: bosh-io-release
   source:
     repository: cloudfoundry-community/prometheus-boshrelease
+
+- name: bpm
+  type: bosh-io-release
+  source:
+    repository: cloudfoundry/bpm-release
 
 - name: logsearch-config
   type: git
