@@ -9,11 +9,23 @@ instance_groups:
     - (( grab terraform_outputs.logsearch_static_ips.[0]))
 
 - name: elasticsearch_data
-  instances: 3
+  instances: 5
   vm_type: t3.medium
 
 - name: maintenance
   vm_type: t3.medium
+
+
+- name: maintenance
+  instances: 1
+  vm_extensions: [errand-profile]
+  jobs:
+  - name: curator
+    release: logsearch
+    properties:
+      curator:
+        purge_logs:
+          retention_period: 90
 
 - name: redis
   instances: 1
