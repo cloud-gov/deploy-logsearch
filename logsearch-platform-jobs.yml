@@ -79,6 +79,8 @@ instance_groups:
           retention_period: 30
   - name: elasticsearch_config
     release: logsearch
+    consumes:
+      elasticsearch: {from: elasticsearch_master}
     properties:
       elasticsearch_config:
         app_index_prefix: logs-platform
