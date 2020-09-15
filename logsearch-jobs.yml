@@ -159,7 +159,7 @@ instance_groups:
 #2nd deploy group - elasticsearch_data, kibana, ingestors
 #########################################################
 - name: elasticsearch_data
-  instances: 10
+  instances: 9
   jobs:
   - name: elasticsearch
     release: logsearch
