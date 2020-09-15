@@ -9,7 +9,7 @@ instance_groups:
     - (( grab terraform_outputs.logsearch_static_ips.[0]))
 
 - name: elasticsearch_data
-  instances: 4
+  instances: 3
   vm_type: t3.medium
 
 - name: maintenance
