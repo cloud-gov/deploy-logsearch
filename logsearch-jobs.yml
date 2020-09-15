@@ -101,6 +101,7 @@ instance_groups:
       elasticsearch_config:
         app_index_settings:
           index.mapping.total_fields.limit: 2000
+          index.queries.cache.enabled: "false"
   - name: elasticsearch_exporter
     release: prometheus
     properties:
@@ -158,7 +159,7 @@ instance_groups:
 #2nd deploy group - elasticsearch_data, kibana, ingestors
 #########################################################
 - name: elasticsearch_data
-  instances: 8
+  instances: 10
   jobs:
   - name: elasticsearch
     release: logsearch
