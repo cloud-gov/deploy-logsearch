@@ -103,6 +103,7 @@ instance_groups:
       elasticsearch_config:
         app_index_settings:
           index.mapping.total_fields.limit: 2000
+          index.queries.cache.enabled: "false"
   - name: elasticsearch_exporter
     release: prometheus
     properties:
