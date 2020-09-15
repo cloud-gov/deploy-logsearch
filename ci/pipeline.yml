@@ -168,7 +168,6 @@ jobs:
       - prometheus-release/*.tgz
       - oauth2-proxy-release/*.tgz
       - secureproxy-release/*.tgz
-      - bpm-release/*.tgz
       stemcells:
       - logsearch-stemcell-xenial/*.tgz
   on_failure:
@@ -303,7 +302,6 @@ jobs:
       - logsearch-release/*.tgz
       - logsearch-for-cloudfoundry-release/*.tgz
       - prometheus-release/*.tgz
-      - bpm-release/*.tgz
       stemcells:
       - logsearch-stemcell-xenial/*.tgz
   on_failure:
