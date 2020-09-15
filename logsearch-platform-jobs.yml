@@ -73,6 +73,8 @@ instance_groups:
         migrate_data_path: true
   - name: curator
     release: logsearch
+    consumes:
+      elasticsearch: {from: elasticsearch_master}
     properties:
       curator:
         purge_logs:
