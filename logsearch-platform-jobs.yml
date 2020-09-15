@@ -40,6 +40,9 @@ instance_groups:
     - (( grab terraform_outputs.logsearch_static_ips.[9]))
   update:
     max_in_flight: 1 # Should never update more than one ES master node at a time or cluster will go down
+  env:
+    bosh:
+      swap_size: 0
 
 - name: redis
   instances: 1
@@ -161,6 +164,9 @@ instance_groups:
   - name: services
   update:
     max_in_flight: 1 # Only update 1 ES data node at a time or risk downtime
+  env:
+    bosh:
+      swap_size: 0
 
 - name: kibana
   instances: 2
@@ -209,6 +215,9 @@ instance_groups:
   azs: [z1]
   networks:
   - name: services
+  env:
+    bosh:
+      swap_size: 0
 
 - name: ingestor
   instances: 5
