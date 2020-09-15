@@ -22,4 +22,3 @@ releases:
 - {name: cf, version: latest}
 - {name: snort, version: latest}
 - {name: cron, version: latest}
-- {name: bpm, version: latest}
