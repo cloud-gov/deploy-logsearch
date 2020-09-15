@@ -185,8 +185,6 @@ instance_groups:
     release: logsearch
     consumes:
       elasticsearch: {from: elasticsearch_master}
-    provides:
-      kibana: {as: kibana_link}
     properties:
       kibana:
         port: 5602

@@ -208,8 +208,6 @@ instance_groups:
         migrate_data_path: true
   - name: kibana
     release: logsearch
-    provides:
-      kibana: {as: kibana_link}
     consumes:
       elasticsearch: {from: elasticsearch_master}
     properties:
