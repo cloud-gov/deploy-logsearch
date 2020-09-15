@@ -5,8 +5,6 @@ instance_groups:
 - name: elasticsearch_master
   instances: 3
   jobs:
-  - name: bpm
-    release: bpm
   - name: elasticsearch
     release: logsearch
     provides:
@@ -46,8 +44,6 @@ instance_groups:
 - name: redis
   instances: 1
   jobs:
-  - name: bpm
-    release: bpm
   - {name: redis, release: logsearch-for-cloudfoundry}
   vm_type: logsearch_redis
   persistent_disk_type: logsearch_redis
@@ -60,8 +56,6 @@ instance_groups:
   instances: 1
   vm_extensions: [errand-profile]
   jobs:
-  - name: bpm
-    release: bpm
   - name: elasticsearch
     release: logsearch
     consumes:
@@ -139,8 +133,6 @@ instance_groups:
 - name: elasticsearch_data
   instances: 9
   jobs:
-  - name: bpm
-    release: bpm
   - name: elasticsearch
     release: logsearch
     consumes:
@@ -173,8 +165,6 @@ instance_groups:
 - name: kibana
   instances: 2
   jobs:
-  - name: bpm
-    release: bpm
   - name: elasticsearch
     release: logsearch
     consumes:
@@ -223,8 +213,6 @@ instance_groups:
 - name: ingestor
   instances: 5
   jobs:
-  - name: bpm
-    release: bpm
   - name: elasticsearch
     release: logsearch
     consumes:

@@ -5,8 +5,6 @@ instance_groups:
 - name: elasticsearch_master
   instances: 3
   jobs:
-  - name: bpm
-    release: bpm
   - name: elasticsearch
     release: logsearch
     provides:
@@ -68,8 +66,6 @@ instance_groups:
   instances: 1
   vm_extensions: [errand-profile]
   jobs:
-  - name: bpm
-    release: bpm
   - name: elasticsearch
     release: logsearch
     consumes:
@@ -164,8 +160,6 @@ instance_groups:
 - name: elasticsearch_data
   instances: 8
   jobs:
-  - name: bpm
-    release: bpm
   - name: elasticsearch
     release: logsearch
     consumes:
@@ -196,8 +190,6 @@ instance_groups:
 - name: kibana
   instances: 2
   jobs:
-  - name: bpm
-    release: bpm
   - name: elasticsearch
     release: logsearch
     consumes:
@@ -251,8 +243,6 @@ instance_groups:
 
 - name: archiver
   jobs:
-  - name: bpm
-    release: bpm
   - name: elasticsearch
     release: logsearch
     consumes:
@@ -302,8 +292,6 @@ instance_groups:
 
 - name: ingestor
   jobs:
-  - name: bpm
-    release: bpm
   - name: elasticsearch
     release: logsearch
     consumes:
