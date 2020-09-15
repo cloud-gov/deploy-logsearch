@@ -103,6 +103,8 @@ instance_groups:
           index.mapping.total_fields.limit: 2000
   - name: upload-kibana-objects
     release: logsearch-for-cloudfoundry
+    consumes:
+      elasticsearch: {from: elasticsearch_master}
     properties:
       elasticsearch_config:
         app_index_prefix: logs-platform

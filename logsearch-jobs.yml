@@ -113,6 +113,8 @@ instance_groups:
           
   - name: upload-kibana-objects
     release: logsearch-for-cloudfoundry
+    consumes:
+      elasticsearch: {from: elasticsearch_master}
     properties:
       cloudfoundry:
         firehose_events:
