@@ -218,7 +218,7 @@ instance_groups:
         - NODE_ENV: production
         source_files: [/var/vcap/jobs/kibana-auth-plugin/config/config.sh]
         health:
-          timeout: 3600
+          timeout: 6000
   - name: kibana-auth-plugin
     release: logsearch-for-cloudfoundry
     properties:
