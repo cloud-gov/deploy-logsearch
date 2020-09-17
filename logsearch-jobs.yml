@@ -219,6 +219,7 @@ instance_groups:
         source_files: [/var/vcap/jobs/kibana-auth-plugin/config/config.sh]
         health:
           timeout: 6000
+        host: localhost
   - name: kibana-auth-plugin
     release: logsearch-for-cloudfoundry
     properties:
