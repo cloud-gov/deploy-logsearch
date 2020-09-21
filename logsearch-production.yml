@@ -3,7 +3,7 @@ instance_groups:
   vm_type: t3.xlarge
 
 - name: elasticsearch_data
-  vm_type: r5.xlarge
+  vm_type: r5.2xlarge
 
 - name: maintenance
   vm_type: t3.large
