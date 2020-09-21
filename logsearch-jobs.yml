@@ -212,6 +212,7 @@ instance_groups:
         - auth: /var/vcap/packages/kibana-auth-plugin/kibana-auth-plugin.zip
         config_options: 
           console.enabled: false
+          server.maxPayloadBytes: 2097152
         env:
         - NODE_ENV: production
         source_files: [/var/vcap/jobs/kibana-auth-plugin/config/config.sh]
