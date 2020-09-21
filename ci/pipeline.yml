@@ -343,7 +343,6 @@ jobs:
       passed: [deploy-logsearch-development]
     - get: logsearch-stemcell-xenial
       trigger: true
-      passed: [deploy-logsearch-development]
     - get: logsearch-config
       resource: logsearch-config-develop
       passed: [deploy-logsearch-development]
