@@ -343,6 +343,7 @@ jobs:
       passed: [deploy-logsearch-development]
     - get: logsearch-stemcell-xenial
       trigger: true
+      passed: [deploy-logsearch-development]
     - get: logsearch-config
       resource: logsearch-config-develop
       passed: [deploy-logsearch-development]
@@ -602,7 +603,6 @@ jobs:
       passed: [smoke-tests-development]
     - get: logsearch-stemcell-xenial
       trigger: true
-      passed: [smoke-tests-development]
     - get: terraform-yaml
       resource: terraform-yaml-staging
   - task: logsearch-manifest
