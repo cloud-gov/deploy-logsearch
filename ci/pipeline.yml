@@ -474,7 +474,6 @@ jobs:
       passed: [smoke-tests-platform-development]
     - get: logsearch-stemcell-xenial
       trigger: true
-      passed: [smoke-tests-platform-development]
     - get: terraform-yaml
       resource: terraform-yaml-staging
       trigger: true
