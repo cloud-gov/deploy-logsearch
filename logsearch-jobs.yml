@@ -261,9 +261,7 @@ instance_groups:
     properties:
       logstash:
         jvm_options:
-        - java:
-          io:
-            tmpdir: /var/vcap/sys/tmp/archiver_syslog
+        - java.io.tmpdir: /var/vcap/sys/tmp/archiver_syslog
         queue:
           max_bytes: 30gb
       logstash_archiver:
