@@ -219,6 +219,7 @@ instance_groups:
         source_files: [/var/vcap/jobs/kibana-auth-plugin/config/config.sh]
         health:
           timeout: 600
+          disable_post_start: true
   - name: kibana-auth-plugin
     release: logsearch-for-cloudfoundry
     properties:
