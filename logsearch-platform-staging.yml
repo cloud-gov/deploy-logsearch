@@ -19,7 +19,7 @@ instance_groups:
   vm_type: t3.large
 
 - name: kibana
-  vm_type: t3.large
+  vm_type: t3.xlarge
   jobs:
   - name: oauth2-proxy
     properties:
