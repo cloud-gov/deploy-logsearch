@@ -101,6 +101,24 @@ instance_groups:
       elasticsearch_config:
         app_index_settings:
           index.mapping.total_fields.limit: 2000
+  - name: upload-kibana-objects
+    release: logsearch-for-cloudfoundry
+    properties:
+      elasticsearch_config:
+        app_index_prefix: logs-platform
+      cloudfoundry:
+        system_domain: (( grab $CF_SYSTEM_DOMAIN ))
+        user: (( grab $CF_USERNAME ))
+        password: (( grab $CF_PASSWORD ))
+        logs_hostname: logs-platform
+      kibana_objects:
+        host_name: logs-platform
+        login_fqdn: opslogin.fr.cloud.gov
+        upload_patterns:
+        - {type: index-pattern, pattern: "/var/vcap/jobs/upload-kibana-objects/kibana-objects/index-pattern/*.json"}
+        - {type: search, pattern: "/var/vcap/jobs/upload-kibana-objects/kibana-objects/search/platform-*.json"}
+        - {type: visualization, pattern: "/var/vcap/jobs/upload-kibana-objects/kibana-objects/visualization/Platform-*.json"}
+        - {type: dashboard, pattern: "/var/vcap/jobs/upload-kibana-objects/kibana-objects/dashboard/Platform-*.json"}
   vm_type: logsearch_maintenance
   stemcell: default
   azs: [z1]
