@@ -5,6 +5,8 @@ instance_groups:
 - name: elasticsearch_master
   instances: 3
   jobs:
+  - name: bpm
+    release: bpm
   - name: elasticsearch
     release: logsearch
     provides:
@@ -44,6 +46,8 @@ instance_groups:
 - name: redis
   instances: 1
   jobs:
+  - name: bpm
+    release: bpm
   - {name: redis, release: logsearch-for-cloudfoundry}
   vm_type: logsearch_redis
   persistent_disk_type: logsearch_redis
@@ -56,6 +60,8 @@ instance_groups:
   instances: 1
   vm_extensions: [errand-profile]
   jobs:
+  - name: bpm
+    release: bpm
   - name: elasticsearch
     release: logsearch
     consumes:
@@ -67,16 +73,12 @@ instance_groups:
         migrate_data_path: true
   - name: curator
     release: logsearch
-    consumes:
-      elasticsearch: {from: elasticsearch_master}
     properties:
       curator:
         purge_logs:
           retention_period: 30
   - name: elasticsearch_config
     release: logsearch
-    consumes:
-      elasticsearch: {from: elasticsearch_master}
     properties:
       elasticsearch_config:
         app_index_prefix: logs-platform
@@ -101,8 +103,6 @@ instance_groups:
           index.mapping.total_fields.limit: 2000
   - name: upload-kibana-objects
     release: logsearch-for-cloudfoundry
-    consumes:
-      elasticsearch: {from: elasticsearch_master}
     properties:
       elasticsearch_config:
         app_index_prefix: logs-platform
@@ -110,12 +110,12 @@ instance_groups:
         system_domain: (( grab $CF_SYSTEM_DOMAIN ))
         user: (( grab $CF_USERNAME ))
         password: (( grab $CF_PASSWORD ))
+        logs_hostname: logs-platform
       kibana_objects:
         host_name: logs-platform
         login_fqdn: opslogin.fr.cloud.gov
         upload_patterns:
         - {type: index-pattern, pattern: "/var/vcap/jobs/upload-kibana-objects/kibana-objects/index-pattern/*.json"}
-        - {type: config, pattern: "/var/vcap/jobs/upload-kibana-objects/kibana-objects/config/*.json"}
         - {type: search, pattern: "/var/vcap/jobs/upload-kibana-objects/kibana-objects/search/platform-*.json"}
         - {type: visualization, pattern: "/var/vcap/jobs/upload-kibana-objects/kibana-objects/visualization/Platform-*.json"}
         - {type: dashboard, pattern: "/var/vcap/jobs/upload-kibana-objects/kibana-objects/dashboard/Platform-*.json"}
@@ -133,6 +133,8 @@ instance_groups:
 - name: elasticsearch_data
   instances: 9
   jobs:
+  - name: bpm
+    release: bpm
   - name: elasticsearch
     release: logsearch
     consumes:
@@ -165,6 +167,8 @@ instance_groups:
 - name: kibana
   instances: 2
   jobs:
+  - name: bpm
+    release: bpm
   - name: elasticsearch
     release: logsearch
     consumes:
@@ -177,6 +181,8 @@ instance_groups:
     release: logsearch
     consumes:
       elasticsearch: {from: elasticsearch_master}
+    provides:
+      kibana: {as: kibana_link}
     properties:
       kibana:
         port: 5602
@@ -213,6 +219,8 @@ instance_groups:
 - name: ingestor
   instances: 5
   jobs:
+  - name: bpm
+    release: bpm
   - name: elasticsearch
     release: logsearch
     consumes:
@@ -226,6 +234,8 @@ instance_groups:
     release: logsearch
     consumes: 
       elasticsearch: {from: elasticsearch_master}
+    provides:
+      ingestor: {as: ingestor_link}
     properties:
       logstash:
         queue:
@@ -285,3 +295,4 @@ instance_groups:
     release: logsearch
     consumes:
       elasticsearch: {from: elasticsearch_master}
+      ingestor_link: {from: ingestor_syslog}

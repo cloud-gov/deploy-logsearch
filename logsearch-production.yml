@@ -4,6 +4,9 @@ instance_groups:
 
 - name: elasticsearch_data
   vm_type: r5.2xlarge
+  update:
+    max_in_flight: 2
+    canaries: 2
 
 - name: maintenance
   vm_type: t3.large
@@ -30,7 +33,7 @@ instance_groups:
         api_endpoint: https://api.fr.cloud.gov
 
 - name: kibana
-  vm_type: t3.large
+  vm_type: t3.xlarge
   jobs:
   - name: kibana-auth-plugin
     properties:
