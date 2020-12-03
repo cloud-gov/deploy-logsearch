@@ -5,8 +5,6 @@ instance_groups:
 - name: elasticsearch_master
   instances: 3
   jobs:
-  - name: bpm
-    release: bpm
   - name: elasticsearch
     release: logsearch
     provides:
@@ -57,8 +55,6 @@ instance_groups:
 - name: redis
   instances: 1
   jobs:
-  - name: bpm
-    release: bpm
   - {name: redis, release: logsearch-for-cloudfoundry}
   persistent_disk_type: logsearch_redis
   stemcell: default
@@ -70,8 +66,6 @@ instance_groups:
   instances: 1
   vm_extensions: [errand-profile]
   jobs:
-  - name: bpm
-    release: bpm
   - name: elasticsearch
     release: logsearch
     consumes:
@@ -82,12 +76,16 @@ instance_groups:
   - name: curator
     release: logsearch
     # nil the link and use the colocated instance when https://github.com/cloudfoundry-community/logsearch-boshrelease/pull/90 is merged
+    consumes:
+      elasticsearch: {from: elasticsearch_master}
     properties:
       curator:
         purge_logs:
           retention_period: 180
   - name: elasticsearch_config
     release: logsearch
+    consumes:
+      elasticsearch: {from: elasticsearch_master}
     properties:
       elasticsearch_config:
         templates:
@@ -103,6 +101,7 @@ instance_groups:
       elasticsearch_config:
         app_index_settings:
           index.mapping.total_fields.limit: 2000
+          index.queries.cache.enabled: "false"
   - name: elasticsearch_exporter
     release: prometheus
     properties:
@@ -113,6 +112,8 @@ instance_groups:
           
   - name: upload-kibana-objects
     release: logsearch-for-cloudfoundry
+    consumes:
+      elasticsearch: {from: elasticsearch_master}
     properties:
       cloudfoundry:
         firehose_events:
@@ -124,6 +125,7 @@ instance_groups:
       kibana_objects:
         upload_patterns:
         - {type: index-pattern, pattern: "/var/vcap/jobs/upload-kibana-objects/kibana-objects/index-pattern/*.json"}
+        - {type: config, pattern: "/var/vcap/jobs/upload-kibana-objects/kibana-objects/config/*.json"}
         - {type: search, pattern: "/var/vcap/jobs/upload-kibana-objects/kibana-objects/search/app-*.json"}
         - {type: visualization, pattern: "/var/vcap/jobs/upload-kibana-objects/kibana-objects/visualization/App-*.json"}
         - {type: dashboard, pattern: "/var/vcap/jobs/upload-kibana-objects/kibana-objects/dashboard/App-*.json"}
@@ -157,10 +159,8 @@ instance_groups:
 #2nd deploy group - elasticsearch_data, kibana, ingestors
 #########################################################
 - name: elasticsearch_data
-  instances: 8
+  instances: 9
   jobs:
-  - name: bpm
-    release: bpm
   - name: elasticsearch
     release: logsearch
     consumes:
@@ -177,6 +177,7 @@ instance_groups:
           fd: 131072  # 2 ** 17
         health:
           timeout: 900
+          disable_post_start: true
         recovery:
           delay_allocation_restart: "15m"
         migrate_data_path: true
@@ -187,12 +188,13 @@ instance_groups:
   - name: services
   update:
     max_in_flight: 1 # Only update 1 ES data node at a time or risk downtime
+  env:
+    bosh:
+      swap_size: 0
 
 - name: kibana
   instances: 2
   jobs:
-  - name: bpm
-    release: bpm
   - name: elasticsearch
     release: logsearch
     consumes:
@@ -203,8 +205,6 @@ instance_groups:
         migrate_data_path: true
   - name: kibana
     release: logsearch
-    provides:
-      kibana: {as: kibana_link}
     consumes:
       elasticsearch: {from: elasticsearch_master}
     properties:
@@ -213,7 +213,9 @@ instance_groups:
         default_app_id: "dashboard/App-Overview"
         plugins:
         - auth: /var/vcap/packages/kibana-auth-plugin/kibana-auth-plugin.zip
-        console_enabled: false
+        config_options: 
+          console.enabled: false
+          server.maxPayloadBytes: 2097152
         env:
         - NODE_ENV: production
         source_files: [/var/vcap/jobs/kibana-auth-plugin/config/config.sh]
@@ -244,11 +246,12 @@ instance_groups:
   azs: [z1]
   networks:
   - name: services
+  env:
+    bosh:
+      swap_size: 0
 
 - name: archiver
   jobs:
-  - name: bpm
-    release: bpm
   - name: elasticsearch
     release: logsearch
     consumes:
@@ -298,8 +301,6 @@ instance_groups:
 
 - name: ingestor
   jobs:
-  - name: bpm
-    release: bpm
   - name: elasticsearch
     release: logsearch
     consumes:
@@ -312,8 +313,6 @@ instance_groups:
     release: logsearch
     consumes:
       elasticsearch: {from: elasticsearch_master}
-    provides:
-      ingestor: {as: ingestor_link}
     properties:
       logstash:
         queue:
@@ -368,4 +367,3 @@ instance_groups:
     release: logsearch
     consumes:
       elasticsearch: {from: elasticsearch_master}
-      ingestor_link: {from: ingestor_syslog}

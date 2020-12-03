@@ -99,6 +99,7 @@ jobs:
     - get: common-development
     - get: pipeline-tasks
     - get: logsearch-config
+      resource: logsearch-config-develop
       trigger: true
     - get: common-secrets
       resource: common-platform-development
@@ -213,6 +214,7 @@ jobs:
       trigger: true
       passed: [deploy-logsearch-platform-development]
     - get: logsearch-config
+      resource: logsearch-config-develop
       trigger: true
       passed: [deploy-logsearch-platform-development]
   - task: smoke-tests
@@ -250,6 +252,7 @@ jobs:
       resource: common-development
       trigger: true
     - get: logsearch-config
+      resource: logsearch-config-develop
       trigger: true
     - get: logsearch-for-cloudfoundry-release
       trigger: true
@@ -342,6 +345,7 @@ jobs:
       trigger: true
       passed: [deploy-logsearch-development]
     - get: logsearch-config
+      resource: logsearch-config-develop
       passed: [deploy-logsearch-development]
       trigger: true
   - task: smoke-tests
@@ -385,6 +389,7 @@ jobs:
       trigger: true
       passed: [deploy-logsearch-development]
     - get: logsearch-config
+      resource: logsearch-config-develop
       passed: [deploy-logsearch-development]
       trigger: true
     - get: logsearch-development-deployment
@@ -452,7 +457,6 @@ jobs:
       trigger: true
     - get: logsearch-config
       trigger: true
-      passed: [smoke-tests-platform-development]
     - get: logsearch-release
       trigger: true
       passed: [smoke-tests-platform-development]
@@ -582,7 +586,6 @@ jobs:
       trigger: true
     - get: logsearch-config
       trigger: true
-      passed: [smoke-tests-development]
     - get: logsearch-for-cloudfoundry-release
       trigger: true
       passed: [smoke-tests-development, smoke-tests-login-development]
@@ -600,7 +603,6 @@ jobs:
       passed: [smoke-tests-development]
     - get: logsearch-stemcell-xenial
       trigger: true
-      passed: [smoke-tests-development]
     - get: terraform-yaml
       resource: terraform-yaml-staging
   - task: logsearch-manifest
@@ -1283,6 +1285,12 @@ resources:
   type: git
   source:
     uri: ((cg-deploy-logsearch-git-url))
+
+- name: logsearch-config-develop
+  type: git
+  source:
+    uri: ((cg-deploy-logsearch-git-url))
+    branch: upgrade-to-v7
 
 - name: logsearch-stemcell-xenial
   type: bosh-io-stemcell
