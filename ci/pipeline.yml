@@ -1283,7 +1283,6 @@ resources:
   type: git
   source:
     uri: ((cg-deploy-logsearch-git-url))
-    branch: upgrade-to-v7
 
 - name: logsearch-stemcell-xenial
   type: bosh-io-stemcell
