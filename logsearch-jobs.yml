@@ -81,7 +81,6 @@ instance_groups:
         migrate_data_path: true
   - name: curator
     release: logsearch
-    # nil the link and use the colocated instance when https://github.com/cloudfoundry-community/logsearch-boshrelease/pull/90 is merged
     properties:
       curator:
         purge_logs:
