@@ -23,9 +23,6 @@ instance_groups:
 
 - name: elasticsearch_data
   vm_type: r5.xlarge
-  update:
-    max_in_flight: 2
-    canaries: 2
 
 - name: redis
   instances: 1

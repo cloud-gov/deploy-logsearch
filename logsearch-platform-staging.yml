@@ -4,7 +4,7 @@ instance_groups:
 
 - name: elasticsearch_data
   instances: 4
-  vm_type: t3.large
+  vm_type: t3.medium
 
 - name: redis
   vm_type: r5.large
@@ -16,13 +16,8 @@ instance_groups:
   vm_type: t3.large
 
 - name: kibana
-  vm_type: t3.xlarge
+  vm_type: t3.large
   jobs:
-  - name: kibana
-    properties:
-      kibana:
-        health:
-          disable_post_start: true
   - name: oauth2-proxy
     properties:
       redirect_url: https://logs-platform.fr-stage.cloud.gov/oauth2/callback

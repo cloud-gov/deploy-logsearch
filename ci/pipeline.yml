@@ -1285,6 +1285,7 @@ resources:
   type: git
   source:
     uri: ((cg-deploy-logsearch-git-url))
+    branch: ((cg-deploy-logsearch-git-branch))
 
 - name: logsearch-config-develop
   type: git

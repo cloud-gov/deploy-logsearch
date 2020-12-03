@@ -18,7 +18,7 @@ instance_groups:
           retention_period: 7
 
 - name: kibana
-  vm_type: t3.large
+  vm_type: t3.medium
   instances: 1
   jobs:
   - name: oauth2-proxy
