@@ -103,7 +103,7 @@ instance_groups:
         app_index_settings:
           index.mapping.total_fields.limit: 2000
           index.queries.cache.enabled: "false"
-          indices.query.bool.max_clause_count: 2000
+          indices.query.bool.max_clause_count: 2048
   - name: elasticsearch_exporter
     release: prometheus
     properties:
@@ -182,8 +182,6 @@ instance_groups:
         recovery:
           delay_allocation_restart: "15m"
         migrate_data_path: true
-
-        config_options: {"xpack.monitoring.enabled": false}
   persistent_disk_type: logsearch_es_data
   stemcell: default
   azs: [z1]
