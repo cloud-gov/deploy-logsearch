@@ -183,6 +183,8 @@ instance_groups:
         recovery:
           delay_allocation_restart: "15m"
         migrate_data_path: true
+        config_options: 
+          indices.query.bool.max_clause_count: 2048
   persistent_disk_type: logsearch_es_data
   stemcell: default
   azs: [z1]
