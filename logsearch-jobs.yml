@@ -91,10 +91,14 @@ instance_groups:
     release: logsearch
     properties:
       elasticsearch_config:
-        templates:
+        component_templates:
         - shards-and-replicas: /var/vcap/jobs/elasticsearch_config/index-templates/shards-and-replicas.json
         - index-settings: /var/vcap/jobs/elasticsearch_config/index-templates/index-settings.json
         - index-mappings: /var/vcap/jobs/elasticsearch_config/index-templates/index-mappings.json
+        - c-index-mappings-lfc: /var/vcap/jobs/elasticsearch-config-lfc/index-mappings.json
+        - c-index-mappings-app-lfc: /var/vcap/jobs/elasticsearch-config-lfc/index-mappings-app.json
+        - c-index-mappings-platform-lfc: /var/vcap/jobs/elasticsearch-config-lfc/index-mappings-platform.json
+        index_templates:
         - index-mappings-lfc: /var/vcap/jobs/elasticsearch-config-lfc/index-mappings.json
         - index-mappings-app-lfc: /var/vcap/jobs/elasticsearch-config-lfc/index-mappings-app.json
         - index-mappings-platform-lfc: /var/vcap/jobs/elasticsearch-config-lfc/index-mappings-platform.json
@@ -105,6 +109,12 @@ instance_groups:
         app_index_settings:
           index.mapping.total_fields.limit: 2000
           index.queries.cache.enabled: "false"
+        base_index_component_name: c-index-mappings-lfc
+        app_index_component_name: c-index-mappings-app-lfc
+        platform_index_component_name: c-index-mappings-platform-lfc
+        index_mappings_component_name: index-mappings
+        index_settings_component_name: index-settings
+        shards_and_replicas_component_name: shards-and-replicas
   - name: elasticsearch_exporter
     release: prometheus
     properties:
