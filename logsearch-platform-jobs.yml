@@ -97,9 +97,9 @@ instance_groups:
     release: logsearch-for-cloudfoundry
     properties:
       elasticsearch_config:
-        base_index_component_name: c-index-mappings-lfc
-        app_index_component_name: c-index-mappings-app-lfc
-        platform_index_component_name: c-index-mappings-platform-lfc
+        base_index_component_name: index-mappings-lfc
+        app_index_component_name: index-mappings-app-lfc
+        platform_index_component_name: index-mappings-platform-lfc
         index_mappings_component_name: index-mappings
         index_settings_component_name: index-settings
         shards_and_replicas_component_name: shards-and-replicas
