@@ -86,9 +86,9 @@ instance_groups:
         - shards-and-replicas: /var/vcap/jobs/elasticsearch_config/index-templates/shards-and-replicas.json
         - index-settings: /var/vcap/jobs/elasticsearch_config/index-templates/index-settings.json
         - index-mappings: /var/vcap/jobs/elasticsearch_config/index-templates/index-mappings.json
-        - c-index-mappings-lfc: /var/vcap/jobs/elasticsearch-config-lfc/index-mappings.json
-        - c-index-mappings-app-lfc: /var/vcap/jobs/elasticsearch-config-lfc/index-mappings-app.json
-        - c-index-mappings-platform-lfc: /var/vcap/jobs/elasticsearch-config-lfc/index-mappings-platform.json
+        - index-mappings-lfc: /var/vcap/jobs/elasticsearch-config-lfc/component-index-mappings.json
+        - index-mappings-app-lfc: /var/vcap/jobs/elasticsearch-config-lfc/component-index-mappings-app.json
+        - index-mappings-platform-lfc: /var/vcap/jobs/elasticsearch-config-lfc/component-index-mappings-platform.json
         index_templates:
         - index-mappings-lfc: /var/vcap/jobs/elasticsearch-config-lfc/index-mappings.json
         - index-mappings-app-lfc: /var/vcap/jobs/elasticsearch-config-lfc/index-mappings-app.json
