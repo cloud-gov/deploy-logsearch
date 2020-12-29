@@ -8,7 +8,7 @@ now=$(date -u)
 
 tempfile=$(mktemp)
 
-log_count=$(curl -s "${ES_HOST}:${ES_PORT:-9200}/${INDEX_PATTERN}/_search?size=0" -H 'Content-Type: application/json' -d @<(cat <<EOF
+log_count=$(curl -s "${ES_HOST}:${ES_PORT:-9200}/${INDEX_PATTERN}/_count" -H 'Content-Type: application/json' -d @<(cat <<EOF
 {
   "query": {
     "range": {
@@ -20,7 +20,7 @@ log_count=$(curl -s "${ES_HOST}:${ES_PORT:-9200}/${INDEX_PATTERN}/_search?size=0
   }
 }
 EOF
-) | jq -r '.hits.total')
+) | jq -r '.count')
 
 cat <<EOF > ${tempfile}
 logsearch_backup_log_count {environment="${ENVIRONMENT}"} ${log_count}
