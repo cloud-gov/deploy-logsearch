@@ -29,6 +29,7 @@ groups:
     - deploy-logsearch-platform-production
     - smoke-tests-platform-production
   - name: build-releases
+    jobs:
     - build-logsearch-release
     - build-logsearch-for-cloudfoundry-release
   - name: tenant-development
