@@ -2,6 +2,8 @@
 groups:
   - name: all
     jobs:
+    - build-logsearch-release
+    - build-logsearch-for-cloudfoundry-release
     - deploy-logsearch-development
     - upload-kibana-objects-development
     - check-backup-development-tenant
@@ -26,6 +28,9 @@ groups:
     - smoke-tests-platform-staging
     - deploy-logsearch-platform-production
     - smoke-tests-platform-production
+  - name: build-releases
+    - build-logsearch-release
+    - build-logsearch-for-cloudfoundry-release
   - name: tenant-development
     jobs:
     - deploy-logsearch-development
@@ -92,6 +97,79 @@ groups:
     - check-backup-production-platform
 
 jobs:
+- name: build-logsearch-release
+  plan:
+  - in_parallel:
+    - get: release-git-repo
+      resource: logsearch-release-git-repo
+      trigger: true
+    - get: pipeline-tasks
+    - get: final-builds-dir-tarball
+      resource: logsearch-final-builds-dir-tarball
+    - get: releases-dir-tarball
+      resource: logsearch-releases-dir-tarball
+  - task: finalize-release
+    file: pipeline-tasks/finalize-bosh-release.yml
+    tags: [iaas]
+    params:
+      PRIVATE_YML_CONTENT: |-
+        ---
+        blobstore:
+          options:
+            region: ((aws-region))
+            bucket_name: ((cg-s3-blobstore-bucket))
+            credentials_source: env_or_profile
+            server_side_encryption: AES256
+  - in_parallel:
+    - put: logsearch-release-tarball
+      tags: [iaas]
+      params:
+        file: finalized-release/logsearch-*.tgz
+    - put: logsearch-final-builds-dir-tarball
+      tags: [iaas]
+      params:
+        file: finalized-release/final-builds-dir-logsearch.tgz
+    - put: logsearch-releases-dir-tarball
+      tags: [iaas]
+      params:
+        file: finalized-release/releases-dir-logsearch.tgz
+
+- name: build-logsearch-for-cloudfoundry-release
+  plan:
+  - in_parallel:
+    - get: release-git-repo
+      resource: logsearch-for-cloudfoundry-release-git-repo
+      trigger: true
+    - get: pipeline-tasks
+    - get: final-builds-dir-tarball
+      resource: logsearch-for-cloudfoundry-final-builds-dir-tarball
+    - get: releases-dir-tarball
+      resource: logsearch-for-cloudfoundry-releases-dir-tarball
+  - task: finalize-release
+    file: pipeline-tasks/finalize-bosh-release.yml
+    tags: [iaas]
+    params:
+      PRIVATE_YML_CONTENT: |-
+        ---
+        blobstore:
+          options:
+            region: ((aws-region))
+            bucket_name: ((cg-s3-blobstore-bucket))
+            credentials_source: env_or_profile
+            server_side_encryption: AES256
+  - in_parallel:
+    - put: logsearch-for-cloudfoundry-release-tarball
+      tags: [iaas]
+      params:
+        file: finalized-release/logsearch-for-cloudfoundry-*.tgz
+    - put: logsearch-for-cloudfoundry-final-builds-dir-tarball
+      tags: [iaas]
+      params:
+        file: finalized-release/final-builds-dir-logsearch-for-cloudfoundry.tgz
+    - put: logsearch-for-cloudfoundry-releases-dir-tarball
+      tags: [iaas]
+      params:
+        file: finalized-release/releases-dir-logsearch-for-cloudfoundry.tgz
 - name: deploy-logsearch-platform-development
   serial_groups: [bosh-platform-development]
   plan:
@@ -160,7 +238,7 @@ jobs:
   - put: logsearch-platform-development-deployment
     params: &deploy-params-platform
       manifest: logsearch-manifest/manifest.yml
-      releases: 
+      releases:
       - logsearch-release/*.tgz
       - logsearch-for-cloudfoundry-release/*.tgz
       - prometheus-release/*.tgz
@@ -1197,6 +1275,66 @@ jobs:
       INDEX_PATTERN: logs-platform-*
 
 resources:
+- name: logsearch-release-git-repo
+  type: git
+  source:
+    uri: https://github.com/cloud-gov/logsearch-boshrelease
+    branch: develop
+
+- name: logsearch-release-tarball
+  type: s3-iam
+  source:
+    bucket: ((cg-s3-bosh-releases-bucket))
+    regexp: logsearch-(.*).tgz
+    region_name: ((aws-region))
+    server_side_encryption: AES256
+
+- name: logsearch-final-builds-dir-tarball
+  type: s3-iam
+  source:
+    bucket: ((cg-s3-bosh-releases-bucket))
+    versioned_file: final-builds-dir-logsearch.tgz
+    region_name: ((aws-region))
+    server_side_encryption: AES256
+
+- name: logsearch-releases-dir-tarball
+  type: s3-iam
+  source:
+    bucket: ((cg-s3-bosh-releases-bucket))
+    versioned_file: releases-dir-logsearch.tgz
+    region_name: ((aws-region))
+    server_side_encryption: AES256
+
+- name: logsearch-for-cloudfoundry-release-git-repo
+  type: git
+  source:
+    uri: https://github.com/cloud-gov/logsearch-for-cloudfoundry
+    branch: develop
+
+- name: logsearch-for-cloudfoundry-release-tarball
+  type: s3-iam
+  source:
+    bucket: ((cg-s3-bosh-releases-bucket))
+    regexp: logsearch-for-cloudfoundry-(.*).tgz
+    region_name: ((aws-region))
+    server_side_encryption: AES256
+
+- name: logsearch-for-cloudfoundry-final-builds-dir-tarball
+  type: s3-iam
+  source:
+    bucket: ((cg-s3-bosh-releases-bucket))
+    versioned_file: final-builds-dir-logsearch-for-cloudfoundry.tgz
+    region_name: ((aws-region))
+    server_side_encryption: AES256
+
+- name: logsearch-for-cloudfoundry-releases-dir-tarball
+  type: s3-iam
+  source:
+    bucket: ((cg-s3-bosh-releases-bucket))
+    versioned_file: releases-dir-logsearch-for-cloudfoundry.tgz
+    region_name: ((aws-region))
+    server_side_encryption: AES256
+
 - name: master-bosh-root-cert
   type: s3-iam
   source:
