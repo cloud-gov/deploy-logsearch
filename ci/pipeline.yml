@@ -146,6 +146,21 @@ jobs:
       resource: logsearch-for-cloudfoundry-final-builds-dir-tarball
     - get: releases-dir-tarball
       resource: logsearch-for-cloudfoundry-releases-dir-tarball
+  - task: run-tests
+    config:
+      inputs:
+      - name: release-git-repo
+      platform: linux
+      image_resource:
+        type: docker-image
+        source:
+          repository: node
+          tag: lts
+      run:
+        path: sh
+        args:
+          - -exc
+          - cd release-git-repo/src/kibana-cf_authentication && npm test
   - task: finalize-release
     file: pipeline-tasks/finalize-bosh-release.yml
     tags: [iaas]
@@ -1383,7 +1398,7 @@ resources:
     bucket: ((cg-s3-bosh-releases-bucket))
     regexp: logsearch-for-cloudfoundry-(.*).tgz
     region_name: ((aws-region))
-    server_side_encryption: AES256 
+    server_side_encryption: AES256
 
 - name: oauth2-proxy-release
   type: s3-iam
