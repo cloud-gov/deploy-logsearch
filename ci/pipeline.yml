@@ -122,7 +122,7 @@ jobs:
             credentials_source: env_or_profile
             server_side_encryption: AES256
   - in_parallel:
-    - put: logsearch-release-tarball
+    - put: logsearch-release
       tags: [iaas]
       params:
         file: finalized-release/logsearch-*.tgz
@@ -159,7 +159,7 @@ jobs:
             credentials_source: env_or_profile
             server_side_encryption: AES256
   - in_parallel:
-    - put: logsearch-for-cloudfoundry-release-tarball
+    - put: logsearch-for-cloudfoundry-release
       tags: [iaas]
       params:
         file: finalized-release/logsearch-for-cloudfoundry-*.tgz
@@ -1282,14 +1282,6 @@ resources:
     uri: https://github.com/cloud-gov/logsearch-boshrelease
     branch: develop
 
-- name: logsearch-release-tarball
-  type: s3-iam
-  source:
-    bucket: ((cg-s3-bosh-releases-bucket))
-    regexp: logsearch-(.*).tgz
-    region_name: ((aws-region))
-    server_side_encryption: AES256
-
 - name: logsearch-final-builds-dir-tarball
   type: s3-iam
   source:
@@ -1311,14 +1303,6 @@ resources:
   source:
     uri: https://github.com/cloud-gov/logsearch-for-cloudfoundry
     branch: develop
-
-- name: logsearch-for-cloudfoundry-release-tarball
-  type: s3-iam
-  source:
-    bucket: ((cg-s3-bosh-releases-bucket))
-    regexp: logsearch-for-cloudfoundry-(.*).tgz
-    region_name: ((aws-region))
-    server_side_encryption: AES256
 
 - name: logsearch-for-cloudfoundry-final-builds-dir-tarball
   type: s3-iam
