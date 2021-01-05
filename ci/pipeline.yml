@@ -1375,6 +1375,7 @@ resources:
     bucket: ((cg-s3-bosh-releases-bucket))
     regexp: logsearch-([\d\.]*).tgz
     region_name: ((aws-region))
+    server_side_encryption: AES256
 
 - name: logsearch-for-cloudfoundry-release
   type: s3-iam
@@ -1382,6 +1383,7 @@ resources:
     bucket: ((cg-s3-bosh-releases-bucket))
     regexp: logsearch-for-cloudfoundry-(.*).tgz
     region_name: ((aws-region))
+    server_side_encryption: AES256 
 
 - name: oauth2-proxy-release
   type: s3-iam
