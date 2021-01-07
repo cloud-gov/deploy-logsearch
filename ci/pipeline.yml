@@ -158,6 +158,22 @@ jobs:
         args:
           - -exc
           - cd release-git-repo/src/kibana-cf_authentication && npm install && npm test
+  on_failure:
+    put: slack
+    params: &slack-params
+      text: |
+        :x: FAILED to pass tests for the latest update to logsearch-for-cloudfoundry
+        <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
+      channel: ((slack-channel))
+      username: ((slack-username))
+      icon_url: ((slack-icon-url))
+  on_success:
+    put: slack
+    params:
+      <<: *slack-params
+      text: |
+        :white_check_mark: Successfully passed tests for the latest update to logsearch-for-cloudfoundry
+        <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
 
 - name: build-logsearch-for-cloudfoundry-release
   plan:
@@ -274,13 +290,11 @@ jobs:
       - logsearch-stemcell-xenial/*.tgz
   on_failure:
     put: slack
-    params: &slack-params
+    params:
+      <<: *slack-params
       text: |
         :x: FAILED to deploy platform logsearch on development
         <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
-      channel: ((slack-channel))
-      username: ((slack-username))
-      icon_url: ((slack-icon-url))
   on_success:
     put: slack
     params:
