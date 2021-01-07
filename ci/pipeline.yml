@@ -3,6 +3,7 @@ groups:
   - name: all
     jobs:
     - build-logsearch-release
+    - test-logsearch-for-cloudfoundry-release
     - build-logsearch-for-cloudfoundry-release
     - deploy-logsearch-development
     - upload-kibana-objects-development
@@ -31,6 +32,7 @@ groups:
   - name: build-releases
     jobs:
     - build-logsearch-release
+    - test-logsearch-for-cloudfoundry-release
     - build-logsearch-for-cloudfoundry-release
   - name: tenant-development
     jobs:
@@ -135,17 +137,12 @@ jobs:
       params:
         file: finalized-release/releases-dir-logsearch.tgz
 
-- name: build-logsearch-for-cloudfoundry-release
+- name: test-logsearch-for-cloudfoundry-release
   plan:
   - in_parallel:
     - get: release-git-repo
       resource: logsearch-for-cloudfoundry-release-git-repo
       trigger: true
-    - get: pipeline-tasks
-    - get: final-builds-dir-tarball
-      resource: logsearch-for-cloudfoundry-final-builds-dir-tarball
-    - get: releases-dir-tarball
-      resource: logsearch-for-cloudfoundry-releases-dir-tarball
   - task: run-tests
     config:
       inputs:
@@ -160,7 +157,36 @@ jobs:
         path: sh
         args:
           - -exc
-          - cd release-git-repo/src/kibana-cf_authentication && npm test
+          - cd release-git-repo/src/kibana-cf_authentication && npm install && npm test
+  on_failure:
+    put: slack
+    params: &slack-params
+      text: |
+        :x: FAILED to pass tests for the latest update to logsearch-for-cloudfoundry
+        <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
+      channel: ((slack-channel))
+      username: ((slack-username))
+      icon_url: ((slack-icon-url))
+  on_success:
+    put: slack
+    params:
+      <<: *slack-params
+      text: |
+        :white_check_mark: Successfully passed tests for the latest update to logsearch-for-cloudfoundry
+        <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
+
+- name: build-logsearch-for-cloudfoundry-release
+  plan:
+  - in_parallel:
+    - get: release-git-repo
+      resource: logsearch-for-cloudfoundry-release-git-repo
+      passed: [test-logsearch-for-cloudfoundry-release]
+      trigger: true
+    - get: pipeline-tasks
+    - get: final-builds-dir-tarball
+      resource: logsearch-for-cloudfoundry-final-builds-dir-tarball
+    - get: releases-dir-tarball
+      resource: logsearch-for-cloudfoundry-releases-dir-tarball
   - task: finalize-release
     file: pipeline-tasks/finalize-bosh-release.yml
     tags: [iaas]
@@ -264,13 +290,11 @@ jobs:
       - logsearch-stemcell-xenial/*.tgz
   on_failure:
     put: slack
-    params: &slack-params
+    params:
+      <<: *slack-params
       text: |
         :x: FAILED to deploy platform logsearch on development
         <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
-      channel: ((slack-channel))
-      username: ((slack-username))
-      icon_url: ((slack-icon-url))
   on_success:
     put: slack
     params:
