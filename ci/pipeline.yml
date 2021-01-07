@@ -157,9 +157,7 @@ jobs:
         path: sh
         args:
           - -exc
-          - cd release-git-repo/src/kibana-cf_authentication &&
-          - npm install &&
-          - npm test
+          - cd release-git-repo/src/kibana-cf_authentication && npm install && npm test
 
 - name: build-logsearch-for-cloudfoundry-release
   plan:
