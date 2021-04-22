@@ -24,7 +24,7 @@ instance_groups:
         api_endpoint: https://api.fr.cloud.gov
 
 - name: ingestor
-  instances: 5
+  instances: 7
   vm_type: r5.xlarge.logsearch.ingestor
   jobs:
   - name: ingestor_cloudfoundry-firehose
