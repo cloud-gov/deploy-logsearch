@@ -39,3 +39,8 @@ instance_groups:
 
 - name: smoke-tests
   vm_type: t3.small
+
+stemcells:
+- alias: default
+  name: bosh-aws-xen-hvm-ubuntu-bionic-go_agent
+  version: latest

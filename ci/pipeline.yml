@@ -235,6 +235,8 @@ jobs:
       trigger: true
     - get: logsearch-stemcell-xenial
       trigger: true
+    - get: logsearch-stemcell-bionic
+      trigger: true
     - get: terraform-yaml
       resource: terraform-yaml-development
       trigger: true
@@ -374,6 +376,8 @@ jobs:
     - get: logsearch-release
       trigger: true
     - get: logsearch-stemcell-xenial
+      trigger: true
+    - get: logsearch-stemcell-bionic
       trigger: true
     - get: terraform-yaml
       resource: terraform-yaml-development
@@ -1452,6 +1456,11 @@ resources:
   type: bosh-io-stemcell
   source:
     name: bosh-aws-xen-hvm-ubuntu-xenial-go_agent
+
+- name: logsearch-stemcell-bionic
+  source:
+    name: bosh-aws-xen-hvm-ubuntu-bionic-go_agent
+  type: bosh-io-stemcell
 
 - name: logsearch-development-deployment
   type: bosh-deployment
