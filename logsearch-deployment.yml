@@ -8,11 +8,6 @@ update:
   max_in_flight: 1
   max_errors: 1
 
-stemcells:
-- alias: default
-  name: bosh-aws-xen-hvm-ubuntu-xenial-go_agent
-  version: latest
-
 name: logsearch
 
 releases:
