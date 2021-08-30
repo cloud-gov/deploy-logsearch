@@ -499,7 +499,7 @@ jobs:
     - get: logsearch-release
       trigger: true
       passed: [deploy-logsearch-development]
-    - get: logsearch-stemcell-xenial
+    - get: logsearch-stemcell-bionic
       trigger: true
       passed: [deploy-logsearch-development]
     - get: logsearch-config
@@ -586,7 +586,7 @@ jobs:
     - get: secureproxy-release
       trigger: true
       passed: [smoke-tests-platform-development]
-    - get: logsearch-stemcell-xenial
+    - get: logsearch-stemcell-bionic
       trigger: true
       passed: [smoke-tests-platform-development]
     - get: terraform-yaml
@@ -657,7 +657,7 @@ jobs:
     - get: secureproxy-release
       trigger: true
       passed: [deploy-logsearch-platform-staging]
-    - get: logsearch-stemcell-xenial
+    - get: logsearch-stemcell-bionic
       trigger: true
       passed: [deploy-logsearch-platform-staging]
     - get: logsearch-platform-staging-deployment
@@ -716,7 +716,7 @@ jobs:
     - get: secureproxy-release
       trigger: true
       passed: [smoke-tests-development]
-    - get: logsearch-stemcell-xenial
+    - get: logsearch-stemcell-bionic
       trigger: true
       passed: [smoke-tests-development]
     - get: terraform-yaml
@@ -786,7 +786,7 @@ jobs:
     - get: secureproxy-release
       trigger: true
       passed: [deploy-logsearch-staging]
-    - get: logsearch-stemcell-xenial
+    - get: logsearch-stemcell-bionic
       trigger: true
       passed: [deploy-logsearch-staging]
     - get: logsearch-staging-deployment
@@ -842,7 +842,7 @@ jobs:
     - get: secureproxy-release
       trigger: true
       passed: [deploy-logsearch-staging]
-    - get: logsearch-stemcell-xenial
+    - get: logsearch-stemcell-bionic
       trigger: true
       passed: [deploy-logsearch-staging]
     - get: logsearch-staging-deployment
