@@ -58,5 +58,5 @@ instance_groups:
 
 stemcells:
 - alias: default
-  name: bosh-aws-xen-hvm-ubuntu-xenial-go_agent
+  name: bosh-aws-xen-hvm-ubuntu-bionic-go_agent
   version: latest
