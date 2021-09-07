@@ -234,6 +234,9 @@ instance_groups:
         console.enabled: false
         config_options: 
           server.maxPayloadBytes: 2097152
+          # max CSV report size ~20M
+          # should never exceed http.max_content_length, which defaults to 100M
+          xpack.reporting.csv.maxSizeBytes: 20971520
         env:
         - NODE_ENV: production
         source_files: [/var/vcap/jobs/kibana-auth-plugin/config/config.sh]
