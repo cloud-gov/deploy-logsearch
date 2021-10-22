@@ -54,14 +54,16 @@ instance_groups:
 
 - name: smoke-tests
   vm_type: t3.small
-  properties:
-    smoke_tests:
-      count_test:
-        run: true
-        minimum: 100000
-        time_interval: "5m"
-        time_field: "@timestamp"
-        index_pattern: "logs-app-*"
+  jobs:
+  - name: smoke_tests
+    properties:
+      smoke_tests:
+        count_test:
+          run: true
+          minimum: 100000
+          time_interval: "5m"
+          time_field: "@timestamp"
+          index_pattern: "logs-app-*"
 
 
 stemcells:
