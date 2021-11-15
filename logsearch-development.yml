@@ -73,8 +73,8 @@ instance_groups:
         targets:
         - deployment: cf-development
           domain: bosh
-          instance_group: nats
-          network: default
+          #instance_group: nats
+          #network: default
           query: '*'
   - name: bosh-dns
     properties:
