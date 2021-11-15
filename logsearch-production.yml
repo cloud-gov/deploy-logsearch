@@ -51,6 +51,17 @@ instance_groups:
         routes:
         - name: logsearch
           uris: [logs.fr.cloud.gov]
+  - name: bosh-dns-aliases
+    release: bosh-dns-aliases
+    properties:
+      aliases:
+      - domain: nats.service.cf.internal
+        targets:
+        - deployment: cf-production
+          domain: bosh
+          instance_group: nats
+          network: default
+          query: '*'
 
 - name: smoke-tests
   vm_type: t3.small

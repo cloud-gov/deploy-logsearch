@@ -265,6 +265,34 @@ instance_groups:
           timeout: 1s
   stemcell: default
   azs: [z1]
+  - name: bosh-dns
+    properties:
+      aliases:
+        alertmanager-production.service.cf.internal:
+        - "*.alertmanager.production-monitoring.prometheus-production.bosh"
+        alertmanager-staging.service.cf.internal:
+        - "*.alertmanager.staging-monitoring.prometheus-staging.bosh"
+        prometheus-production.service.cf.internal:
+        - "*.prometheus.production-monitoring.prometheus-production.bosh"
+        prometheus-staging.service.cf.internal:
+        - "*.prometheus.staging-monitoring.prometheus-staging.bosh"
+        prometheus-tooling.service.cf.internal:
+        - "*.prometheus-tooling.production-monitoring.prometheus-production.bosh"
+      api:
+        client:
+          tls: "((/dns_api_client_tls))"
+        server:
+          tls: "((/dns_api_server_tls))"
+      cache:
+        enabled: true
+      health:
+        client:
+          tls: "((/dns_healthcheck_client_tls))"
+        enabled: true
+        server:
+          tls: "((/dns_healthcheck_server_tls))"
+      log_level: WARN
+    release: bosh-dns
   networks:
   - name: services
   env:
