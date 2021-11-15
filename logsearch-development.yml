@@ -69,12 +69,12 @@ instance_groups:
     release: bosh-dns-aliases
     properties:
       aliases:
-      - domain: cf.internal
+      - domain: nats.service.cf.internal
         targets:
         - deployment: cf-development
           domain: bosh
-          #instance_group: nats
-          #network: default
+          instance_group: nats
+          network: default
           query: '*'
   - name: bosh-dns
     properties:
