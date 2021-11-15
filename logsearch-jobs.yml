@@ -263,8 +263,6 @@ instance_groups:
             name: kibana-up
             script_path: /var/vcap/jobs/kibana/bin/post-start
           timeout: 1s
-  stemcell: default
-  azs: [z1]
   - name: bosh-dns
     properties:
       aliases:
@@ -293,6 +291,8 @@ instance_groups:
           tls: "((/dns_healthcheck_server_tls))"
       log_level: WARN
     release: bosh-dns
+  stemcell: default
+  azs: [z1]
   networks:
   - name: services
   env:
