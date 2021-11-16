@@ -255,6 +255,11 @@ instance_groups:
     release: routing
     properties:
       route_registrar:
+        nats:
+          hostname: nats.service.cf.internal
+          port: 4224
+          tls:
+            enabled: true
         routes:
         - name: logsearch
           registration_interval: 2s
