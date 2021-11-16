@@ -62,11 +62,11 @@ instance_groups:
         deployment: cf-development
     properties:
       route_registrar:
-        nats:
-          hostname: nats.service.cf.internal
-          port: 4224
-          tls:
-            enabled: true
+        #nats:
+        #  hostname: nats.service.cf.internal
+        #  port: 4224
+        #  tls:
+        #    enabled: true
         routes:
         - name: logsearch
           uris: [logs.dev.us-gov-west-1.aws-us-gov.cloud.gov]
