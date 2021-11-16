@@ -64,8 +64,8 @@ instance_groups:
       nats:
         tls:
           enabled: true
-          client_cert: "((! /bosh/cf-development/nats_client_cert.certificate ))"
-          client_key: "((! /bosh/cf-development/nats_client_cert.private_key ))"
+          client_cert: "(( !/bosh/cf-development/nats_client_cert.certificate ))"
+          client_key: "(( !/bosh/cf-development/nats_client_cert.private_key ))"
       route_registrar:
         routes:
         - name: logsearch
