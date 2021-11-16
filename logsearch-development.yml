@@ -58,7 +58,7 @@ instance_groups:
   - name: route_registrar
     consumes:
       nats:
-        from: nats
+        from: nats-tls
         deployment: cf-development
     properties:
       route_registrar:
