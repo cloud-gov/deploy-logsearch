@@ -56,17 +56,17 @@ instance_groups:
           api_endpoint: https://api.dev.us-gov-west-1.aws-us-gov.cloud.gov
           system_domain: dev.us-gov-west-1.aws-us-gov.cloud.gov
   - name: route_registrar
-    consumes:
-      nats-tls:
-        from: nats-tls
-        deployment: cf-development
+#    consumes:
+#      nats-tls:
+#        from: nats-tls
+#        deployment: cf-development
     properties:
+      nats:
+        tls:
+          enabled: true
+          client_cert: "((/bosh/cf-development/nats_client_cert.certificate))"
+          client_key: "((/bosh/cf-development/nats_client_cert.private_key))"
       route_registrar:
-        #nats:
-        #  hostname: nats.service.cf.internal
-        #  port: 4224
-        #  tls:
-        #    enabled: true
         routes:
         - name: logsearch
           uris: [logs.dev.us-gov-west-1.aws-us-gov.cloud.gov]
