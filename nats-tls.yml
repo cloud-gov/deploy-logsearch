@@ -1,8 +1,8 @@
 # Add in cf dev nats tls client cert and key
 - type: replace
-  path: /instance_groups/name=kibana/jobs/name=route_registrar/properties/nats/tls/client_cert?
+  path: /instance_groups/name=kibana/jobs/name=route_registrar/properties/nats?/tls?/client_cert?
   value: ((/bosh/cf-development/nats_client_cert.certificate))
 
 - type: replace
-  path: /instance_groups/name=kibana/jobs/name=route_registrar/properties/nats/tls/client_key?
+  path: /instance_groups/name=kibana/jobs/name=route_registrar/properties/nats?/tls?/client_key?
   value: ((/bosh/cf-development/nats_client_cert.private_key))
