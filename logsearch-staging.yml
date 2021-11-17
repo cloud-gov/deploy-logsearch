@@ -41,8 +41,8 @@ instance_groups:
           system_domain: fr-stage.cloud.gov
   - name: route_registrar
     consumes:
-      nats:
-        from: nats
+      nats-tls:
+        from: nats-tls
         deployment: cf-staging
     properties:
       route_registrar:

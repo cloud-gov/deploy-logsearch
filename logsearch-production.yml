@@ -43,8 +43,8 @@ instance_groups:
           system_domain: fr.cloud.gov
   - name: route_registrar
     consumes:
-      nats:
-        from: nats
+      nats-tls:
+        from: nats-tls
         deployment: cf-production
     properties:
       route_registrar:

@@ -415,6 +415,8 @@ jobs:
       - prometheus-release/*.tgz
       stemcells:
       - logsearch-stemcell-bionic/*.tgz
+      ops_files:
+      - logsearch-config/nats-tls-dev.yml
   on_failure:
     put: slack
     params: &slack-params
@@ -745,7 +747,16 @@ jobs:
         CF_SYSTEM_DOMAIN: ((cf-system-domain-staging))
   - *lint-manifest
   - put: logsearch-staging-deployment
-    params: *deploy-params
+    params:
+      manifest: logsearch-manifest/manifest.yml
+      releases:
+      - logsearch-release/*.tgz
+      - logsearch-for-cloudfoundry-release/*.tgz
+      - prometheus-release/*.tgz
+      stemcells:
+      - logsearch-stemcell-bionic/*.tgz
+      ops_files:
+      - logsearch-config/nats-tls-stage.yml
   on_failure:
     put: slack
     params:
@@ -1075,7 +1086,16 @@ jobs:
         CF_SYSTEM_DOMAIN: ((cf-system-domain-production))
   - *lint-manifest
   - put: logsearch-production-deployment
-    params: *deploy-params
+    params:
+      manifest: logsearch-manifest/manifest.yml
+      releases:
+      - logsearch-release/*.tgz
+      - logsearch-for-cloudfoundry-release/*.tgz
+      - prometheus-release/*.tgz
+      stemcells:
+      - logsearch-stemcell-bionic/*.tgz
+      ops_files:
+      - logsearch-config/nats-tls-prod.yml
   on_failure:
     put: slack
     params:

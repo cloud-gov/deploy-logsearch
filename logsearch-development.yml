@@ -57,10 +57,15 @@ instance_groups:
           system_domain: dev.us-gov-west-1.aws-us-gov.cloud.gov
   - name: route_registrar
     consumes:
-      nats:
-        from: nats
+      nats-tls:
+        from: nats-tls
         deployment: cf-development
     properties:
+      #nats:
+      #  tls:
+      #    enabled: true
+      #    client_cert: "(( !/bosh/cf-development/nats_client_cert.certificate ))"
+      #    client_key: "(( !/bosh/cf-development/nats_client_cert.private_key ))"
       route_registrar:
         routes:
         - name: logsearch
