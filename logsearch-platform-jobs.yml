@@ -30,6 +30,8 @@ instance_groups:
           delay_allocation_restart: "15m"
         config_options: {"xpack.monitoring.enabled": false}
         migrate_data_path: true
+        jvm_options:
+          - "‐Dlog4j2.formatMsgNoLookups=True"
   vm_type: logsearch_es_master
   persistent_disk_type: logsearch_es_master
   stemcell: default
@@ -71,6 +73,8 @@ instance_groups:
         heap_size: 2G
         config_options: {"xpack.monitoring.enabled": false}
         migrate_data_path: true
+        jvm_options:
+          - "‐Dlog4j2.formatMsgNoLookups=True"
   - name: curator
     release: logsearch
     properties:
@@ -153,6 +157,8 @@ instance_groups:
       elasticsearch: {from: elasticsearch_master}
     properties:
       elasticsearch:
+        jvm_options:
+          - "‐Dlog4j2.formatMsgNoLookups=True"
         node:
           allow_master: false
           allow_data: true
@@ -239,6 +245,8 @@ instance_groups:
       elasticsearch: {from: elasticsearch_master}
     properties:
       elasticsearch:
+        jvm_options:
+          - "‐Dlog4j2.formatMsgNoLookups=True"
         heap_size: 1G
         config_options: {"xpack.monitoring.enabled": false}
         migrate_data_path: true
