@@ -31,7 +31,7 @@ instance_groups:
         config_options: {"xpack.monitoring.enabled": false}
         migrate_data_path: true
         jvm_options:
-          - "‐Dlog4j2.formatMsgNoLookups=True"
+          - "-Dlog4j2.formatMsgNoLookups=true"
   vm_type: logsearch_es_master
   persistent_disk_type: logsearch_es_master
   stemcell: default
@@ -74,7 +74,7 @@ instance_groups:
         config_options: {"xpack.monitoring.enabled": false}
         migrate_data_path: true
         jvm_options:
-          - "‐Dlog4j2.formatMsgNoLookups=True"
+          - "-Dlog4j2.formatMsgNoLookups=true"
   - name: curator
     release: logsearch
     properties:
@@ -158,7 +158,7 @@ instance_groups:
     properties:
       elasticsearch:
         jvm_options:
-          - "‐Dlog4j2.formatMsgNoLookups=True"
+          - "-Dlog4j2.formatMsgNoLookups=true"
         node:
           allow_master: false
           allow_data: true
@@ -246,7 +246,7 @@ instance_groups:
     properties:
       elasticsearch:
         jvm_options:
-          - "‐Dlog4j2.formatMsgNoLookups=True"
+          - "-Dlog4j2.formatMsgNoLookups=true"
         heap_size: 1G
         config_options: {"xpack.monitoring.enabled": false}
         migrate_data_path: true
@@ -259,7 +259,7 @@ instance_groups:
     properties:
       logstash:
         jvm_options:
-        - "‐Dlog4j2.formatMsgNoLookups=True"
+        - "-Dlog4j2.formatMsgNoLookups=true"
         queue:
           max_bytes: 30gb
       logstash_parser:
