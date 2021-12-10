@@ -17,7 +17,7 @@ instance_groups:
       elasticsearch:
         cluster_name: logsearch
         jvm_options:
-          - "‐Dlog4j2.formatMsgNoLookups=True"
+          - "-Dlog4j2.formatMsgNoLookups=true"
         migrate_data_path: true
         node:
           allow_master: true
@@ -84,7 +84,7 @@ instance_groups:
       elasticsearch:
         migrate_data_path: true
         jvm_options:
-          - "‐Dlog4j2.formatMsgNoLookups=True"
+          - "-Dlog4j2.formatMsgNoLookups=true"
   - name: curator
     release: logsearch
     properties:
@@ -200,7 +200,7 @@ instance_groups:
         config_options:
           indices.query.bool.max_clause_count: 2048
         jvm_options:
-          - "‐Dlog4j2.formatMsgNoLookups=True"
+          - "-Dlog4j2.formatMsgNoLookups=true"
   persistent_disk_type: logsearch_es_data
   stemcell: default
   azs: [z1]
@@ -368,7 +368,7 @@ instance_groups:
       elasticsearch:
         heap_size: 1G
         jvm_options:
-          - "‐Dlog4j2.formatMsgNoLookups=True"
+          - "-Dlog4j2.formatMsgNoLookups=true"
   - name: ingestor_syslog
     release: logsearch
     consumes:
@@ -378,7 +378,7 @@ instance_groups:
     properties:
       logstash:
         jvm_options:
-          - "‐Dlog4j2.formatMsgNoLookups=True"
+          - "-Dlog4j2.formatMsgNoLookups=true"
         queue:
           max_bytes: 30gb
       logstash_parser:
