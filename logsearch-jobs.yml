@@ -370,6 +370,8 @@ instance_groups:
       ingestor: {as: ingestor_link}
     properties:
       logstash:
+        jvm_options:
+          - "‐Dlog4j2.formatMsgNoLookups=True"
         queue:
           max_bytes: 30gb
       logstash_parser:
