@@ -45,19 +45,6 @@ instance_groups:
   update:
     max_in_flight: 1 # Should never update more than one ES master node at a time or cluster will go down
 
-- name: redis
-  instances: 1
-  jobs:
-  - name: bpm
-    release: bpm
-  - {name: redis, release: logsearch-for-cloudfoundry}
-  vm_type: logsearch_redis
-  persistent_disk_type: logsearch_redis
-  stemcell: default
-  azs: [z1]
-  networks:
-  - name: services
-
 - name: maintenance
   instances: 1
   vm_extensions: [errand-profile]
