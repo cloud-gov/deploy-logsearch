@@ -1,0 +1,185 @@
+@startuml
+skinparam DefaultTextAlignment center
+skinparam ArrowColor black
+skinparam ComponentStyle uml1
+skinparam Ranksep 200
+skinparam Linetype ortho
+
+actor "cf user" as user
+
+cloud S3 [
+    ==S3 bucket
+    redundant storage for logs
+]
+cloud ALB [
+    ==app ALB
+]
+cloud UAAALB [
+    ==UAA ALB
+]
+
+rectangle cloudfoundry {
+    node gorouter [
+        ==gorouter
+        dynamic reverse-proxy load balancer
+    ]
+    node nats [
+        ==nats
+        message bus
+    ]
+    node capi [
+        ==CAPI
+        the cf api
+    ]
+    node doppler [
+        ==cloudfoundry doppler
+        this is the source of all the logs
+    ]
+    node uaa [
+        ==UAA
+        auth for cf
+    ]
+}
+
+rectangle logsearch {
+node "kibana (N x environment)" as kibana {
+    agent kbn [
+        ==kibana
+        The primary interface for viewing logs
+    ]
+    agent kibanaplugin [
+        ==kibana-auth-plugin
+        injects filters into user queries
+    ]
+    agent es_k [
+        ==elasticsearch
+        this is an elasticsearch instance
+        that is neither a data node nor
+        a master. It's probably just here
+        to make addressing easier for kibana
+    ]
+    agent routeregistrar [
+        == route registrar
+        tells nats where kibana is
+        so gorouter can route traffic
+    ]
+    kbn -r-> es_k
+    kbn -l-> kibanaplugin
+
+}
+
+node "redis (n x environment)" as redis_host {
+    agent redis [
+        ==redis
+    ]
+}
+
+node "archiver (N x environment)" as archiver {
+    agent ingestor_firehose_a [
+        ==ingestor_firehose-cloudfoundry
+        pulls logs from doppler
+    ]
+
+    agent ingestor_syslog [
+        ==ingestor_syslog
+        logstash process
+        listens for syslog messages,
+        writes docs raw to S3
+    ]
+}
+
+node "ingestor (N x environment)" as ingestor {
+    agent ingestor_firehose_i [
+        ==ingestor_firehose-cloudfoundry
+        pulls logs from doppler
+    ]
+
+    agent ingestor_syslog [
+        ==ingestor_syslog
+        logstash process
+        listens for syslog messages,
+        does some minimal parsing
+        writes docs to elasticsearch
+    ]
+    agent es_i [
+        ==elasticsearch
+        this elasticsearch instance
+        is neither a data node nor
+        a master. It's probably just here
+        to make addressing easier for ingestor_syslog
+    ]
+    ingestor_syslog -> es_i
+}
+
+node "elasticsearch_master (3 x environment)" as elasticsearch_master {
+    agent es_em [
+        ==elasticsearch
+        master nodes are used
+        for coordination only
+    ]
+}
+
+node "elasticsearch_data (N x environment)" as elasticsearch_data {
+    agent es_ed [
+        ==elasticsearch
+        data nodes are where the
+        logs are actually stored
+    ]
+}
+
+
+node "maintenance (1 x environment)" as maintenance {
+    agent curator [
+        ==curator
+        curator prunes indices based on name
+        it's capable of other maintenance tasks
+        but we don't leverage them
+    ]
+    agent elasticsearch_exporter [
+        ==elasticsearch_exporter
+        gathers stats about elasticsearch
+        exports them to prometheus
+    ]
+    agent kibana_objects [
+        ==upload-kibana-objects
+        uploads index templates, 
+        vizualizations, etc
+    ]
+    agent es_m [
+        ==elasticsearch
+        this elasticsearch instance
+        is neither a data node nor
+        a master. It's probably just here
+        to make addressing easier for curator
+    ]
+    curator -> es_m
+    kibana_objects -u-> kbn
+    elasticsearch_exporter -r-> es_m
+}
+}
+
+user --> ALB
+user --> UAAALB
+ALB --> gorouter
+UAAALB --> uaa
+es_k -down-> es_em
+es_i -down-> es_em
+es_m -up-> es_em
+es_em <-down-> es_ed
+kibanaplugin -u-> UAAALB : authenticate users
+kibanaplugin -u-> capi : get user roles
+kibanaplugin -d-> redis : share state\nbetween instances
+routeregistrar -u-> nats
+
+ingestor_firehose_a -u-> doppler : get logs
+ingestor_firehose_a -u-> UAAALB : authenticate for doppler
+ingestor_firehose_a -u-> capi : get space/app metadata
+ingestor_firehose_a -d-> S3
+
+ingestor_firehose_i -u-> doppler : get logs
+ingestor_firehose_i -u-> UAAALB : authenticate for doppler
+ingestor_firehose_i -u-> capi : "get\nspace/app\nmetadata" " "
+ingestor_firehose_i -> ingestor_syslog : send logs
+
+
+@enduml

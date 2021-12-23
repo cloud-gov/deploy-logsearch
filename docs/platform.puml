@@ -1,0 +1,137 @@
+@startuml
+skinparam DefaultTextAlignment center
+skinparam ArrowColor black
+skinparam ComponentStyle uml1
+
+actor operator
+
+cloud ALB [
+    ==HTTPS ALB
+]
+
+
+node "kibana (N x environment)" as kibana {
+    agent oauth2proxy [
+        ==oauth2_proxy
+        authorizes users based on 
+        authentication against opsuaa
+    ]
+    agent secureproxy [
+        ==secureproxy
+        nginx responsible for
+        security-related header manipulation
+    ]
+    agent kbn [
+        ==kibana
+        The primary interface for viewing logs
+    ]
+    agent es_k [
+        ==elasticsearch
+        this is an elasticsearch instance
+        that is neither a data node nor
+        a master. It's probably just here
+        to make addressing easier for kibana
+    ]
+    secureproxy -right-> oauth2proxy
+    oauth2proxy -right-> kbn
+    kbn -right-> es_k
+}
+
+node opsuaa [
+    ==opsuaa
+    UAA that only knows about operators
+    (this is its own deployment elsewhere)
+]
+
+node "bosh-managed ec2 instance" as ec2 {
+    agent syslog_forwarder [
+        ==syslog_forwarder
+        collects system logs from 
+        var/log and /var/vcap/sys/log/**/* 
+        sends them via syslog
+    ]
+}
+
+cloud ELB [
+    ==TCP ELB
+]
+
+node "ingestor (N x environment)" as ingestor {
+
+    agent ingestor_syslog [
+        ==ingestor_syslog
+        logstash process
+        listens for syslog messages,
+        does some minimal parsing
+        writes docs to elasticsearch
+    ]
+    agent es_i [
+        ==elasticsearch
+        this elasticsearch instance
+        is neither a data node nor
+        a master. It's probably just here
+        to make addressing easier for ingestor_syslog
+    ]
+    ingestor_syslog -> es_i
+}
+
+node "elasticsearch_master (3 x environment)" as elasticsearch_master {
+    agent es_em [
+        ==elasticsearch
+        master nodes are used
+        for coordination only
+    ]
+}
+
+node "elasticsearch_data (N x environment)" as elasticsearch_data {
+    agent es_ed [
+        ==elasticsearch
+        data nodes are where the
+        logs are actually stored
+    ]
+}
+
+
+node "maintenance (1 x environment)" as maintenance {
+    agent curator [
+        ==curator
+        curator prunes indices based on name
+        it's capable of other maintenance tasks
+        but we don't leverage them
+    ]
+    agent elasticsearch_exporter [
+        ==elasticsearch_exporter
+        gathers stats about elasticsearch
+        exports them to prometheus
+    ]
+    agent kibana_objects [
+        ==upload-kibana-objects
+        uploads index templates, 
+        vizualizations, etc
+    ]
+    agent es_m [
+        ==elasticsearch
+        this elasticsearch instance
+        is neither a data node nor
+        a master. It's probably just here
+        to make addressing easier for curator
+    ]
+    curator -> es_m
+    kibana_objects -u-> kbn
+    elasticsearch_exporter -r-> es_m
+}
+
+operator -down-> ALB
+operator -[norank]> opsuaa
+ALB -down-> secureproxy
+ec2 -down-> ELB
+es_k -down-> es_em
+es_i -down-> es_em
+es_m -up-> es_em
+es_em <-down-> es_ed
+ELB -down-> ingestor_syslog
+oauth2proxy -[norank]> opsuaa
+
+
+
+@enduml
