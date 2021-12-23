@@ -6,9 +6,6 @@ instance_groups:
   instances: 4
   vm_type: t3.large
 
-- name: redis
-  vm_type: r5.large
-
 - name: ingestor
   vm_type: t3.large
 
