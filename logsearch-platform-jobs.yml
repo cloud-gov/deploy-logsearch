@@ -206,7 +206,6 @@ instance_groups:
       client_id: (( param "specify oauth-proxy client" ))
       client_secret: (( param "specify oauth-proxy client secret" ))
       cookie_secret: (( param "specify oauth-proxy cookie secret" ))
-      oidc_issuer_url: https://opslogin.fr.cloud.gov/oauth/token
       email_domain: gsa.gov
   - name: secureproxy
     release: secureproxy
