@@ -1,13 +1,6 @@
 instance_groups:
 - name: elasticsearch_master
-  vm_type: t3.large
-
-- name: elasticsearch_data
-  instances: 4
-  vm_type: t3.large
-
-- name: ingestor
-  vm_type: t3.large
+  vm_type: t3.xlarge
 
 - name: maintenance
   vm_type: t3.large
@@ -17,8 +10,23 @@ instance_groups:
   jobs:
   - name: oauth2-proxy
     properties:
-      redirect_url: https://logs-platform.fr-stage.cloud.gov/oauth2/callback
-      oidc_issuer_url: https://opslogin.fr.cloud.gov/oauth/token
+      redirect_url: https://logs-platform.fr.wb.cloud.gov/oauth2/callback
+      oidc_issuer_url: https://opslogin.fr.west.cloud.gov/oauth/token
+
+- name: ingestor
+  vm_type: m5.2xlarge
+  jobs:
+  - name: ingestor_syslog
+    properties:
+      logstash_ingestor:
+        health:
+          timeout: 900
+
+- name: elasticsearch_data
+  vm_type: m5.2xlarge
+  update:
+    max_in_flight: 2
+    canaries: 2
 
 - name: smoke-tests
   vm_type: t3.small
@@ -28,7 +36,7 @@ instance_groups:
       smoke_tests:
         count_test:
           run: true
-          minimum: 20000
+          minimum: 50000
           time_interval: "5m"
           time_field: "@timestamp"
           index_pattern: "logs-platform-*"
