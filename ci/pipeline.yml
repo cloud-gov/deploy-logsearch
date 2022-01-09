@@ -1456,7 +1456,7 @@ jobs:
       stemcells:
       - logsearch-stemcell-bionic/*.tgz
       ops_files:
-      - logsearch-config/nats-tls-prod.yml
+      - logsearch-config/nats-tls-westb.yml
   on_failure:
     put: slack
     params:
