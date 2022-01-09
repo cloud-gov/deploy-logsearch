@@ -29,6 +29,12 @@ groups:
     - smoke-tests-platform-staging
     - deploy-logsearch-platform-production
     - smoke-tests-platform-production
+    - deploy-logsearch-westb
+    - upload-kibana-objects-westb
+    - smoke-tests-westb
+    - smoke-tests-login-westb
+    - deploy-logsearch-platform-westb
+    - smoke-tests-platform-westb
   - name: build-releases
     jobs:
     - build-logsearch-release
@@ -65,11 +71,21 @@ groups:
     - check-backup-production-tenant
     - smoke-tests-production
     - smoke-tests-login-production
+  - name: tenant-westb
+    jobs:
+    - deploy-logsearch-westb
+    - upload-kibana-objects-westb
+    - smoke-tests-westb
+    - smoke-tests-login-westb
   - name: platform-production
     jobs:
     - deploy-logsearch-platform-production
     - smoke-tests-platform-production
     - check-backup-production-platform
+  - name: platform-westb
+    jobs:
+    - deploy-logsearch-platform-westb
+    - smoke-tests-platform-westb
   - name: tenant
     jobs:
     - deploy-logsearch-development
@@ -87,6 +103,10 @@ groups:
     - check-backup-production-tenant
     - smoke-tests-production
     - smoke-tests-login-production
+    - deploy-logsearch-westb
+    - upload-kibana-objects-westb
+    - smoke-tests-westb
+    - smoke-tests-login-westb
   - name: platform
     jobs:
     - deploy-logsearch-platform-development
@@ -98,6 +118,8 @@ groups:
     - deploy-logsearch-platform-production
     - smoke-tests-platform-production
     - check-backup-production-platform
+    - deploy-logsearch-platform-westb
+    - smoke-tests-platform-westb
 
 jobs:
 - name: build-logsearch-release
@@ -1744,6 +1766,13 @@ resources:
   source:
     bucket: ((logsearch-private-bucket))
     versioned_file: logsearch-production.yml
+    region_name: ((aws-region))
+
+- name: common-westb
+  type: s3-iam
+  source:
+    bucket: ((logsearch-private-bucket))
+    versioned_file: logsearch-westb.yml
     region_name: ((aws-region))
 
 - name: common-platform-development
