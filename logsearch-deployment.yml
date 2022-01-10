@@ -1,5 +1,8 @@
 director_uuid: (( param "Please set the UUID of your BOSH Director" ))
 
+features:
+  use_dns_addresses: false
+
 update:
   serial: false
   canaries: 1
