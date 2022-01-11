@@ -49,7 +49,3 @@ stemcells:
 - alias: default
   name: bosh-aws-xen-hvm-ubuntu-bionic-go_agent
   version: latest
-
-variables:
-- name: platform_kibana_cookie_secret_westb
-  type: password
