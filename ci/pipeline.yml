@@ -35,6 +35,25 @@ groups:
     - smoke-tests-login-westb
     - deploy-logsearch-platform-westb
     - smoke-tests-platform-westb
+    - deploy-logsearch-westc
+    - upload-kibana-objects-westc
+    - smoke-tests-westc
+    - smoke-tests-login-westc
+    - deploy-logsearch-easta
+    - upload-kibana-objects-easta
+    - smoke-tests-easta
+    - smoke-tests-login-easta
+    - deploy-logsearch-eastb
+    - upload-kibana-objects-eastb
+    - smoke-tests-eastb
+    - smoke-tests-login-eastb
+    - deploy-logsearch-platform-westc
+    - smoke-tests-platform-westc
+    - deploy-logsearch-platform-easta
+    - smoke-tests-platform-easta
+    - deploy-logsearch-platform-eastb
+    - smoke-tests-platform-eastb
+    
   - name: build-releases
     jobs:
     - build-logsearch-release
@@ -77,6 +96,24 @@ groups:
     - upload-kibana-objects-westb
     - smoke-tests-westb
     - smoke-tests-login-westb
+  - name: tenant-westc
+    jobs:
+    - deploy-logsearch-westc
+    - upload-kibana-objects-westc
+    - smoke-tests-westc
+    - smoke-tests-login-westc
+  - name: tenant-easta
+    jobs:
+    - deploy-logsearch-easta
+    - upload-kibana-objects-easta
+    - smoke-tests-easta
+    - smoke-tests-login-easta
+  - name: tenant-eastb
+    jobs:
+    - deploy-logsearch-eastb
+    - upload-kibana-objects-eastb
+    - smoke-tests-eastb
+    - smoke-tests-login-eastb
   - name: platform-production
     jobs:
     - deploy-logsearch-platform-production
@@ -86,6 +123,18 @@ groups:
     jobs:
     - deploy-logsearch-platform-westb
     - smoke-tests-platform-westb
+  - name: platform-westc
+    jobs:
+    - deploy-logsearch-platform-westc
+    - smoke-tests-platform-westc
+  - name: platform-easta
+    jobs:
+    - deploy-logsearch-platform-easta
+    - smoke-tests-platform-easta
+  - name: platform-eastb
+    jobs:
+    - deploy-logsearch-platform-eastb
+    - smoke-tests-platform-eastb
   - name: tenant
     jobs:
     - deploy-logsearch-development
@@ -107,6 +156,18 @@ groups:
     - upload-kibana-objects-westb
     - smoke-tests-westb
     - smoke-tests-login-westb
+    - deploy-logsearch-westc
+    - upload-kibana-objects-westc
+    - smoke-tests-westc
+    - smoke-tests-login-westc
+    - deploy-logsearch-easta
+    - upload-kibana-objects-easta
+    - smoke-tests-easta
+    - smoke-tests-login-easta
+    - deploy-logsearch-eastb
+    - upload-kibana-objects-eastb
+    - smoke-tests-eastb
+    - smoke-tests-login-eastb
   - name: platform
     jobs:
     - deploy-logsearch-platform-development
@@ -120,6 +181,12 @@ groups:
     - check-backup-production-platform
     - deploy-logsearch-platform-westb
     - smoke-tests-platform-westb
+    - deploy-logsearch-platform-westc
+    - smoke-tests-platform-westc
+    - deploy-logsearch-platform-easta
+    - smoke-tests-platform-easta
+    - deploy-logsearch-platform-eastb
+    - smoke-tests-platform-eastb
 
 jobs:
 - name: build-logsearch-release
@@ -2820,6 +2887,27 @@ resources:
     versioned_file: logsearch-platform-westb.yml
     region_name: ((aws-region))
 
+- name: common-platform-westc
+  type: s3-iam
+  source:
+    bucket: ((logsearch-private-bucket))
+    versioned_file: logsearch-platform-westc.yml
+    region_name: ((aws-region))
+
+- name: common-platform-easta
+  type: s3-iam
+  source:
+    bucket: ((logsearch-private-bucket))
+    versioned_file: logsearch-platform-easta.yml
+    region_name: ((aws-region))
+
+- name: common-platform-eastb
+  type: s3-iam
+  source:
+    bucket: ((logsearch-private-bucket))
+    versioned_file: logsearch-platform-eastb.yml
+    region_name: ((aws-region))
+
 - name: logsearch-release
   type: s3-iam
   source:
@@ -2901,6 +2989,34 @@ resources:
     ca_cert: ((logsearch-westb-ca-cert))
     deployment: logsearch
 
+- name: logsearch-westc-deployment
+  type: bosh-deployment
+  source: &bosh-params-westc
+    target: ((logsearch-westc-deployment-bosh-target))
+    client: ((logsearch-westc-deployment-bosh-client))
+    client_secret: ((logsearch-westc-deployment-bosh-client-secret))
+    ca_cert: ((logsearch-westc-ca-cert))
+    deployment: logsearch
+
+- name: logsearch-easta-deployment
+  type: bosh-deployment
+  source: &bosh-params-easta
+    target: ((logsearch-easta-deployment-bosh-target))
+    client: ((logsearch-easta-deployment-bosh-client))
+    client_secret: ((logsearch-easta-deployment-bosh-client-secret))
+    ca_cert: ((logsearch-easta-ca-cert))
+    deployment: logsearch
+
+- name: logsearch-eastb-deployment
+  type: bosh-deployment
+  source: &bosh-params-eastb
+    target: ((logsearch-eastb-deployment-bosh-target))
+    client: ((logsearch-eastb-deployment-bosh-client))
+    client_secret: ((logsearch-eastb-deployment-bosh-client-secret))
+    ca_cert: ((logsearch-eastb-ca-cert))
+    deployment: logsearch
+
+
 - name: logsearch-platform-development-deployment
   type: bosh-deployment
   source:
@@ -2924,6 +3040,25 @@ resources:
   source:
     <<: *bosh-params-westb
     deployment: logsearch-platform
+
+- name: logsearch-platform-westc-deployment
+  type: bosh-deployment
+  source:
+    <<: *bosh-params-westc
+    deployment: logsearch-platform
+
+- name: logsearch-platform-easta-deployment
+  type: bosh-deployment
+  source:
+    <<: *bosh-params-easta
+    deployment: logsearch-platform
+
+- name: logsearch-platform-eastb-deployment
+  type: bosh-deployment
+  source:
+    <<: *bosh-params-eastb
+    deployment: logsearch-platform
+
 
 - name: pipeline-tasks
   type: git
@@ -2972,6 +3107,27 @@ resources:
   source:
     bucket: ((tf-state-bucket-westb))
     versioned_file: ((tf-state-file-westb))
+    region_name: ((aws-region))
+
+- name: terraform-yaml-westc
+  type: s3-iam
+  source:
+    bucket: ((tf-state-bucket-westc))
+    versioned_file: ((tf-state-file-westc))
+    region_name: ((aws-region))
+
+- name: terraform-yaml-easta
+  type: s3-iam
+  source:
+    bucket: ((tf-state-bucket-easta))
+    versioned_file: ((tf-state-file-easta))
+    region_name: ((aws-region))
+
+- name: terraform-yaml-eastb
+  type: s3-iam
+  source:
+    bucket: ((tf-state-bucket-eastb))
+    versioned_file: ((tf-state-file-eastb))
     region_name: ((aws-region))
 
 resource_types:
