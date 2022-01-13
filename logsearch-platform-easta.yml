@@ -12,6 +12,9 @@ instance_groups:
     properties:
       redirect_url: https://logs-platform.fr.ea.cloud.gov/oauth2/callback
       oidc_issuer_url: https://opslogin.fr.east.cloud.gov/oauth/token
+      client_id: platform-kibana-easta
+      client_secret: ((platform_kibana_client_secret_easta))
+      cookie_secret: ((platform_kibana_cookie_secret_easta))
 
 - name: ingestor
   vm_type: m5.2xlarge
