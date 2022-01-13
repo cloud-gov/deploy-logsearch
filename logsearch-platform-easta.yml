@@ -1,0 +1,47 @@
+instance_groups:
+- name: elasticsearch_master
+  vm_type: t3.xlarge
+
+- name: maintenance
+  vm_type: t3.large
+
+- name: kibana
+  vm_type: t3.xlarge
+  jobs:
+  - name: oauth2-proxy
+    properties:
+      redirect_url: https://logs-platform.fr.ea.cloud.gov/oauth2/callback
+      oidc_issuer_url: https://opslogin.fr.east.cloud.gov/oauth/token
+
+- name: ingestor
+  vm_type: m5.2xlarge
+  jobs:
+  - name: ingestor_syslog
+    properties:
+      logstash_ingestor:
+        health:
+          timeout: 900
+
+- name: elasticsearch_data
+  vm_type: m5.2xlarge
+  update:
+    max_in_flight: 2
+    canaries: 2
+
+- name: smoke-tests
+  vm_type: t3.small
+  jobs:
+  - name: smoke_tests
+    properties:
+      smoke_tests:
+        count_test:
+          run: true
+          minimum: 50000
+          time_interval: "5m"
+          time_field: "@timestamp"
+          index_pattern: "logs-platform-*"
+
+stemcells:
+- alias: default
+  name: bosh-aws-xen-hvm-ubuntu-bionic-go_agent
+  version: latest

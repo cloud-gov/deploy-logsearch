@@ -35,6 +35,25 @@ groups:
     - smoke-tests-login-westb
     - deploy-logsearch-platform-westb
     - smoke-tests-platform-westb
+    - deploy-logsearch-westc
+    - upload-kibana-objects-westc
+    - smoke-tests-westc
+    - smoke-tests-login-westc
+    - deploy-logsearch-easta
+    - upload-kibana-objects-easta
+    - smoke-tests-easta
+    - smoke-tests-login-easta
+    - deploy-logsearch-eastb
+    - upload-kibana-objects-eastb
+    - smoke-tests-eastb
+    - smoke-tests-login-eastb
+    - deploy-logsearch-platform-westc
+    - smoke-tests-platform-westc
+    - deploy-logsearch-platform-easta
+    - smoke-tests-platform-easta
+    - deploy-logsearch-platform-eastb
+    - smoke-tests-platform-eastb
+    
   - name: build-releases
     jobs:
     - build-logsearch-release
@@ -77,6 +96,24 @@ groups:
     - upload-kibana-objects-westb
     - smoke-tests-westb
     - smoke-tests-login-westb
+  - name: tenant-westc
+    jobs:
+    - deploy-logsearch-westc
+    - upload-kibana-objects-westc
+    - smoke-tests-westc
+    - smoke-tests-login-westc
+  - name: tenant-easta
+    jobs:
+    - deploy-logsearch-easta
+    - upload-kibana-objects-easta
+    - smoke-tests-easta
+    - smoke-tests-login-easta
+  - name: tenant-eastb
+    jobs:
+    - deploy-logsearch-eastb
+    - upload-kibana-objects-eastb
+    - smoke-tests-eastb
+    - smoke-tests-login-eastb
   - name: platform-production
     jobs:
     - deploy-logsearch-platform-production
@@ -86,6 +123,18 @@ groups:
     jobs:
     - deploy-logsearch-platform-westb
     - smoke-tests-platform-westb
+  - name: platform-westc
+    jobs:
+    - deploy-logsearch-platform-westc
+    - smoke-tests-platform-westc
+  - name: platform-easta
+    jobs:
+    - deploy-logsearch-platform-easta
+    - smoke-tests-platform-easta
+  - name: platform-eastb
+    jobs:
+    - deploy-logsearch-platform-eastb
+    - smoke-tests-platform-eastb
   - name: tenant
     jobs:
     - deploy-logsearch-development
@@ -107,6 +156,18 @@ groups:
     - upload-kibana-objects-westb
     - smoke-tests-westb
     - smoke-tests-login-westb
+    - deploy-logsearch-westc
+    - upload-kibana-objects-westc
+    - smoke-tests-westc
+    - smoke-tests-login-westc
+    - deploy-logsearch-easta
+    - upload-kibana-objects-easta
+    - smoke-tests-easta
+    - smoke-tests-login-easta
+    - deploy-logsearch-eastb
+    - upload-kibana-objects-eastb
+    - smoke-tests-eastb
+    - smoke-tests-login-eastb
   - name: platform
     jobs:
     - deploy-logsearch-platform-development
@@ -120,6 +181,12 @@ groups:
     - check-backup-production-platform
     - deploy-logsearch-platform-westb
     - smoke-tests-platform-westb
+    - deploy-logsearch-platform-westc
+    - smoke-tests-platform-westc
+    - deploy-logsearch-platform-easta
+    - smoke-tests-platform-easta
+    - deploy-logsearch-platform-eastb
+    - smoke-tests-platform-eastb
 
 jobs:
 - name: build-logsearch-release
@@ -1263,6 +1330,684 @@ jobs:
       BOSH_CA_CERT: common/master-bosh.crt
       BOSH_ERRAND: upload-kibana-objects
 
+- name: deploy-logsearch-platform-easta
+  serial_groups: [bosh-platform-easta]
+  plan:
+  - in_parallel:
+    - get: pipeline-tasks
+    - get: common-secrets
+      resource: common-platform-easta
+      trigger: true
+    - get: logsearch-config
+      trigger: true
+      passed: [smoke-tests-platform-staging]
+    - get: logsearch-release
+      trigger: true
+      passed: [smoke-tests-platform-staging]
+    - get: logsearch-for-cloudfoundry-release
+      trigger: true
+      passed: [smoke-tests-platform-staging]
+    - get: prometheus-release
+      trigger: true
+      passed: [smoke-tests-platform-staging]
+    - get: oauth2-proxy-release
+      trigger: true
+      passed: [smoke-tests-platform-staging]
+    - get: secureproxy-release
+      trigger: true
+      passed: [smoke-tests-platform-staging]
+    - get: logsearch-stemcell-bionic
+      trigger: true
+      passed: [smoke-tests-platform-staging]
+    - get: logsearch-platform-staging-deployment
+    - get: terraform-yaml
+      resource: terraform-yaml-easta
+  - task: logsearch-manifest
+    config:
+      <<: *manifest-config
+      run:
+        path: sh
+        args:
+        - -exc
+        - |
+          SPRUCE_FILE_BASE_PATH=logsearch-config spruce merge \
+            --prune terraform_outputs \
+            logsearch-config/logsearch-platform-deployment.yml \
+            logsearch-config/logsearch-platform-jobs.yml \
+            common-secrets/logsearch-platform-easta.yml \
+            logsearch-config/logsearch-platform-easta.yml \
+            terraform-yaml/state.yml \
+            > logsearch-manifest/manifest.yml
+      outputs:
+      - name: logsearch-manifest
+      params:
+        CF_USERNAME: ((cf-username-easta))
+        CF_PASSWORD: ((cf-password-easta))
+        CF_SYSTEM_DOMAIN: ((cf-system-domain-easta))
+  - *lint-manifest
+  - put: logsearch-platform-easta-deployment
+    params: *deploy-params-platform
+  on_failure:
+    put: slack
+    params:
+      <<: *slack-params
+      text: |
+        :x: FAILED to deploy platform logsearch on easta
+        <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
+  on_success:
+    put: slack
+    params:
+      <<: *slack-params
+      text: |
+        :white_check_mark: Successfully deployed platform logsearch on easta
+        <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
+
+- name: smoke-tests-platform-easta
+  serial_groups: [bosh-platform-easta]
+  plan:
+  - in_parallel:
+    - get: common
+      resource: master-bosh-root-cert
+    - get: pipeline-tasks
+    - get: logsearch-config
+      trigger: true
+      passed: [deploy-logsearch-platform-easta]
+    - get: logsearch-release
+      trigger: true
+      passed: [deploy-logsearch-platform-easta]
+    - get: logsearch-for-cloudfoundry-release
+      trigger: true
+      passed: [deploy-logsearch-platform-easta]
+    - get: prometheus-release
+      trigger: true
+      passed: [deploy-logsearch-platform-easta]
+    - get: oauth2-proxy-release
+      trigger: true
+      passed: [deploy-logsearch-platform-easta]
+    - get: secureproxy-release
+      trigger: true
+      passed: [deploy-logsearch-platform-easta]
+    - get: logsearch-stemcell-bionic
+      trigger: true
+      passed: [deploy-logsearch-platform-easta]
+    - get: logsearch-platform-easta-deployment
+      trigger: true
+    - get: tests-timer
+      trigger: true
+  - task: smoke-tests
+    file: pipeline-tasks/bosh-errand.yml
+    params:
+      BOSH_ENVIRONMENT: ((bosh.easta.environment))
+      BOSH_CLIENT: ((bosh.easta.client))
+      BOSH_CLIENT_SECRET: ((bosh.easta.client-secret))
+      BOSH_DEPLOYMENT: ((logsearch-platform.easta.name))
+      BOSH_ERRAND: ((logsearch-platform.easta.smoke-tests))
+      BOSH_FLAGS: "--keep-alive"
+      BOSH_CA_CERT: common/master-bosh.crt
+  on_failure:
+    put: slack
+    params:
+      <<: *slack-params
+      text: |
+        :x: Smoke tests for platform logsearch on easta FAILED
+        <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
+  on_success:
+    put: slack
+    params:
+      <<: *slack-params
+      channel: ((slack-news-channel))
+      text: |
+        :white_check_mark: Smoke tests for platform logsearch on easta PASSED
+        <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
+
+- name: deploy-logsearch-easta
+  serial_groups: [bosh-easta]
+  plan:
+  - in_parallel:
+    - get: pipeline-tasks
+    - get: common-secrets
+      resource: common-easta
+      trigger: true
+    - get: logsearch-config
+      trigger: true
+      passed: [smoke-tests-staging]
+    - get: logsearch-for-cloudfoundry-release
+      trigger: true
+      passed: [smoke-tests-staging, smoke-tests-login-staging]
+    - get: logsearch-release
+      trigger: true
+      passed: [smoke-tests-staging]
+    - get: prometheus-release
+      trigger: true
+      passed: [smoke-tests-staging]
+    - get: oauth2-proxy-release
+      trigger: true
+      passed: [smoke-tests-staging]
+    - get: secureproxy-release
+      trigger: true
+      passed: [smoke-tests-staging]
+    - get: logsearch-stemcell-bionic
+      trigger: true
+      passed: [smoke-tests-staging]
+    - get: logsearch-staging-deployment
+    - get: terraform-yaml
+      resource: terraform-yaml-easta
+  - task: logsearch-manifest
+    config:
+      <<: *manifest-config
+      run:
+        path: sh
+        args:
+        - -exc
+        - |
+          SPRUCE_FILE_BASE_PATH=logsearch-config spruce merge \
+            --prune terraform_outputs \
+            logsearch-config/logsearch-deployment.yml \
+            logsearch-config/logsearch-jobs.yml \
+            common-secrets/logsearch-easta.yml \
+            logsearch-config/logsearch-easta.yml \
+            terraform-yaml/state.yml \
+            > logsearch-manifest/manifest.yml
+      params:
+        CF_USERNAME: ((cf-username-easta))
+        CF_PASSWORD: ((cf-password-easta))
+        CF_SYSTEM_DOMAIN: ((cf-system-domain-easta))
+  - *lint-manifest
+  - put: logsearch-easta-deployment
+    params:
+      manifest: logsearch-manifest/manifest.yml
+      releases:
+      - logsearch-release/*.tgz
+      - logsearch-for-cloudfoundry-release/*.tgz
+      - prometheus-release/*.tgz
+      stemcells:
+      - logsearch-stemcell-bionic/*.tgz
+      ops_files:
+      - logsearch-config/nats-tls-easta.yml
+  on_failure:
+    put: slack
+    params:
+      <<: *slack-params
+      text: |
+        :x: FAILED to deploy logsearch on easta
+        <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
+  on_success:
+    put: slack
+    params:
+      <<: *slack-params
+      text: |
+        :white_check_mark: Successfully deployed logsearch on easta
+        <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
+
+- name: smoke-tests-easta
+  serial_groups: [bosh-easta]
+  plan:
+  - in_parallel:
+    - get: pipeline-tasks
+    - get: common
+      resource: master-bosh-root-cert
+    - get: logsearch-config
+      trigger: true
+      passed: [deploy-logsearch-easta]
+    - get: logsearch-for-cloudfoundry-release
+      trigger: true
+      passed: [deploy-logsearch-easta]
+    - get: logsearch-release
+      trigger: true
+      passed: [deploy-logsearch-easta]
+    - get: prometheus-release
+      trigger: true
+      passed: [deploy-logsearch-easta]
+    - get: oauth2-proxy-release
+      trigger: true
+      passed: [deploy-logsearch-easta]
+    - get: secureproxy-release
+      trigger: true
+      passed: [deploy-logsearch-easta]
+    - get: logsearch-stemcell-bionic
+      trigger: true
+      passed: [deploy-logsearch-easta]
+    - get: logsearch-easta-deployment
+      trigger: true
+    - get: tests-timer
+      trigger: true
+  - task: smoke-tests
+    file: pipeline-tasks/bosh-errand.yml
+    params:
+      BOSH_ENVIRONMENT: ((bosh.easta.environment))
+      BOSH_CLIENT: ((bosh.easta.client))
+      BOSH_CLIENT_SECRET: ((bosh.easta.client-secret))
+      BOSH_DEPLOYMENT: ((logsearch.easta.name))
+      BOSH_ERRAND: ((logsearch.easta.smoke-tests))
+      BOSH_FLAGS: "--keep-alive"
+      BOSH_CA_CERT: common/master-bosh.crt
+  on_failure:
+    put: slack
+    params:
+      <<: *slack-params
+      text: |
+        :x: Smoke tests for logsearch on easta FAILED
+        <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
+  on_success:
+    put: slack
+    params:
+      <<: *slack-params
+      channel: ((slack-news-channel))
+      text: |
+        :white_check_mark: Smoke tests for logsearch on easta PASSED
+        <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
+
+- name: smoke-tests-login-easta
+  serial_groups: [bosh-easta]
+  plan:
+  - in_parallel:
+    - get: pipeline-tasks
+    - get: logsearch-config
+      trigger: true
+      passed: [deploy-logsearch-easta]
+    - get: logsearch-for-cloudfoundry-release
+      trigger: true
+      passed: [deploy-logsearch-easta]
+    - get: logsearch-release
+      trigger: true
+      passed: [deploy-logsearch-easta]
+    - get: prometheus-release
+      trigger: true
+      passed: [deploy-logsearch-easta]
+    - get: oauth2-proxy-release
+      trigger: true
+      passed: [deploy-logsearch-easta]
+    - get: secureproxy-release
+      trigger: true
+      passed: [deploy-logsearch-easta]
+    - get: logsearch-stemcell-bionic
+      trigger: true
+      passed: [deploy-logsearch-easta]
+    - get: logsearch-easta-deployment
+      trigger: true
+    - get: tests-timer
+      trigger: true
+  - task: smoke-tests-login
+    file: logsearch-config/ci/smoke-tests-login.yml
+    params:
+      CF_USERNAME: ((cf-username-easta))
+      CF_PASSWORD: ((cf-password-easta))
+      CF_SYSTEM_DOMAIN: ((cf-system-domain-easta))
+  on_failure:
+    put: slack
+    params:
+      <<: *slack-params
+      text: |
+        :x: Login smoke tests for logsearch on easta FAILED
+        <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
+  on_success:
+    put: slack
+    params:
+      <<: *slack-params
+      channel: ((slack-news-channel))
+      text: |
+        :white_check_mark: Login smoke tests for logsearch on easta PASSED
+        <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
+
+- name: upload-kibana-objects-easta
+  serial_groups: [bosh-easta]
+  plan:
+  - in_parallel:
+    - get: pipeline-tasks
+      passed: [deploy-logsearch-easta]
+    - get: common
+      resource: master-bosh-root-cert
+    - get: logsearch-easta-deployment
+      trigger: true
+  - task: upload-kibana-objects
+    file: pipeline-tasks/bosh-errand.yml
+    params:
+      BOSH_ENVIRONMENT: ((bosh.easta.environment))
+      BOSH_CLIENT: ((bosh.easta.client))
+      BOSH_CLIENT_SECRET: ((bosh.easta.client-secret))
+      BOSH_DEPLOYMENT: ((logsearch.easta.name))
+      BOSH_CA_CERT: common/master-bosh.crt
+      BOSH_ERRAND: upload-kibana-objects
+
+- name: deploy-logsearch-platform-eastb
+  serial_groups: [bosh-platform-eastb]
+  plan:
+  - in_parallel:
+    - get: pipeline-tasks
+    - get: common-secrets
+      resource: common-platform-eastb
+      trigger: true
+    - get: logsearch-config
+      trigger: true
+      passed: [smoke-tests-platform-staging]
+    - get: logsearch-release
+      trigger: true
+      passed: [smoke-tests-platform-staging]
+    - get: logsearch-for-cloudfoundry-release
+      trigger: true
+      passed: [smoke-tests-platform-staging]
+    - get: prometheus-release
+      trigger: true
+      passed: [smoke-tests-platform-staging]
+    - get: oauth2-proxy-release
+      trigger: true
+      passed: [smoke-tests-platform-staging]
+    - get: secureproxy-release
+      trigger: true
+      passed: [smoke-tests-platform-staging]
+    - get: logsearch-stemcell-bionic
+      trigger: true
+      passed: [smoke-tests-platform-staging]
+    - get: logsearch-platform-staging-deployment
+    - get: terraform-yaml
+      resource: terraform-yaml-eastb
+  - task: logsearch-manifest
+    config:
+      <<: *manifest-config
+      run:
+        path: sh
+        args:
+        - -exc
+        - |
+          SPRUCE_FILE_BASE_PATH=logsearch-config spruce merge \
+            --prune terraform_outputs \
+            logsearch-config/logsearch-platform-deployment.yml \
+            logsearch-config/logsearch-platform-jobs.yml \
+            common-secrets/logsearch-platform-eastb.yml \
+            logsearch-config/logsearch-platform-eastb.yml \
+            terraform-yaml/state.yml \
+            > logsearch-manifest/manifest.yml
+      outputs:
+      - name: logsearch-manifest
+      params:
+        CF_USERNAME: ((cf-username-eastb))
+        CF_PASSWORD: ((cf-password-eastb))
+        CF_SYSTEM_DOMAIN: ((cf-system-domain-eastb))
+  - *lint-manifest
+  - put: logsearch-platform-eastb-deployment
+    params: *deploy-params-platform
+  on_failure:
+    put: slack
+    params:
+      <<: *slack-params
+      text: |
+        :x: FAILED to deploy platform logsearch on eastb
+        <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
+  on_success:
+    put: slack
+    params:
+      <<: *slack-params
+      text: |
+        :white_check_mark: Successfully deployed platform logsearch on eastb
+        <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
+
+- name: smoke-tests-platform-eastb
+  serial_groups: [bosh-platform-eastb]
+  plan:
+  - in_parallel:
+    - get: common
+      resource: master-bosh-root-cert
+    - get: pipeline-tasks
+    - get: logsearch-config
+      trigger: true
+      passed: [deploy-logsearch-platform-eastb]
+    - get: logsearch-release
+      trigger: true
+      passed: [deploy-logsearch-platform-eastb]
+    - get: logsearch-for-cloudfoundry-release
+      trigger: true
+      passed: [deploy-logsearch-platform-eastb]
+    - get: prometheus-release
+      trigger: true
+      passed: [deploy-logsearch-platform-eastb]
+    - get: oauth2-proxy-release
+      trigger: true
+      passed: [deploy-logsearch-platform-eastb]
+    - get: secureproxy-release
+      trigger: true
+      passed: [deploy-logsearch-platform-eastb]
+    - get: logsearch-stemcell-bionic
+      trigger: true
+      passed: [deploy-logsearch-platform-eastb]
+    - get: logsearch-platform-eastb-deployment
+      trigger: true
+    - get: tests-timer
+      trigger: true
+  - task: smoke-tests
+    file: pipeline-tasks/bosh-errand.yml
+    params:
+      BOSH_ENVIRONMENT: ((bosh.eastb.environment))
+      BOSH_CLIENT: ((bosh.eastb.client))
+      BOSH_CLIENT_SECRET: ((bosh.eastb.client-secret))
+      BOSH_DEPLOYMENT: ((logsearch-platform.eastb.name))
+      BOSH_ERRAND: ((logsearch-platform.eastb.smoke-tests))
+      BOSH_FLAGS: "--keep-alive"
+      BOSH_CA_CERT: common/master-bosh.crt
+  on_failure:
+    put: slack
+    params:
+      <<: *slack-params
+      text: |
+        :x: Smoke tests for platform logsearch on eastb FAILED
+        <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
+  on_success:
+    put: slack
+    params:
+      <<: *slack-params
+      channel: ((slack-news-channel))
+      text: |
+        :white_check_mark: Smoke tests for platform logsearch on eastb PASSED
+        <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
+
+- name: deploy-logsearch-eastb
+  serial_groups: [bosh-eastb]
+  plan:
+  - in_parallel:
+    - get: pipeline-tasks
+    - get: common-secrets
+      resource: common-eastb
+      trigger: true
+    - get: logsearch-config
+      trigger: true
+      passed: [smoke-tests-staging]
+    - get: logsearch-for-cloudfoundry-release
+      trigger: true
+      passed: [smoke-tests-staging, smoke-tests-login-staging]
+    - get: logsearch-release
+      trigger: true
+      passed: [smoke-tests-staging]
+    - get: prometheus-release
+      trigger: true
+      passed: [smoke-tests-staging]
+    - get: oauth2-proxy-release
+      trigger: true
+      passed: [smoke-tests-staging]
+    - get: secureproxy-release
+      trigger: true
+      passed: [smoke-tests-staging]
+    - get: logsearch-stemcell-bionic
+      trigger: true
+      passed: [smoke-tests-staging]
+    - get: logsearch-staging-deployment
+    - get: terraform-yaml
+      resource: terraform-yaml-eastb
+  - task: logsearch-manifest
+    config:
+      <<: *manifest-config
+      run:
+        path: sh
+        args:
+        - -exc
+        - |
+          SPRUCE_FILE_BASE_PATH=logsearch-config spruce merge \
+            --prune terraform_outputs \
+            logsearch-config/logsearch-deployment.yml \
+            logsearch-config/logsearch-jobs.yml \
+            common-secrets/logsearch-eastb.yml \
+            logsearch-config/logsearch-eastb.yml \
+            terraform-yaml/state.yml \
+            > logsearch-manifest/manifest.yml
+      params:
+        CF_USERNAME: ((cf-username-eastb))
+        CF_PASSWORD: ((cf-password-eastb))
+        CF_SYSTEM_DOMAIN: ((cf-system-domain-eastb))
+  - *lint-manifest
+  - put: logsearch-eastb-deployment
+    params:
+      manifest: logsearch-manifest/manifest.yml
+      releases:
+      - logsearch-release/*.tgz
+      - logsearch-for-cloudfoundry-release/*.tgz
+      - prometheus-release/*.tgz
+      stemcells:
+      - logsearch-stemcell-bionic/*.tgz
+      ops_files:
+      - logsearch-config/nats-tls-eastb.yml
+  on_failure:
+    put: slack
+    params:
+      <<: *slack-params
+      text: |
+        :x: FAILED to deploy logsearch on eastb
+        <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
+  on_success:
+    put: slack
+    params:
+      <<: *slack-params
+      text: |
+        :white_check_mark: Successfully deployed logsearch on eastb
+        <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
+
+- name: smoke-tests-eastb
+  serial_groups: [bosh-eastb]
+  plan:
+  - in_parallel:
+    - get: pipeline-tasks
+    - get: common
+      resource: master-bosh-root-cert
+    - get: logsearch-config
+      trigger: true
+      passed: [deploy-logsearch-eastb]
+    - get: logsearch-for-cloudfoundry-release
+      trigger: true
+      passed: [deploy-logsearch-eastb]
+    - get: logsearch-release
+      trigger: true
+      passed: [deploy-logsearch-eastb]
+    - get: prometheus-release
+      trigger: true
+      passed: [deploy-logsearch-eastb]
+    - get: oauth2-proxy-release
+      trigger: true
+      passed: [deploy-logsearch-eastb]
+    - get: secureproxy-release
+      trigger: true
+      passed: [deploy-logsearch-eastb]
+    - get: logsearch-stemcell-bionic
+      trigger: true
+      passed: [deploy-logsearch-eastb]
+    - get: logsearch-eastb-deployment
+      trigger: true
+    - get: tests-timer
+      trigger: true
+  - task: smoke-tests
+    file: pipeline-tasks/bosh-errand.yml
+    params:
+      BOSH_ENVIRONMENT: ((bosh.eastb.environment))
+      BOSH_CLIENT: ((bosh.eastb.client))
+      BOSH_CLIENT_SECRET: ((bosh.eastb.client-secret))
+      BOSH_DEPLOYMENT: ((logsearch.eastb.name))
+      BOSH_ERRAND: ((logsearch.eastb.smoke-tests))
+      BOSH_FLAGS: "--keep-alive"
+      BOSH_CA_CERT: common/master-bosh.crt
+  on_failure:
+    put: slack
+    params:
+      <<: *slack-params
+      text: |
+        :x: Smoke tests for logsearch on eastb FAILED
+        <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
+  on_success:
+    put: slack
+    params:
+      <<: *slack-params
+      channel: ((slack-news-channel))
+      text: |
+        :white_check_mark: Smoke tests for logsearch on eastb PASSED
+        <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
+
+- name: smoke-tests-login-eastb
+  serial_groups: [bosh-eastb]
+  plan:
+  - in_parallel:
+    - get: pipeline-tasks
+    - get: logsearch-config
+      trigger: true
+      passed: [deploy-logsearch-eastb]
+    - get: logsearch-for-cloudfoundry-release
+      trigger: true
+      passed: [deploy-logsearch-eastb]
+    - get: logsearch-release
+      trigger: true
+      passed: [deploy-logsearch-eastb]
+    - get: prometheus-release
+      trigger: true
+      passed: [deploy-logsearch-eastb]
+    - get: oauth2-proxy-release
+      trigger: true
+      passed: [deploy-logsearch-eastb]
+    - get: secureproxy-release
+      trigger: true
+      passed: [deploy-logsearch-eastb]
+    - get: logsearch-stemcell-bionic
+      trigger: true
+      passed: [deploy-logsearch-eastb]
+    - get: logsearch-eastb-deployment
+      trigger: true
+    - get: tests-timer
+      trigger: true
+  - task: smoke-tests-login
+    file: logsearch-config/ci/smoke-tests-login.yml
+    params:
+      CF_USERNAME: ((cf-username-eastb))
+      CF_PASSWORD: ((cf-password-eastb))
+      CF_SYSTEM_DOMAIN: ((cf-system-domain-eastb))
+  on_failure:
+    put: slack
+    params:
+      <<: *slack-params
+      text: |
+        :x: Login smoke tests for logsearch on eastb FAILED
+        <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
+  on_success:
+    put: slack
+    params:
+      <<: *slack-params
+      channel: ((slack-news-channel))
+      text: |
+        :white_check_mark: Login smoke tests for logsearch on eastb PASSED
+        <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
+
+- name: upload-kibana-objects-eastb
+  serial_groups: [bosh-eastb]
+  plan:
+  - in_parallel:
+    - get: pipeline-tasks
+      passed: [deploy-logsearch-eastb]
+    - get: common
+      resource: master-bosh-root-cert
+    - get: logsearch-eastb-deployment
+      trigger: true
+  - task: upload-kibana-objects
+    file: pipeline-tasks/bosh-errand.yml
+    params:
+      BOSH_ENVIRONMENT: ((bosh.eastb.environment))
+      BOSH_CLIENT: ((bosh.eastb.client))
+      BOSH_CLIENT_SECRET: ((bosh.eastb.client-secret))
+      BOSH_DEPLOYMENT: ((logsearch.eastb.name))
+      BOSH_CA_CERT: common/master-bosh.crt
+      BOSH_ERRAND: upload-kibana-objects
+
 - name: deploy-logsearch-platform-westb
   serial_groups: [bosh-platform-westb]
   plan:
@@ -1602,6 +2347,345 @@ jobs:
       BOSH_CA_CERT: common/master-bosh.crt
       BOSH_ERRAND: upload-kibana-objects
 
+- name: deploy-logsearch-platform-westc
+  serial_groups: [bosh-platform-westc]
+  plan:
+  - in_parallel:
+    - get: pipeline-tasks
+    - get: common-secrets
+      resource: common-platform-westc
+      trigger: true
+    - get: logsearch-config
+      trigger: true
+      passed: [smoke-tests-platform-staging]
+    - get: logsearch-release
+      trigger: true
+      passed: [smoke-tests-platform-staging]
+    - get: logsearch-for-cloudfoundry-release
+      trigger: true
+      passed: [smoke-tests-platform-staging]
+    - get: prometheus-release
+      trigger: true
+      passed: [smoke-tests-platform-staging]
+    - get: oauth2-proxy-release
+      trigger: true
+      passed: [smoke-tests-platform-staging]
+    - get: secureproxy-release
+      trigger: true
+      passed: [smoke-tests-platform-staging]
+    - get: logsearch-stemcell-bionic
+      trigger: true
+      passed: [smoke-tests-platform-staging]
+    - get: logsearch-platform-staging-deployment
+    - get: terraform-yaml
+      resource: terraform-yaml-westc
+  - task: logsearch-manifest
+    config:
+      <<: *manifest-config
+      run:
+        path: sh
+        args:
+        - -exc
+        - |
+          SPRUCE_FILE_BASE_PATH=logsearch-config spruce merge \
+            --prune terraform_outputs \
+            logsearch-config/logsearch-platform-deployment.yml \
+            logsearch-config/logsearch-platform-jobs.yml \
+            common-secrets/logsearch-platform-westc.yml \
+            logsearch-config/logsearch-platform-westc.yml \
+            terraform-yaml/state.yml \
+            > logsearch-manifest/manifest.yml
+      outputs:
+      - name: logsearch-manifest
+      params:
+        CF_USERNAME: ((cf-username-westc))
+        CF_PASSWORD: ((cf-password-westc))
+        CF_SYSTEM_DOMAIN: ((cf-system-domain-westc))
+  - *lint-manifest
+  - put: logsearch-platform-westc-deployment
+    params: *deploy-params-platform
+  on_failure:
+    put: slack
+    params:
+      <<: *slack-params
+      text: |
+        :x: FAILED to deploy platform logsearch on westc
+        <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
+  on_success:
+    put: slack
+    params:
+      <<: *slack-params
+      text: |
+        :white_check_mark: Successfully deployed platform logsearch on westc
+        <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
+
+- name: smoke-tests-platform-westc
+  serial_groups: [bosh-platform-westc]
+  plan:
+  - in_parallel:
+    - get: common
+      resource: master-bosh-root-cert
+    - get: pipeline-tasks
+    - get: logsearch-config
+      trigger: true
+      passed: [deploy-logsearch-platform-westc]
+    - get: logsearch-release
+      trigger: true
+      passed: [deploy-logsearch-platform-westc]
+    - get: logsearch-for-cloudfoundry-release
+      trigger: true
+      passed: [deploy-logsearch-platform-westc]
+    - get: prometheus-release
+      trigger: true
+      passed: [deploy-logsearch-platform-westc]
+    - get: oauth2-proxy-release
+      trigger: true
+      passed: [deploy-logsearch-platform-westc]
+    - get: secureproxy-release
+      trigger: true
+      passed: [deploy-logsearch-platform-westc]
+    - get: logsearch-stemcell-bionic
+      trigger: true
+      passed: [deploy-logsearch-platform-westc]
+    - get: logsearch-platform-westc-deployment
+      trigger: true
+    - get: tests-timer
+      trigger: true
+  - task: smoke-tests
+    file: pipeline-tasks/bosh-errand.yml
+    params:
+      BOSH_ENVIRONMENT: ((bosh.westc.environment))
+      BOSH_CLIENT: ((bosh.westc.client))
+      BOSH_CLIENT_SECRET: ((bosh.westc.client-secret))
+      BOSH_DEPLOYMENT: ((logsearch-platform.westc.name))
+      BOSH_ERRAND: ((logsearch-platform.westc.smoke-tests))
+      BOSH_FLAGS: "--keep-alive"
+      BOSH_CA_CERT: common/master-bosh.crt
+  on_failure:
+    put: slack
+    params:
+      <<: *slack-params
+      text: |
+        :x: Smoke tests for platform logsearch on westc FAILED
+        <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
+  on_success:
+    put: slack
+    params:
+      <<: *slack-params
+      channel: ((slack-news-channel))
+      text: |
+        :white_check_mark: Smoke tests for platform logsearch on westc PASSED
+        <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
+
+- name: deploy-logsearch-westc
+  serial_groups: [bosh-westc]
+  plan:
+  - in_parallel:
+    - get: pipeline-tasks
+    - get: common-secrets
+      resource: common-westc
+      trigger: true
+    - get: logsearch-config
+      trigger: true
+      passed: [smoke-tests-staging]
+    - get: logsearch-for-cloudfoundry-release
+      trigger: true
+      passed: [smoke-tests-staging, smoke-tests-login-staging]
+    - get: logsearch-release
+      trigger: true
+      passed: [smoke-tests-staging]
+    - get: prometheus-release
+      trigger: true
+      passed: [smoke-tests-staging]
+    - get: oauth2-proxy-release
+      trigger: true
+      passed: [smoke-tests-staging]
+    - get: secureproxy-release
+      trigger: true
+      passed: [smoke-tests-staging]
+    - get: logsearch-stemcell-bionic
+      trigger: true
+      passed: [smoke-tests-staging]
+    - get: logsearch-staging-deployment
+    - get: terraform-yaml
+      resource: terraform-yaml-westc
+  - task: logsearch-manifest
+    config:
+      <<: *manifest-config
+      run:
+        path: sh
+        args:
+        - -exc
+        - |
+          SPRUCE_FILE_BASE_PATH=logsearch-config spruce merge \
+            --prune terraform_outputs \
+            logsearch-config/logsearch-deployment.yml \
+            logsearch-config/logsearch-jobs.yml \
+            common-secrets/logsearch-westc.yml \
+            logsearch-config/logsearch-westc.yml \
+            terraform-yaml/state.yml \
+            > logsearch-manifest/manifest.yml
+      params:
+        CF_USERNAME: ((cf-username-westc))
+        CF_PASSWORD: ((cf-password-westc))
+        CF_SYSTEM_DOMAIN: ((cf-system-domain-westc))
+  - *lint-manifest
+  - put: logsearch-westc-deployment
+    params:
+      manifest: logsearch-manifest/manifest.yml
+      releases:
+      - logsearch-release/*.tgz
+      - logsearch-for-cloudfoundry-release/*.tgz
+      - prometheus-release/*.tgz
+      stemcells:
+      - logsearch-stemcell-bionic/*.tgz
+      ops_files:
+      - logsearch-config/nats-tls-westc.yml
+  on_failure:
+    put: slack
+    params:
+      <<: *slack-params
+      text: |
+        :x: FAILED to deploy logsearch on westc
+        <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
+  on_success:
+    put: slack
+    params:
+      <<: *slack-params
+      text: |
+        :white_check_mark: Successfully deployed logsearch on westc
+        <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
+
+- name: smoke-tests-westc
+  serial_groups: [bosh-westc]
+  plan:
+  - in_parallel:
+    - get: pipeline-tasks
+    - get: common
+      resource: master-bosh-root-cert
+    - get: logsearch-config
+      trigger: true
+      passed: [deploy-logsearch-westc]
+    - get: logsearch-for-cloudfoundry-release
+      trigger: true
+      passed: [deploy-logsearch-westc]
+    - get: logsearch-release
+      trigger: true
+      passed: [deploy-logsearch-westc]
+    - get: prometheus-release
+      trigger: true
+      passed: [deploy-logsearch-westc]
+    - get: oauth2-proxy-release
+      trigger: true
+      passed: [deploy-logsearch-westc]
+    - get: secureproxy-release
+      trigger: true
+      passed: [deploy-logsearch-westc]
+    - get: logsearch-stemcell-bionic
+      trigger: true
+      passed: [deploy-logsearch-westc]
+    - get: logsearch-westc-deployment
+      trigger: true
+    - get: tests-timer
+      trigger: true
+  - task: smoke-tests
+    file: pipeline-tasks/bosh-errand.yml
+    params:
+      BOSH_ENVIRONMENT: ((bosh.westc.environment))
+      BOSH_CLIENT: ((bosh.westc.client))
+      BOSH_CLIENT_SECRET: ((bosh.westc.client-secret))
+      BOSH_DEPLOYMENT: ((logsearch.westc.name))
+      BOSH_ERRAND: ((logsearch.westc.smoke-tests))
+      BOSH_FLAGS: "--keep-alive"
+      BOSH_CA_CERT: common/master-bosh.crt
+  on_failure:
+    put: slack
+    params:
+      <<: *slack-params
+      text: |
+        :x: Smoke tests for logsearch on westc FAILED
+        <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
+  on_success:
+    put: slack
+    params:
+      <<: *slack-params
+      channel: ((slack-news-channel))
+      text: |
+        :white_check_mark: Smoke tests for logsearch on westc PASSED
+        <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
+
+- name: smoke-tests-login-westc
+  serial_groups: [bosh-westc]
+  plan:
+  - in_parallel:
+    - get: pipeline-tasks
+    - get: logsearch-config
+      trigger: true
+      passed: [deploy-logsearch-westc]
+    - get: logsearch-for-cloudfoundry-release
+      trigger: true
+      passed: [deploy-logsearch-westc]
+    - get: logsearch-release
+      trigger: true
+      passed: [deploy-logsearch-westc]
+    - get: prometheus-release
+      trigger: true
+      passed: [deploy-logsearch-westc]
+    - get: oauth2-proxy-release
+      trigger: true
+      passed: [deploy-logsearch-westc]
+    - get: secureproxy-release
+      trigger: true
+      passed: [deploy-logsearch-westc]
+    - get: logsearch-stemcell-bionic
+      trigger: true
+      passed: [deploy-logsearch-westc]
+    - get: logsearch-westc-deployment
+      trigger: true
+    - get: tests-timer
+      trigger: true
+  - task: smoke-tests-login
+    file: logsearch-config/ci/smoke-tests-login.yml
+    params:
+      CF_USERNAME: ((cf-username-westc))
+      CF_PASSWORD: ((cf-password-westc))
+      CF_SYSTEM_DOMAIN: ((cf-system-domain-westc))
+  on_failure:
+    put: slack
+    params:
+      <<: *slack-params
+      text: |
+        :x: Login smoke tests for logsearch on westc FAILED
+        <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
+  on_success:
+    put: slack
+    params:
+      <<: *slack-params
+      channel: ((slack-news-channel))
+      text: |
+        :white_check_mark: Login smoke tests for logsearch on westc PASSED
+        <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
+
+- name: upload-kibana-objects-westc
+  serial_groups: [bosh-westc]
+  plan:
+  - in_parallel:
+    - get: pipeline-tasks
+      passed: [deploy-logsearch-westc]
+    - get: common
+      resource: master-bosh-root-cert
+    - get: logsearch-westc-deployment
+      trigger: true
+  - task: upload-kibana-objects
+    file: pipeline-tasks/bosh-errand.yml
+    params:
+      BOSH_ENVIRONMENT: ((bosh.westc.environment))
+      BOSH_CLIENT: ((bosh.westc.client))
+      BOSH_CLIENT_SECRET: ((bosh.westc.client-secret))
+      BOSH_DEPLOYMENT: ((logsearch.westc.name))
+      BOSH_CA_CERT: common/master-bosh.crt
+      BOSH_ERRAND: upload-kibana-objects
+
 - name: check-backup-development-tenant
   plan:
   - in_parallel:
@@ -1803,6 +2887,27 @@ resources:
     versioned_file: logsearch-platform-westb.yml
     region_name: ((aws-region))
 
+- name: common-platform-westc
+  type: s3-iam
+  source:
+    bucket: ((logsearch-private-bucket))
+    versioned_file: logsearch-platform-westc.yml
+    region_name: ((aws-region))
+
+- name: common-platform-easta
+  type: s3-iam
+  source:
+    bucket: ((logsearch-private-bucket))
+    versioned_file: logsearch-platform-easta.yml
+    region_name: ((aws-region))
+
+- name: common-platform-eastb
+  type: s3-iam
+  source:
+    bucket: ((logsearch-private-bucket))
+    versioned_file: logsearch-platform-eastb.yml
+    region_name: ((aws-region))
+
 - name: logsearch-release
   type: s3-iam
   source:
@@ -1884,6 +2989,34 @@ resources:
     ca_cert: ((logsearch-westb-ca-cert))
     deployment: logsearch
 
+- name: logsearch-westc-deployment
+  type: bosh-deployment
+  source: &bosh-params-westc
+    target: ((logsearch-westc-deployment-bosh-target))
+    client: ((logsearch-westc-deployment-bosh-client))
+    client_secret: ((logsearch-westc-deployment-bosh-client-secret))
+    ca_cert: ((logsearch-westc-ca-cert))
+    deployment: logsearch
+
+- name: logsearch-easta-deployment
+  type: bosh-deployment
+  source: &bosh-params-easta
+    target: ((logsearch-easta-deployment-bosh-target))
+    client: ((logsearch-easta-deployment-bosh-client))
+    client_secret: ((logsearch-easta-deployment-bosh-client-secret))
+    ca_cert: ((logsearch-easta-ca-cert))
+    deployment: logsearch
+
+- name: logsearch-eastb-deployment
+  type: bosh-deployment
+  source: &bosh-params-eastb
+    target: ((logsearch-eastb-deployment-bosh-target))
+    client: ((logsearch-eastb-deployment-bosh-client))
+    client_secret: ((logsearch-eastb-deployment-bosh-client-secret))
+    ca_cert: ((logsearch-eastb-ca-cert))
+    deployment: logsearch
+
+
 - name: logsearch-platform-development-deployment
   type: bosh-deployment
   source:
@@ -1907,6 +3040,25 @@ resources:
   source:
     <<: *bosh-params-westb
     deployment: logsearch-platform
+
+- name: logsearch-platform-westc-deployment
+  type: bosh-deployment
+  source:
+    <<: *bosh-params-westc
+    deployment: logsearch-platform
+
+- name: logsearch-platform-easta-deployment
+  type: bosh-deployment
+  source:
+    <<: *bosh-params-easta
+    deployment: logsearch-platform
+
+- name: logsearch-platform-eastb-deployment
+  type: bosh-deployment
+  source:
+    <<: *bosh-params-eastb
+    deployment: logsearch-platform
+
 
 - name: pipeline-tasks
   type: git
@@ -1955,6 +3107,27 @@ resources:
   source:
     bucket: ((tf-state-bucket-westb))
     versioned_file: ((tf-state-file-westb))
+    region_name: ((aws-region))
+
+- name: terraform-yaml-westc
+  type: s3-iam
+  source:
+    bucket: ((tf-state-bucket-westc))
+    versioned_file: ((tf-state-file-westc))
+    region_name: ((aws-region))
+
+- name: terraform-yaml-easta
+  type: s3-iam
+  source:
+    bucket: ((tf-state-bucket-easta))
+    versioned_file: ((tf-state-file-easta))
+    region_name: ((aws-region))
+
+- name: terraform-yaml-eastb
+  type: s3-iam
+  source:
+    bucket: ((tf-state-bucket-eastb))
+    versioned_file: ((tf-state-file-eastb))
     region_name: ((aws-region))
 
 resource_types:
