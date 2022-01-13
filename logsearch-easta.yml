@@ -21,7 +21,7 @@ instance_groups:
   - name: ingestor_cloudfoundry-firehose
     properties:
       cloudfoundry:
-        api_endpoint: https://api.fr.eb.cloud.gov
+        api_endpoint: https://api.fr.ea.cloud.gov
 
 - name: ingestor
   instances: 7
@@ -30,7 +30,7 @@ instance_groups:
   - name: ingestor_cloudfoundry-firehose
     properties:
       cloudfoundry:
-        api_endpoint: https://api.fr.eb.cloud.gov
+        api_endpoint: https://api.fr.ea.cloud.gov
 
 - name: kibana
   vm_type: t3.xlarge
@@ -39,25 +39,25 @@ instance_groups:
     properties:
       kibana-auth:
         cloudfoundry:
-          api_endpoint: https://api.fr.eb.cloud.gov
-          system_domain: fr.eb.cloud.gov
+          api_endpoint: https://api.fr.ea.cloud.gov
+          system_domain: fr.ea.cloud.gov
   - name: route_registrar
     consumes:
       nats-tls:
         from: nats-tls
-        deployment: cf-eastb
+        deployment: cf-easta
     properties:
       route_registrar:
         routes:
         - name: logsearch
-          uris: [logs.fr.eb.cloud.gov]
+          uris: [logs.fr.ea.cloud.gov]
   - name: bosh-dns-aliases
     release: bosh-dns-aliases
     properties:
       aliases:
       - domain: nats.service.cf.internal
         targets:
-        - deployment: cf-eastb
+        - deployment: cf-easta
           domain: bosh
           instance_group: nats
           network: default

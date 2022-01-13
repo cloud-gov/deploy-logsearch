@@ -45,7 +45,7 @@ instance_groups:
     consumes:
       nats-tls:
         from: nats-tls
-        deployment: cf-westb
+        deployment: cf-westc
     properties:
       route_registrar:
         routes:
@@ -57,7 +57,7 @@ instance_groups:
       aliases:
       - domain: nats.service.cf.internal
         targets:
-        - deployment: cf-westb
+        - deployment: cf-westc
           domain: bosh
           instance_group: nats
           network: default
