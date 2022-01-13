@@ -2859,6 +2859,27 @@ resources:
     versioned_file: logsearch-westb.yml
     region_name: ((aws-region))
 
+- name: common-westc
+  type: s3-iam
+  source:
+    bucket: ((logsearch-private-bucket))
+    versioned_file: logsearch-westc.yml
+    region_name: ((aws-region))
+
+- name: common-easta
+  type: s3-iam
+  source:
+    bucket: ((logsearch-private-bucket))
+    versioned_file: logsearch-easta.yml
+    region_name: ((aws-region))
+
+- name: common-eastb
+  type: s3-iam
+  source:
+    bucket: ((logsearch-private-bucket))
+    versioned_file: logsearch-eastb.yml
+    region_name: ((aws-region))
+
 - name: common-platform-development
   type: s3-iam
   source:
