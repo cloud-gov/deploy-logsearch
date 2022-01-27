@@ -271,6 +271,22 @@ instance_groups:
                 }
               }
             }
+        outputs:
+        - plugin: s3
+          options:
+            region: (( grab terraform_outputs.vpc_region ))
+            bucket: (( grab terraform_outputs.platform_logs_bucket_name ))
+            access_key_id: (( grab terraform_outputs.platform_logs_bucket_access_key_id_curr ))
+            secret_access_key: (( grab terraform_outputs.platform_logs_bucket_secret_access_key_curr ))
+            server_side_encryption: true
+            prefix: "%{+yyyy/MM/dd/HH/mm}"
+            encoding: "gzip"
+            temporary_directory: /var/vcap/data/logstash_ingestor/s3_temp
+            # note that this is different than in the archivers
+            # here, we're uploading the parsed message as json, not the raw log line
+            codec: json
+        - plugin: elasticsearch
+          options: {}
         deployment_dictionary:
         - /var/vcap/packages/logsearch-config/deployment_lookup.yml
         - /var/vcap/jobs/parser-config-lfc/config/deployment_lookup.yml
