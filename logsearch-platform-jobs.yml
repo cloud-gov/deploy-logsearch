@@ -281,7 +281,7 @@ instance_groups:
             server_side_encryption: true
             prefix: "%{+yyyy/MM/dd/HH/mm}"
             encoding: "gzip"
-            temporary_directory: /var/vcap/data/logstash_ingestor/s3_temp
+            temporary_directory: /var/vcap/data/ingestor_syslog/s3_temp
             # note that this is different than in the archivers
             # here, we're uploading the parsed message as json, not the raw log line
             codec: json
