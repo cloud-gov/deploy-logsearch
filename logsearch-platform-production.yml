@@ -13,7 +13,6 @@ instance_groups:
       redirect_url: https://logs-platform.fr.cloud.gov/oauth2/callback
       oidc_issuer_url: https://opslogin.fr.cloud.gov/oauth/token
 
-
 - name: ingestor
   vm_type: r5.xlarge.logsearch.ingestor
   jobs:
