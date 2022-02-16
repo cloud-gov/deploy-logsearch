@@ -19,17 +19,12 @@ instance_groups:
         node:
           allow_master: true
           allow_data: false
-        exec:
-          environment:
-            JAVA_OPTS: '"-Djava.io.tmpdir=${TMP_DIR}"'
         limits:
           fd: 131072  # 2 ** 17
         health:
           timeout: 900
         recovery:
           delay_allocation_restart: "15m"
-        config_options: {"xpack.monitoring.enabled": false}
-        migrate_data_path: true
         jvm_options:
           - "-Dlog4j2.formatMsgNoLookups=true"
   vm_type: logsearch_es_master
@@ -59,7 +54,6 @@ instance_groups:
       elasticsearch:
         heap_size: 2G
         config_options: {"xpack.monitoring.enabled": false}
-        migrate_data_path: true
         jvm_options:
           - "-Dlog4j2.formatMsgNoLookups=true"
   - name: curator
@@ -149,9 +143,6 @@ instance_groups:
         node:
           allow_master: false
           allow_data: true
-        exec:
-          environment:
-            JAVA_OPTS: '"-Djava.io.tmpdir=${TMP_DIR}"'
         limits:
           fd: 131072  # 2 ** 17
         health:
@@ -159,7 +150,6 @@ instance_groups:
         recovery:
           delay_allocation_restart: "15m"
         config_options: {"xpack.monitoring.enabled": false}
-        migrate_data_path: true
   vm_type: logsearch_es_data
   persistent_disk_type: logsearch_es_platform_data
   stemcell: default
@@ -181,7 +171,6 @@ instance_groups:
     properties:
       elasticsearch:
         heap_size: 2G
-        migrate_data_path: true
   - name: kibana
     release: logsearch
     consumes:
@@ -235,7 +224,6 @@ instance_groups:
           - "-Dlog4j2.formatMsgNoLookups=true"
         heap_size: 1G
         config_options: {"xpack.monitoring.enabled": false}
-        migrate_data_path: true
   - name: ingestor_syslog
     release: logsearch
     consumes: 
