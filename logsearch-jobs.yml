@@ -18,13 +18,9 @@ instance_groups:
         cluster_name: logsearch
         jvm_options:
           - "-Dlog4j2.formatMsgNoLookups=true"
-        migrate_data_path: true
         node:
           allow_master: true
           allow_data: false
-        exec:
-          environment:
-            JAVA_OPTS: '"-Djava.io.tmpdir=${TMP_DIR}"'
         limits:
           fd: 131072  # 2 ** 17
         health:
@@ -82,7 +78,6 @@ instance_groups:
       elasticsearch: {from: elasticsearch_master}
     properties:
       elasticsearch:
-        migrate_data_path: true
         jvm_options:
           - "-Dlog4j2.formatMsgNoLookups=true"
   - name: curator
@@ -186,9 +181,6 @@ instance_groups:
         node:
           allow_master: false
           allow_data: true
-        exec:
-          environment:
-            JAVA_OPTS: '"-Djava.io.tmpdir=${TMP_DIR}"'
         limits:
           fd: 131072  # 2 ** 17
         health:
@@ -196,7 +188,6 @@ instance_groups:
           disable_post_start: true
         recovery:
           delay_allocation_restart: "15m"
-        migrate_data_path: true
         config_options:
           indices.query.bool.max_clause_count: 2048
         jvm_options:
