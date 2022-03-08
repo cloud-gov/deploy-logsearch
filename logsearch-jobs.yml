@@ -215,6 +215,8 @@ instance_groups:
     properties:
       elasticsearch:
         heap_size: 2G
+        jvm_options:
+          - "-Dlog4j2.formatMsgNoLookups=true"
         migrate_data_path: true
   - name: kibana
     release: logsearch
@@ -306,6 +308,8 @@ instance_groups:
       elasticsearch: {from: elasticsearch_master}
     properties:
       elasticsearch:
+        jvm_options:
+          - "-Dlog4j2.formatMsgNoLookups=true"
         migrate_data_path: true
   - name: archiver_syslog
     release: logsearch
