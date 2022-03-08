@@ -18,7 +18,6 @@ instance_groups:
         cluster_name: logsearch
         jvm_options:
           - "-Dlog4j2.formatMsgNoLookups=true"
-          - "-XX:+DisableExplicitGC"
         node:
           allow_master: true
           allow_data: false
@@ -81,7 +80,6 @@ instance_groups:
       elasticsearch:
         jvm_options:
           - "-Dlog4j2.formatMsgNoLookups=true"
-          - "-XX:+DisableExplicitGC"
   - name: curator
     release: logsearch
     properties:
@@ -194,7 +192,6 @@ instance_groups:
           indices.query.bool.max_clause_count: 2048
         jvm_options:
           - "-Dlog4j2.formatMsgNoLookups=true"
-          - "-XX:+DisableExplicitGC"
   persistent_disk_type: logsearch_es_data
   stemcell: default
   azs: [z1]
@@ -218,9 +215,7 @@ instance_groups:
     properties:
       elasticsearch:
         heap_size: 2G
-        jvm_options:
-          - "-Dlog4j2.formatMsgNoLookups=true"
-          - "-XX:+DisableExplicitGC"
+        migrate_data_path: true
   - name: kibana
     release: logsearch
     provides:
@@ -311,9 +306,7 @@ instance_groups:
       elasticsearch: {from: elasticsearch_master}
     properties:
       elasticsearch:
-        jvm_options:
-          - "-Dlog4j2.formatMsgNoLookups=true"
-          - "-XX:+DisableExplicitGC"
+        migrate_data_path: true
   - name: archiver_syslog
     release: logsearch
     properties:
@@ -367,7 +360,6 @@ instance_groups:
         heap_size: 1G
         jvm_options:
           - "-Dlog4j2.formatMsgNoLookups=true"
-          - "-XX:+DisableExplicitGC"
   - name: ingestor_syslog
     release: logsearch
     consumes:
