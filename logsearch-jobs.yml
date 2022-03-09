@@ -84,8 +84,32 @@ instance_groups:
     release: logsearch
     properties:
       curator:
+        execute:
+          daily: true
+          hourly: false
         purge_logs:
           retention_period: 180
+        actions:
+        - action: forcemerge
+          description: >-
+            Force merging of older indices to make their shards more compact
+            and search-optimized
+          options:
+            ignore_empty_list: true
+            max_num_segments: 1
+          filters:
+          - filtertype: pattern
+            kind: regex
+            value: logs*
+          - filtertype: age
+            source: creation_date
+            direction: older
+            unit: days
+            unit_count: 90
+          - filtertype: forcemerged
+            max_num_segments: 1
+            exclude: true
+
   - name: elasticsearch_config
     release: logsearch
     properties:
