@@ -1,6 +1,6 @@
 @startuml tenant
 skinparam DefaultTextAlignment center
-skinparam ArrowColor black
+skinparam ArrowColor blue
 skinparam ComponentStyle uml1
 skinparam Ranksep 200
 skinparam Linetype ortho

@@ -1,6 +1,6 @@
 @startuml platform
 skinparam DefaultTextAlignment center
-skinparam ArrowColor black
+skinparam ArrowColor blue
 skinparam ComponentStyle uml1
 
 actor operator
