@@ -1,9 +1,15 @@
 @startuml tenant
+!theme toy
 skinparam DefaultTextAlignment center
 skinparam ArrowColor blue
 skinparam ComponentStyle uml1
 skinparam Ranksep 200
 skinparam Linetype ortho
+skinparam AgentBackgroundColor APPLICATION
+skinparam NodeBackgroundColor STRATEGY
+skinparam RectangleBackgroundColor BUSINESS
+skinparam CloudBackgroundColor MOTIVATION
+skinparam BackgroundColor WhiteSmoke
 
 actor "cf user" as user
 

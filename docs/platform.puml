@@ -2,6 +2,11 @@
 skinparam DefaultTextAlignment center
 skinparam ArrowColor blue
 skinparam ComponentStyle uml1
+skinparam AgentBackgroundColor APPLICATION
+skinparam NodeBackgroundColor STRATEGY
+skinparam RectangleBackgroundColor BUSINESS
+skinparam CloudBackgroundColor MOTIVATION
+skinparam BackgroundColor WhiteSmoke
 
 actor operator
 
