@@ -164,7 +164,7 @@ jobs:
       text: |
         :x: FAILED to pass tests for the latest update to logsearch-for-cloudfoundry
         <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
-      channel: ((slack-channel))
+      channel: '#cg-platform-news'
       username: ((slack-username))
       icon_url: ((slack-icon-url))
   on_success:
@@ -354,7 +354,7 @@ jobs:
     put: slack
     params:
       <<: *slack-params
-      channel: ((slack-news-channel))
+      channel: '#cg-platform-news'
       text: |
         :white_check_mark: Smoke tests for platform logsearch on development PASSED
         <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
@@ -423,7 +423,7 @@ jobs:
       text: |
         :x: FAILED to deploy logsearch on development
         <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
-      channel: ((slack-channel))
+      channel: '#cg-platform-news'
       username: ((slack-username))
       icon_url: ((slack-icon-url))
   on_success:
@@ -485,7 +485,7 @@ jobs:
     put: slack
     params:
       <<: *slack-params
-      channel: ((slack-news-channel))
+      channel: '#cg-platform-news'
       text: |
         :white_check_mark: Smoke tests for logsearch on development PASSED
         <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
@@ -537,7 +537,7 @@ jobs:
     put: slack
     params:
       <<: *slack-params
-      channel: ((slack-news-channel))
+      channel: '#cg-platform-news'
       text: |
         :white_check_mark: Login smoke tests for logsearch on development PASSED
         <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
@@ -687,7 +687,7 @@ jobs:
     put: slack
     params:
       <<: *slack-params
-      channel: ((slack-news-channel))
+      channel: '#cg-platform-news'
       text: |
         :white_check_mark: Smoke tests for platform logsearch on staging PASSED
         <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
@@ -825,7 +825,7 @@ jobs:
     put: slack
     params:
       <<: *slack-params
-      channel: ((slack-news-channel))
+      channel: '#cg-platform-news'
       text: |
         :white_check_mark: Smoke tests for logsearch on staging PASSED
         <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
@@ -877,7 +877,7 @@ jobs:
     put: slack
     params:
       <<: *slack-params
-      channel: ((slack-news-channel))
+      channel: '#cg-platform-news'
       text: |
         :white_check_mark: Login smoke tests for logsearch on staging PASSED
         <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
@@ -1020,6 +1020,7 @@ jobs:
     put: slack
     params:
       <<: *slack-params
+      channel: '#cg-platform'
       text: |
         :x: Smoke tests for platform logsearch on production FAILED
         <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
@@ -1027,7 +1028,7 @@ jobs:
     put: slack
     params:
       <<: *slack-params
-      channel: ((slack-news-channel))
+      channel: '#cg-platform-news'
       text: |
         :white_check_mark: Smoke tests for platform logsearch on production PASSED
         <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
@@ -1157,6 +1158,7 @@ jobs:
     put: slack
     params:
       <<: *slack-params
+      channel: '#cg-platform'
       text: |
         :x: Smoke tests for logsearch on production FAILED
         <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
@@ -1164,7 +1166,7 @@ jobs:
     put: slack
     params:
       <<: *slack-params
-      channel: ((slack-news-channel))
+      channel: '#cg-platform-news'
       text: |
         :white_check_mark: Smoke tests for logsearch on production PASSED
         <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
@@ -1209,6 +1211,7 @@ jobs:
     put: slack
     params:
       <<: *slack-params
+      channel: '#cg-platform-news'
       text: |
         :x: Login smoke tests for logsearch on production FAILED
         <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
@@ -1216,7 +1219,7 @@ jobs:
     put: slack
     params:
       <<: *slack-params
-      channel: ((slack-news-channel))
+      channel: '#cg-platform-news'
       text: |
         :white_check_mark: Login smoke tests for logsearch on production PASSED
         <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
@@ -1338,6 +1341,7 @@ resources:
 - name: logsearch-release-git-repo
   type: git
   source:
+    commit_verification_keys: ((cloud-gov-pgp-keys))
     uri: https://github.com/cloud-gov/logsearch-boshrelease
     branch: develop
 
@@ -1360,6 +1364,7 @@ resources:
 - name: logsearch-for-cloudfoundry-release-git-repo
   type: git
   source:
+    commit_verification_keys: ((cloud-gov-pgp-keys))
     uri: https://github.com/cloud-gov/logsearch-for-cloudfoundry
     branch: develop
 
@@ -1466,6 +1471,7 @@ resources:
 - name: logsearch-config
   type: git
   source:
+    commit_verification_keys: ((cloud-gov-pgp-keys))
     uri: ((cg-deploy-logsearch-git-url))
 
 - name: logsearch-stemcell-bionic
@@ -1521,6 +1527,7 @@ resources:
 - name: pipeline-tasks
   type: git
   source:
+    commit_verification_keys: ((cloud-gov-pgp-keys))
     uri: ((pipeline-tasks-git-url))
     branch: ((pipeline-tasks-git-branch))
 
