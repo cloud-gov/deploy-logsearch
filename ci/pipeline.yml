@@ -909,27 +909,19 @@ jobs:
     - get: pipeline-tasks
     - get: common-secrets
       resource: common-platform-production
-      trigger: true
     - get: logsearch-config
-      trigger: true
       passed: [smoke-tests-platform-staging]
     - get: logsearch-release
-      trigger: true
       passed: [smoke-tests-platform-staging]
     - get: logsearch-for-cloudfoundry-release
-      trigger: true
       passed: [smoke-tests-platform-staging]
     - get: prometheus-release
-      trigger: true
       passed: [smoke-tests-platform-staging]
     - get: oauth2-proxy-release
-      trigger: true
       passed: [smoke-tests-platform-staging]
     - get: secureproxy-release
-      trigger: true
       passed: [smoke-tests-platform-staging]
     - get: logsearch-stemcell-bionic
-      trigger: true
       passed: [smoke-tests-platform-staging]
     - get: logsearch-platform-staging-deployment
     - get: terraform-yaml
@@ -1040,27 +1032,19 @@ jobs:
     - get: pipeline-tasks
     - get: common-secrets
       resource: common-prod
-      trigger: true
     - get: logsearch-config
-      trigger: true
       passed: [smoke-tests-staging]
     - get: logsearch-for-cloudfoundry-release
-      trigger: true
       passed: [smoke-tests-staging, smoke-tests-login-staging]
     - get: logsearch-release
-      trigger: true
       passed: [smoke-tests-staging]
     - get: prometheus-release
-      trigger: true
       passed: [smoke-tests-staging]
     - get: oauth2-proxy-release
-      trigger: true
       passed: [smoke-tests-staging]
     - get: secureproxy-release
-      trigger: true
       passed: [smoke-tests-staging]
     - get: logsearch-stemcell-bionic
-      trigger: true
       passed: [smoke-tests-staging]
     - get: logsearch-staging-deployment
     - get: terraform-yaml
