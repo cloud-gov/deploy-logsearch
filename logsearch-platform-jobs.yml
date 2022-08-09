@@ -7,12 +7,12 @@ instance_groups:
   jobs:
   - name: bpm
     release: bpm
-  - name: elasticsearch
+  - name: elasticsearch-platform
     release: logsearch
     provides:
-      elasticsearch: {as: elasticsearch_master}
+      elasticsearch-platform: {as: elasticsearch_master}
     consumes:
-      elasticsearch: {from: elasticsearch_master}
+      elasticsearch-platform: {from: elasticsearch_master}
     properties:
       elasticsearch:
         cluster_name: logsearch-platform
@@ -46,10 +46,10 @@ instance_groups:
   jobs:
   - name: bpm
     release: bpm
-  - name: elasticsearch
+  - name: elasticsearch-platform
     release: logsearch
     consumes:
-      elasticsearch: {from: elasticsearch_master}
+      elasticsearch-platform: {from: elasticsearch_master}
     properties:
       elasticsearch:
         heap_size: 2G
@@ -129,10 +129,10 @@ instance_groups:
   jobs:
   - name: bpm
     release: bpm
-  - name: elasticsearch
+  - name: elasticsearch-platform
     release: logsearch
     consumes:
-      elasticsearch: {from: elasticsearch_master}
+      elasticsearch-platform: {from: elasticsearch_master}
     properties:
       elasticsearch:
         jvm_options:
@@ -161,19 +161,19 @@ instance_groups:
   jobs:
   - name: bpm
     release: bpm
-  - name: elasticsearch
+  - name: elasticsearch-platform
     release: logsearch
     consumes:
-      elasticsearch: {from: elasticsearch_master}
+      elasticsearch-platform: {from: elasticsearch_master}
     properties:
       elasticsearch:
         heap_size: 2G
-  - name: kibana
+  - name: kibana-platform
     release: logsearch
     consumes:
       elasticsearch: {from: elasticsearch_master}
     provides:
-      kibana: {as: kibana_link}
+      kibana-platform: {as: kibana_link}
     properties:
       kibana:
         port: 5602
@@ -211,10 +211,10 @@ instance_groups:
   jobs:
   - name: bpm
     release: bpm
-  - name: elasticsearch
+  - name: elasticsearch-platform
     release: logsearch
     consumes:
-      elasticsearch: {from: elasticsearch_master}
+      elasticsearch-platform: {from: elasticsearch_master}
     properties:
       elasticsearch:
         jvm_options:
@@ -223,8 +223,8 @@ instance_groups:
         config_options: {"xpack.monitoring.enabled": false}
   - name: ingestor_syslog
     release: logsearch
-    consumes: 
-      elasticsearch: {from: elasticsearch_master}
+    consumes:
+      elasticsearch-platform: {from: elasticsearch_master}
     provides:
       ingestor: {as: ingestor_link}
     properties:
@@ -303,5 +303,5 @@ instance_groups:
   - name: smoke_tests
     release: logsearch
     consumes:
-      elasticsearch: {from: elasticsearch_master}
+      elasticsearch-platform: {from: elasticsearch_master}
       ingestor_link: {from: ingestor_syslog}
