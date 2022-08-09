@@ -171,7 +171,7 @@ instance_groups:
   - name: kibana-platform
     release: logsearch
     consumes:
-      elasticsearch: {from: elasticsearch_master}
+      elasticsearch-platform: {from: elasticsearch_master}
     provides:
       kibana-platform: {as: kibana_link}
     properties:
@@ -224,7 +224,7 @@ instance_groups:
   - name: ingestor_syslog
     release: logsearch
     consumes:
-      elasticsearch-platform: {from: elasticsearch_master}
+      elasticsearch: {from: elasticsearch_master}
     provides:
       ingestor: {as: ingestor_link}
     properties:
@@ -303,5 +303,5 @@ instance_groups:
   - name: smoke_tests
     release: logsearch
     consumes:
-      elasticsearch-platform: {from: elasticsearch_master}
+      elasticsearch: {from: elasticsearch_master}
       ingestor_link: {from: ingestor_syslog}
