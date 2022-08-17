@@ -241,7 +241,6 @@ instance_groups:
         heap_size: 2G
         jvm_options:
           - "-Dlog4j2.formatMsgNoLookups=true"
-        migrate_data_path: true
   - name: kibana
     release: logsearch
     provides:
