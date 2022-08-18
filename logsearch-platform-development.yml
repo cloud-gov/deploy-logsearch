@@ -1,7 +1,7 @@
 instance_groups:
 - name: elasticsearch_master
   instances: 1
-  vm_type: t3.medium
+  vm_type: t3.large
   networks:
   - name: services
     static_ips:
