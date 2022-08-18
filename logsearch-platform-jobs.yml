@@ -148,6 +148,7 @@ instance_groups:
         recovery:
           delay_allocation_restart: "15m"
         config_options: {"xpack.monitoring.enabled": false}
+        migrate_data: true
   vm_type: logsearch_es_data
   persistent_disk_type: logsearch_es_platform_data
   stemcell: default
