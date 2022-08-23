@@ -25,6 +25,10 @@ instance_groups:
     properties:
       redirect_url: https://logs-platform.dev.us-gov-west-1.aws-us-gov.cloud.gov/oauth2/callback
       oidc_issuer_url: https://opslogin.fr.cloud.gov/oauth/token
+  - name: kibana-platform
+    properties:
+      kibana:
+        public_base_url: https://logs-platform.dev.us-gov-west-1.aws-us-gov.cloud.gov/
 
 - name: ingestor
   instances: 1
