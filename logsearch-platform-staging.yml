@@ -19,10 +19,6 @@ instance_groups:
     properties:
       redirect_url: https://logs-platform.fr-stage.cloud.gov/oauth2/callback
       oidc_issuer_url: https://opslogin.fr.cloud.gov/oauth/token
-  - name: kibana-platform
-    properties:
-      kibana:
-        public_base_url: https://logs-platform.fr-stage.cloud.gov/
 
 - name: smoke-tests
   vm_type: t3.small
