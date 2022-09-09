@@ -27,6 +27,10 @@ instance_groups:
   update:
     max_in_flight: 2
     canaries: 2
+  properties:
+    elasticsearch:
+      health:
+        timeout: 1800
 
 - name: smoke-tests
   vm_type: t3.medium
