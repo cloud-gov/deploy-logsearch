@@ -32,7 +32,7 @@ instance_groups:
       properties:
         elasticsearch:
           health:
-          timeout: 1800
+            timeout: 1800
 
 - name: smoke-tests
   vm_type: t3.medium
