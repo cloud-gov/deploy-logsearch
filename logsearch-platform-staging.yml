@@ -6,6 +6,7 @@ instance_groups:
     properties:
       elasticsearch:
         migrate_data: false
+        delete_migrated_data: true
 
 - name: elasticsearch_data
   instances: 4
@@ -15,6 +16,7 @@ instance_groups:
     properties:
       elasticsearch:
         migrate_data: false
+        delete_migrated_data: true
 
 - name: ingestor
   vm_type: t3.large
