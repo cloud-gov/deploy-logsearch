@@ -5,7 +5,6 @@ instance_groups:
   - name: elasticsearch-platform
     properties:
       elasticsearch:
-        migrate_data: false
         delete_migrated_data: true
 
 - name: elasticsearch_data
@@ -15,7 +14,6 @@ instance_groups:
   - name: elasticsearch-platform
     properties:
       elasticsearch:
-        migrate_data: false
         delete_migrated_data: true
 
 - name: ingestor

@@ -27,7 +27,6 @@ instance_groups:
           delay_allocation_restart: "15m"
         jvm_options:
           - "-Dlog4j2.formatMsgNoLookups=true"
-        migrate_data: true
   vm_type: logsearch_es_master
   persistent_disk_type: logsearch_es_master
   stemcell: default
@@ -148,7 +147,6 @@ instance_groups:
         recovery:
           delay_allocation_restart: "15m"
         config_options: {"xpack.monitoring.enabled": false}
-        migrate_data: true
   vm_type: logsearch_es_data
   persistent_disk_type: logsearch_es_platform_data
   stemcell: default
