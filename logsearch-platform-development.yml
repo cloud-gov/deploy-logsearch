@@ -6,7 +6,6 @@ instance_groups:
   - name: elasticsearch-platform
     properties:
       elasticsearch:
-        migrate_data: false
         delete_migrated_data: true
   networks:
   - name: services
@@ -47,7 +46,6 @@ instance_groups:
   - name: elasticsearch-platform
     properties:
       elasticsearch:
-        migrate_data: false
         delete_migrated_data: true
 
 - name: smoke-tests
