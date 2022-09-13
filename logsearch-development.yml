@@ -22,6 +22,7 @@ instance_groups:
       curator:
         purge_logs:
           retention_period: 90
+          unit: days
 
 - name: redis
   instances: 1
