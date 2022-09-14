@@ -63,6 +63,24 @@ instance_groups:
         purge_logs:
           retention_period: 12
           unit: months
+      actions:
+      - action: index_settings
+        description: >-
+          Sets indices older than 1 day to be read only
+        options:
+          index_settings:
+            index:
+              blocks:
+                write: true
+        filters:
+        - filtertype: pattern
+          kind: regex
+          value: logs*
+        - filtertype: age
+          source: creation_date
+          direction: older
+          unit: days
+          unit_count: 1
   - name: elasticsearch_config
     release: logsearch
     properties:
