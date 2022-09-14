@@ -61,7 +61,8 @@ instance_groups:
     properties:
       curator:
         purge_logs:
-          retention_period: 30
+          retention_period: 12
+          unit: months
   - name: elasticsearch_config
     release: logsearch
     properties:

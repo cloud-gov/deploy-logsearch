@@ -21,6 +21,7 @@ instance_groups:
       curator:
         purge_logs:
           retention_period: 7
+          unit: days
 
 - name: kibana
   vm_type: t3.large
