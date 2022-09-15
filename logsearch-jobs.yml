@@ -88,8 +88,7 @@ instance_groups:
           daily: true
           hourly: false
         purge_logs:
-          retention_period: 12
-          unit: months
+          retention_period: 180
         actions:
         - action: forcemerge
           description: >-
