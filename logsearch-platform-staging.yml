@@ -1,20 +1,10 @@
 instance_groups:
 - name: elasticsearch_master
   vm_type: t3.large
-  jobs:
-  - name: elasticsearch-platform
-    properties:
-      elasticsearch:
-        delete_migrated_data: true
 
 - name: elasticsearch_data
   instances: 4
   vm_type: t3.large
-  jobs:
-  - name: elasticsearch-platform
-    properties:
-      elasticsearch:
-        delete_migrated_data: true
 
 - name: ingestor
   vm_type: t3.large
