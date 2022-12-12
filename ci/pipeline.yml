@@ -288,7 +288,7 @@ jobs:
       - oauth2-proxy-release/*.tgz
       - secureproxy-release/*.tgz
       stemcells:
-      - logsearch-stemcell-bionic/*.tgz
+      - logsearch-platform-stemcell-bionic/*.tgz
   on_failure:
     put: slack
     params:
