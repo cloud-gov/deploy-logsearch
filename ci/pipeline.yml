@@ -236,6 +236,8 @@ jobs:
       trigger: true
     - get: logsearch-platform-stemcell-bionic
       trigger: true
+    - get: logsearch-platform-stemcell-jammy
+      trigger: true
     - get: terraform-yaml
       resource: terraform-yaml-development
       trigger: true
@@ -292,7 +294,7 @@ jobs:
       - oauth2-proxy-release/*.tgz
       - secureproxy-release/*.tgz
       stemcells:
-      - logsearch-platform-stemcell-bionic/*.tgz
+      - logsearch-platform-stemcell-jammy/*.tgz
   on_failure:
     put: slack
     params:
@@ -333,6 +335,9 @@ jobs:
       trigger: true
       passed: [deploy-logsearch-platform-development]
     - get: logsearch-platform-stemcell-bionic
+      trigger: true
+      passed: [deploy-logsearch-platform-development]
+    - get: logsearch-platform-stemcell-jammy
       trigger: true
       passed: [deploy-logsearch-platform-development]
     - get: logsearch-config
@@ -380,6 +385,8 @@ jobs:
       trigger: true
     - get: logsearch-stemcell-bionic
       trigger: true
+    - get: logsearch-stemcell-jammy
+      trigger: true
     - get: terraform-yaml
       resource: terraform-yaml-development
     - get: prometheus-release
@@ -419,7 +426,7 @@ jobs:
       - logsearch-for-cloudfoundry-release/*.tgz
       - prometheus-release/*.tgz
       stemcells:
-      - logsearch-stemcell-bionic/*.tgz
+      - logsearch-stemcell-jammy/*.tgz
       ops_files:
       - logsearch-config/nats-tls-dev.yml
   on_failure:
@@ -466,6 +473,9 @@ jobs:
     - get: logsearch-stemcell-bionic
       trigger: true
       passed: [deploy-logsearch-development]
+    - get: logsearch-stemcell-jammy
+      trigger: true
+      passed: [deploy-logsearch-development]
     - get: logsearch-config
       passed: [deploy-logsearch-development]
       trigger: true
@@ -507,6 +517,9 @@ jobs:
       trigger: true
       passed: [deploy-logsearch-development]
     - get: logsearch-stemcell-bionic
+      trigger: true
+      passed: [deploy-logsearch-development]
+    - get: logsearch-stemcell-jammy
       trigger: true
       passed: [deploy-logsearch-development]
     - get: logsearch-config
@@ -596,6 +609,9 @@ jobs:
     - get: logsearch-platform-stemcell-bionic
       trigger: true
       passed: [smoke-tests-platform-development]
+    - get: logsearch-platform-stemcell-jammy
+      trigger: true
+      passed: [smoke-tests-platform-development]
     - get: terraform-yaml
       resource: terraform-yaml-staging
       trigger: true
@@ -667,6 +683,9 @@ jobs:
     - get: logsearch-platform-stemcell-bionic
       trigger: true
       passed: [deploy-logsearch-platform-staging]
+    - get: logsearch-platform-stemcell-jammy
+      trigger: true
+      passed: [deploy-logsearch-platform-staging]
     - get: logsearch-platform-staging-deployment
       trigger: true
     - get: tests-timer
@@ -726,6 +745,9 @@ jobs:
     - get: logsearch-stemcell-bionic
       trigger: true
       passed: [smoke-tests-development]
+    - get: logsearch-stemcell-jammy
+      trigger: true
+      passed: [smoke-tests-development]
     - get: terraform-yaml
       resource: terraform-yaml-staging
   - task: logsearch-manifest
@@ -759,7 +781,7 @@ jobs:
       - logsearch-for-cloudfoundry-release/*.tgz
       - prometheus-release/*.tgz
       stemcells:
-      - logsearch-stemcell-bionic/*.tgz
+      - logsearch-stemcell-jammy/*.tgz
       ops_files:
       - logsearch-config/nats-tls-stage.yml
   on_failure:
@@ -803,6 +825,9 @@ jobs:
       trigger: true
       passed: [deploy-logsearch-staging]
     - get: logsearch-stemcell-bionic
+      trigger: true
+      passed: [deploy-logsearch-staging]
+    - get: logsearch-stemcell-jammy
       trigger: true
       passed: [deploy-logsearch-staging]
     - get: logsearch-staging-deployment
@@ -859,6 +884,9 @@ jobs:
       trigger: true
       passed: [deploy-logsearch-staging]
     - get: logsearch-stemcell-bionic
+      trigger: true
+      passed: [deploy-logsearch-staging]
+    - get: logsearch-stemcell-jammy
       trigger: true
       passed: [deploy-logsearch-staging]
     - get: logsearch-staging-deployment
@@ -1473,6 +1501,15 @@ resources:
     name: bosh-aws-xen-hvm-ubuntu-bionic-go_agent
   type: bosh-io-stemcell
 
+- name: logsearch-stemcell-jammy
+  source:
+    name: bosh-aws-xen-hvm-ubuntu-jammy-go_agent
+  type: bosh-io-stemcell
+
+- name: logsearch-platform-stemcell-jammy
+  source:
+    name: bosh-aws-xen-hvm-ubuntu-jammy-go_agent
+  type: bosh-io-stemcell
 
 - name: logsearch-development-deployment
   type: bosh-deployment
