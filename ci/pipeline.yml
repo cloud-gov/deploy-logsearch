@@ -234,8 +234,6 @@ jobs:
       trigger: true
     - get: secureproxy-release
       trigger: true
-    - get: logsearch-platform-stemcell-bionic
-      trigger: true
     - get: logsearch-platform-stemcell-jammy
       trigger: true
     - get: terraform-yaml
@@ -332,9 +330,6 @@ jobs:
       trigger: true
       passed: [deploy-logsearch-platform-development]
     - get: logsearch-for-cloudfoundry-release
-      trigger: true
-      passed: [deploy-logsearch-platform-development]
-    - get: logsearch-platform-stemcell-bionic
       trigger: true
       passed: [deploy-logsearch-platform-development]
     - get: logsearch-platform-stemcell-jammy
@@ -606,9 +601,6 @@ jobs:
     - get: secureproxy-release
       trigger: true
       passed: [smoke-tests-platform-development]
-    - get: logsearch-platform-stemcell-bionic
-      trigger: true
-      passed: [smoke-tests-platform-development]
     - get: logsearch-platform-stemcell-jammy
       trigger: true
       passed: [smoke-tests-platform-development]
@@ -678,9 +670,6 @@ jobs:
       trigger: true
       passed: [deploy-logsearch-platform-staging]
     - get: secureproxy-release
-      trigger: true
-      passed: [deploy-logsearch-platform-staging]
-    - get: logsearch-platform-stemcell-bionic
       trigger: true
       passed: [deploy-logsearch-platform-staging]
     - get: logsearch-platform-stemcell-jammy
@@ -954,8 +943,6 @@ jobs:
       passed: [smoke-tests-platform-staging]
     - get: secureproxy-release
       passed: [smoke-tests-platform-staging]
-    - get: logsearch-platform-stemcell-bionic
-      passed: [smoke-tests-platform-staging]
     - get: logsearch-platform-staging-deployment
     - get: terraform-yaml
       resource: terraform-yaml-production
@@ -1022,9 +1009,6 @@ jobs:
       trigger: true
       passed: [deploy-logsearch-platform-production]
     - get: secureproxy-release
-      trigger: true
-      passed: [deploy-logsearch-platform-production]
-    - get: logsearch-platform-stemcell-bionic
       trigger: true
       passed: [deploy-logsearch-platform-production]
     - get: logsearch-platform-production-deployment
@@ -1492,11 +1476,6 @@ resources:
     uri: ((cg-deploy-logsearch-git-url))
 
 - name: logsearch-stemcell-bionic
-  source:
-    name: bosh-aws-xen-hvm-ubuntu-bionic-go_agent
-  type: bosh-io-stemcell
-
-- name: logsearch-platform-stemcell-bionic
   source:
     name: bosh-aws-xen-hvm-ubuntu-bionic-go_agent
   type: bosh-io-stemcell
