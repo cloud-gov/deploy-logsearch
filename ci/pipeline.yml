@@ -378,8 +378,6 @@ jobs:
       trigger: true
     - get: logsearch-release
       trigger: true
-    - get: logsearch-stemcell-bionic
-      trigger: true
     - get: logsearch-stemcell-jammy
       trigger: true
     - get: terraform-yaml
@@ -465,9 +463,6 @@ jobs:
     - get: logsearch-release
       trigger: true
       passed: [deploy-logsearch-development]
-    - get: logsearch-stemcell-bionic
-      trigger: true
-      passed: [deploy-logsearch-development]
     - get: logsearch-stemcell-jammy
       trigger: true
       passed: [deploy-logsearch-development]
@@ -509,9 +504,6 @@ jobs:
       trigger: true
       passed: [deploy-logsearch-development]
     - get: logsearch-release
-      trigger: true
-      passed: [deploy-logsearch-development]
-    - get: logsearch-stemcell-bionic
       trigger: true
       passed: [deploy-logsearch-development]
     - get: logsearch-stemcell-jammy
@@ -731,9 +723,6 @@ jobs:
     - get: secureproxy-release
       trigger: true
       passed: [smoke-tests-development]
-    - get: logsearch-stemcell-bionic
-      trigger: true
-      passed: [smoke-tests-development]
     - get: logsearch-stemcell-jammy
       trigger: true
       passed: [smoke-tests-development]
@@ -813,9 +802,6 @@ jobs:
     - get: secureproxy-release
       trigger: true
       passed: [deploy-logsearch-staging]
-    - get: logsearch-stemcell-bionic
-      trigger: true
-      passed: [deploy-logsearch-staging]
     - get: logsearch-stemcell-jammy
       trigger: true
       passed: [deploy-logsearch-staging]
@@ -870,9 +856,6 @@ jobs:
       trigger: true
       passed: [deploy-logsearch-staging]
     - get: secureproxy-release
-      trigger: true
-      passed: [deploy-logsearch-staging]
-    - get: logsearch-stemcell-bionic
       trigger: true
       passed: [deploy-logsearch-staging]
     - get: logsearch-stemcell-jammy
@@ -943,6 +926,8 @@ jobs:
       passed: [smoke-tests-platform-staging]
     - get: secureproxy-release
       passed: [smoke-tests-platform-staging]
+    - get: logsearch-platform-stemcell-jammy
+      passed: [smoke-tests-platform-staging]
     - get: logsearch-platform-staging-deployment
     - get: terraform-yaml
       resource: terraform-yaml-production
@@ -1011,6 +996,9 @@ jobs:
     - get: secureproxy-release
       trigger: true
       passed: [deploy-logsearch-platform-production]
+    - get: logsearch-platform-stemcell-jammy
+      trigger: true
+      passed: [deploy-logsearch-platform-production]
     - get: logsearch-platform-production-deployment
       trigger: true
     - get: tests-timer
@@ -1061,7 +1049,7 @@ jobs:
       passed: [smoke-tests-staging]
     - get: secureproxy-release
       passed: [smoke-tests-staging]
-    - get: logsearch-stemcell-bionic
+    - get: logsearch-stemcell-jammy
       passed: [smoke-tests-staging]
     - get: logsearch-staging-deployment
     - get: terraform-yaml
@@ -1095,7 +1083,7 @@ jobs:
       - logsearch-for-cloudfoundry-release/*.tgz
       - prometheus-release/*.tgz
       stemcells:
-      - logsearch-stemcell-bionic/*.tgz
+      - logsearch-stemcell-jammy/*.tgz
       ops_files:
       - logsearch-config/nats-tls-prod.yml
   on_failure:
@@ -1138,7 +1126,7 @@ jobs:
     - get: secureproxy-release
       trigger: true
       passed: [deploy-logsearch-production]
-    - get: logsearch-stemcell-bionic
+    - get: logsearch-stemcell-jammy
       trigger: true
       passed: [deploy-logsearch-production]
     - get: logsearch-production-deployment
@@ -1195,7 +1183,7 @@ jobs:
     - get: secureproxy-release
       trigger: true
       passed: [deploy-logsearch-production]
-    - get: logsearch-stemcell-bionic
+    - get: logsearch-stemcell-jammy
       trigger: true
       passed: [deploy-logsearch-production]
     - get: logsearch-production-deployment
@@ -1474,11 +1462,6 @@ resources:
   source:
     commit_verification_keys: ((cloud-gov-pgp-keys))
     uri: ((cg-deploy-logsearch-git-url))
-
-- name: logsearch-stemcell-bionic
-  source:
-    name: bosh-aws-xen-hvm-ubuntu-bionic-go_agent
-  type: bosh-io-stemcell
 
 - name: logsearch-stemcell-jammy
   source:
