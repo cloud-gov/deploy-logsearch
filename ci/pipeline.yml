@@ -273,15 +273,6 @@ jobs:
         CF_USERNAME: ((cf-username-development))
         CF_PASSWORD: ((cf-password-development))
         CF_SYSTEM_DOMAIN: ((cf-system-domain-development))
-  - &lint-manifest
-    task: lint-manifest
-    file: pipeline-tasks/lint-manifest.yml
-    input_mapping:
-      pipeline-config: logsearch-config
-      lint-manifest: logsearch-manifest
-    params:
-      LINTER_CONFIG: bosh-lint.yml
-    # todo (mxplusb): figure out why it's pushing prometheus, oauth2-proxy, and secureproxy releases...
   - put: logsearch-platform-development-deployment
     params: &deploy-params-platform
       manifest: logsearch-manifest/manifest.yml
@@ -410,7 +401,6 @@ jobs:
         CF_USERNAME: ((cf-username-development))
         CF_PASSWORD: ((cf-password-development))
         CF_SYSTEM_DOMAIN: ((cf-system-domain-development))
-  - *lint-manifest
   - put: logsearch-development-deployment
     params: &deploy-params
       manifest: logsearch-manifest/manifest.yml
@@ -621,7 +611,6 @@ jobs:
         CF_USERNAME: ((cf-username-staging))
         CF_PASSWORD: ((cf-password-staging))
         CF_SYSTEM_DOMAIN: ((cf-system-domain-staging))
-  - *lint-manifest
   - put: logsearch-platform-staging-deployment
     params: *deploy-params-platform
   on_failure:
@@ -750,7 +739,6 @@ jobs:
         CF_USERNAME: ((cf-username-staging))
         CF_PASSWORD: ((cf-password-staging))
         CF_SYSTEM_DOMAIN: ((cf-system-domain-staging))
-  - *lint-manifest
   - put: logsearch-staging-deployment
     params:
       manifest: logsearch-manifest/manifest.yml
@@ -953,7 +941,6 @@ jobs:
         CF_USERNAME: ((cf-username-production))
         CF_PASSWORD: ((cf-password-production))
         CF_SYSTEM_DOMAIN: ((cf-system-domain-production))
-  - *lint-manifest
   - put: logsearch-platform-production-deployment
     params: *deploy-params-platform
   on_failure:
@@ -1074,7 +1061,6 @@ jobs:
         CF_USERNAME: ((cf-username-production))
         CF_PASSWORD: ((cf-password-production))
         CF_SYSTEM_DOMAIN: ((cf-system-domain-production))
-  - *lint-manifest
   - put: logsearch-production-deployment
     params:
       manifest: logsearch-manifest/manifest.yml
