@@ -306,6 +306,8 @@ instance_groups:
   azs: [z1]
   networks:
   - name: services
+  vm_extensions: 
+  - 10GB_ephemeral_disk
   env:
     bosh:
       swap_size: 0
@@ -361,7 +363,10 @@ instance_groups:
   azs: [z1]
   networks:
   - name: services
-  vm_extensions: [logsearch-ingestor-profile]
+  vm_extensions: 
+  - logsearch-ingestor-profile
+  - 10GB_ephemeral_disk
+
 
 - name: ingestor
   jobs:
