@@ -19,6 +19,7 @@ instance_groups:
       oidc_issuer_url: https://opslogin.fr.cloud.gov/oauth/token
 
 - name: ingestor
+  instances: 7
   vm_type: r5.xlarge.logsearch.ingestor
   jobs:
   - name: ingestor_syslog
