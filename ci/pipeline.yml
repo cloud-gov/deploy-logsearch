@@ -143,16 +143,13 @@ jobs:
     - get: release-git-repo
       resource: logsearch-for-cloudfoundry-release-git-repo
       trigger: true
+    - get: general-task
   - task: run-tests
+    image: general-task
     config:
       inputs:
       - name: release-git-repo
       platform: linux
-      image_resource:
-        type: docker-image
-        source:
-          repository: node
-          tag: lts
       run:
         path: sh
         args:
@@ -239,17 +236,11 @@ jobs:
     - get: terraform-yaml
       resource: terraform-yaml-development
       trigger: true
+    - get: general-task
   - task: logsearch-manifest
+    image: general-task
     config: &manifest-config
       platform: linux
-      image_resource:
-        type: registry-image
-        source:
-          aws_access_key_id: ((ecr_aws_key))
-          aws_secret_access_key: ((ecr_aws_secret))
-          repository: harden-concourse-task
-          aws_region: us-gov-west-1
-          tag: ((harden-concourse-task-tag))
       inputs:
       - name: logsearch-config
       - name: common-secrets
@@ -379,7 +370,9 @@ jobs:
       trigger: true
     - get: secureproxy-release
       trigger: true
+    - get: general-task
   - task: logsearch-manifest
+    image: general-task
     config:
       <<: *manifest-config
       run:
@@ -515,7 +508,9 @@ jobs:
       passed: [deploy-logsearch-development]
     - get: tests-timer
       trigger: true
+    - get: general-task
   - task: smoke-tests-login
+    image: general-task
     file: logsearch-config/ci/smoke-tests-login.yml
     params:
       CF_USERNAME: ((cf-username-development))
@@ -589,7 +584,9 @@ jobs:
     - get: terraform-yaml
       resource: terraform-yaml-staging
       trigger: true
+    - get: general-task
   - task: logsearch-manifest
+    image: general-task
     config:
       <<: *manifest-config
       run:
@@ -717,7 +714,9 @@ jobs:
       passed: [smoke-tests-development]
     - get: terraform-yaml
       resource: terraform-yaml-staging
+    - get: general-task
   - task: logsearch-manifest
+    image: general-task
     config:
       <<: *manifest-config
       run:
@@ -853,7 +852,9 @@ jobs:
       trigger: true
     - get: tests-timer
       trigger: true
+    - get: general-task
   - task: smoke-tests-login
+    image: general-task
     file: logsearch-config/ci/smoke-tests-login.yml
     params:
       CF_USERNAME: ((cf-username-staging))
@@ -919,7 +920,9 @@ jobs:
     - get: logsearch-platform-staging-deployment
     - get: terraform-yaml
       resource: terraform-yaml-production
+    - get: general-task
   - task: logsearch-manifest
+    image: general-task
     config:
       <<: *manifest-config
       run:
@@ -1041,7 +1044,9 @@ jobs:
     - get: logsearch-staging-deployment
     - get: terraform-yaml
       resource: terraform-yaml-production
+    - get: general-task
   - task: logsearch-manifest
+    image: general-task
     config:
       <<: *manifest-config
       run:
@@ -1176,7 +1181,9 @@ jobs:
       trigger: true
     - get: tests-timer
       trigger: true
+    - get: general-task
   - task: smoke-tests-login
+    image: general-task
     file: logsearch-config/ci/smoke-tests-login.yml
     params:
       CF_USERNAME: ((cf-username-production))
@@ -1225,7 +1232,9 @@ jobs:
     - get: check-backup-timer
       trigger: true
     - get: logsearch-config
+    - get: general-task
   - task: check-backup
+    image: general-task
     file: logsearch-config/ci/check-backup.yml
     tags: [iaas]
     params:
@@ -1242,7 +1251,9 @@ jobs:
     - get: check-backup-timer
       trigger: true
     - get: logsearch-config
+    - get: general-task
   - task: check-backup
+    image: general-task
     file: logsearch-config/ci/check-backup.yml
     params:
       ES_HOST: ((logsearch-development-platform-check-backup-es-host))
@@ -1256,7 +1267,9 @@ jobs:
     - get: check-backup-timer
       trigger: true
     - get: logsearch-config
+    - get: general-task
   - task: check-backup
+    image: general-task
     file: logsearch-config/ci/check-backup.yml
     tags: [iaas]
     params:
@@ -1273,7 +1286,9 @@ jobs:
     - get: check-backup-timer
       trigger: true
     - get: logsearch-config
+    - get: general-task
   - task: check-backup
+    image: general-task
     file: logsearch-config/ci/check-backup.yml
     params:
       ES_HOST: ((logsearch-staging-platform-check-backup-es-host))
@@ -1287,7 +1302,9 @@ jobs:
     - get: check-backup-timer
       trigger: true
     - get: logsearch-config
+    - get: general-task
   - task: check-backup
+    image: general-task
     file: logsearch-config/ci/check-backup.yml
     tags: [iaas]
     params:
@@ -1304,7 +1321,9 @@ jobs:
     - get: check-backup-timer
       trigger: true
     - get: logsearch-config
+    - get: general-task
   - task: check-backup
+    image: general-task
     file: logsearch-config/ci/check-backup.yml
     params:
       ES_HOST: ((logsearch-production-platform-check-backup-es-host))
@@ -1547,11 +1566,33 @@ resources:
     versioned_file: ((tf-state-file-production))
     region_name: ((aws-region))
 
-resource_types:
-- name: slack-notification
-  type: docker-image
+- name: general-task
+  type: registry-image
   source:
-    repository: cfcommunity/slack-notification-resource
+    aws_access_key_id: ((ecr_aws_key))
+    aws_secret_access_key: ((ecr_aws_secret))
+    repository: general-task
+    aws_region: us-gov-west-1
+    tag: latest
+
+resource_types:
+- name: registry-image
+  type: registry-image
+  source:
+    aws_access_key_id: ((ecr_aws_key))
+    aws_secret_access_key: ((ecr_aws_secret))
+    repository: registry-image-resource
+    aws_region: us-gov-west-1
+    tag: latest
+
+- name: slack-notification
+  type: registry-image
+  source:
+    aws_access_key_id: ((ecr_aws_key))
+    aws_secret_access_key: ((ecr_aws_secret))
+    repository: slack-notification-resource
+    aws_region: us-gov-west-1
+    tag: latest
 
 - name: bosh-deployment
   type: docker-image
@@ -1559,6 +1600,19 @@ resource_types:
     repository: cloudfoundry/bosh-deployment-resource
 
 - name: s3-iam
-  type: docker-image
+  type: registry-image
   source:
-    repository: 18fgsa/s3-resource
+    aws_access_key_id: ((ecr_aws_key))
+    aws_secret_access_key: ((ecr_aws_secret))
+    repository: s3-resource
+    aws_region: us-gov-west-1
+    tag: latest
+
+- name: time
+  type: registry-image
+  source:
+    aws_access_key_id: ((ecr_aws_key))
+    aws_secret_access_key: ((ecr_aws_secret))
+    repository: time-resource
+    aws_region: us-gov-west-1
+    tag: latest
