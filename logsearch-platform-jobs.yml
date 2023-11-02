@@ -127,7 +127,7 @@ instance_groups:
         host_name: logs-platform
         login_fqdn: opslogin.fr.cloud.gov
         upload_patterns:
-        - {type: index-pattern, pattern: "/var/vcap/jobs/upload-kibana-objects/kibana-objects/index-pattern/*.json"}
+        - {type: index-pattern, pattern: "/var/vcap/jobs/upload-kibana-objects/kibana-objects/index-pattern/logs-platform.json"}
         - {type: search, pattern: "/var/vcap/jobs/upload-kibana-objects/kibana-objects/search/platform-*.json"}
         - {type: visualization, pattern: "/var/vcap/jobs/upload-kibana-objects/kibana-objects/visualization/Platform-*.json"}
         - {type: dashboard, pattern: "/var/vcap/jobs/upload-kibana-objects/kibana-objects/dashboard/Platform-*.json"}
@@ -218,7 +218,7 @@ instance_groups:
         listen_port: 5600
         proxy_port: 5601
   vm_type: logsearch_kibana
-  vm_extensions: 
+  vm_extensions:
   - platform-kibana-lb
   - 50GB_ephemeral_disk
   stemcell: default
