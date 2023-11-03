@@ -175,7 +175,7 @@ instance_groups:
         password: (( grab $CF_PASSWORD ))
       kibana_objects:
         upload_patterns:
-        - {type: index-pattern, pattern: "/var/vcap/jobs/upload-kibana-objects/kibana-objects/index-pattern/*.json"}
+        - {type: index-pattern, pattern: "/var/vcap/jobs/upload-kibana-objects/kibana-objects/index-pattern/logs-app.json"}
         - {type: search, pattern: "/var/vcap/jobs/upload-kibana-objects/kibana-objects/search/app-*.json"}
         - {type: visualization, pattern: "/var/vcap/jobs/upload-kibana-objects/kibana-objects/visualization/App-*.json"}
         - {type: dashboard, pattern: "/var/vcap/jobs/upload-kibana-objects/kibana-objects/dashboard/App-*.json"}
@@ -306,7 +306,7 @@ instance_groups:
   azs: [z1]
   networks:
   - name: services
-  vm_extensions: 
+  vm_extensions:
   - 50GB_ephemeral_disk
   env:
     bosh:
@@ -363,7 +363,7 @@ instance_groups:
   azs: [z1]
   networks:
   - name: services
-  vm_extensions: 
+  vm_extensions:
   - logsearch-ingestor-profile
   - 50GB_ephemeral_disk
 
