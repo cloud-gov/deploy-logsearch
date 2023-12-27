@@ -28,7 +28,7 @@ instance_groups:
         jvm_options:
           - "-Dlog4j2.formatMsgNoLookups=true"
   - name: snort-config
-    release: snort
+    release: jammy-snort
     properties:
       snort:
         rules:

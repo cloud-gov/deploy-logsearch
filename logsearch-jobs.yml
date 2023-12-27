@@ -30,7 +30,7 @@ instance_groups:
         config_options:
           indices.query.bool.max_clause_count: 2048
   - name: snort-config
-    release: snort
+    release: jammy-snort
     properties:
       snort:
         rules:
