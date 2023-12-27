@@ -20,5 +20,6 @@ releases:
 - {name: routing, version: latest}
 - {name: bosh-dns-aliases, version: latest}
 - {name: bosh-dns, version: latest}
+- {name: jammy-snort, version: latest}
 - {name: cron, version: latest}
 - {name: bpm, version: latest}
