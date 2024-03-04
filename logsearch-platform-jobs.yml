@@ -36,6 +36,8 @@ instance_groups:
         - 'alert tcp any any -> any 9200 (msg:"Unexpected logsearch action"; content:"DELETE"; http_method; content: "logs-platform"; http_uri; classtype:web-application-attack; sid:343080005; rev:1;)'
         - (( concat "suppress gen_id 1, sig_id 343080005, track by_src, ip " instance_groups.maintenance.networks.services.static_ips.[0] ))
         - 'suppress gen_id 1, sig_id 343080005, track by_src, ip 127.0.0.1'
+        - 'suppress gen_id 1, sid_id 57907, track by_src, ip 127.0.0.1'
+        
   vm_type: logsearch_es_master
   persistent_disk_type: logsearch_es_master
   stemcell: default
