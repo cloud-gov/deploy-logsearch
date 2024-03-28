@@ -14,7 +14,7 @@ instance_groups:
 
 - name: archiver
   instances: 1
-  vm_type: r5.large
+  vm_type: r6i.large
   jobs:
   - name: ingestor_cloudfoundry-firehose
     properties:
@@ -23,7 +23,7 @@ instance_groups:
 
 - name: ingestor
   instances: 1
-  vm_type: r5.large
+  vm_type: r6i.large
   jobs:
   - name: ingestor_cloudfoundry-firehose
     properties:
