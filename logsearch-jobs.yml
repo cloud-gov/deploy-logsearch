@@ -41,7 +41,7 @@ instance_groups:
         - 'suppress gen_id 1, sig_id 57907, track by_src, ip 127.0.0.1'
         - 'suppress gen_id 1, sig_id 26275, track by_src, ip 127.0.0.1'
         - 'suppress gen_id 1, sig_id 41495, track by_src, ip 127.0.0.1'
-    
+
   persistent_disk_type: logsearch_es_master
   stemcell: default
   azs: [z1]
@@ -106,7 +106,7 @@ instance_groups:
             source: creation_date
             direction: older
             unit: days
-            unit_count: 90
+            unit_count: 45
           - filtertype: forcemerged
             max_num_segments: 1
             exclude: true
