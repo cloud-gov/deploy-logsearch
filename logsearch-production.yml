@@ -3,6 +3,7 @@ instance_groups:
   vm_type: m6i.xlarge
 
 - name: elasticsearch_data
+  instances: 12
   vm_type: r6i.2xlarge
   update:
     max_in_flight: 2
