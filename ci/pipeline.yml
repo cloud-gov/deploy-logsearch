@@ -1342,6 +1342,7 @@ resources:
 - name: logsearch-final-builds-dir-tarball
   type: s3-iam
   source:
+    check: never
     bucket: ((cg-s3-bosh-releases-bucket))
     versioned_file: final-builds-dir-logsearch.tgz
     region_name: ((aws-region))
@@ -1350,6 +1351,7 @@ resources:
 - name: logsearch-releases-dir-tarball
   type: s3-iam
   source:
+    check: never
     bucket: ((cg-s3-bosh-releases-bucket))
     versioned_file: releases-dir-logsearch.tgz
     region_name: ((aws-region))
