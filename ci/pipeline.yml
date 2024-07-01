@@ -2,6 +2,7 @@
 groups:
   - name: all
     jobs:
+    - reconfigure
     - build-logsearch-release
     - test-logsearch-for-cloudfoundry-release
     - build-logsearch-for-cloudfoundry-release
@@ -1594,6 +1595,14 @@ resources:
     aws_region: us-gov-west-1
     tag: latest
 
+- name: secrets
+  type: s3-iam
+  icon: cloud-lock
+  source:
+    region_name: ((concourse-varz-bucket-region))
+    bucket: ((concourse-varz-bucket))
+    versioned_file: ((name)).yml
+
 resource_types:
 - name: registry-image
   type: registry-image
@@ -1635,11 +1644,3 @@ resource_types:
     repository: time-resource
     aws_region: us-gov-west-1
     tag: latest
-
-- name: secrets
-  type: s3-iam
-  icon: cloud-lock
-  source:
-    region_name: ((concourse-varz-bucket-region))
-    bucket: ((concourse-varz-bucket))
-    versioned_file: ((name)).yml
