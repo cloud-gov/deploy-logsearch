@@ -100,6 +100,21 @@ groups:
     - check-backup-production-platform
 
 jobs:
+- name: reconfigure
+  serial: true
+  plan:
+  - get: logsearch-config
+    params: {depth: 1}
+    trigger: true
+  - get: secrets
+    # Remember to manually trigger a new build if you upload a new version
+    # of the credentials file.
+    trigger: false
+  - set_pipeline: ((name))
+    file: logsearch-config/ci/pipeline.yml
+    var_files:
+    - secrets/((name)).yml
+
 - name: build-logsearch-release
   plan:
   - in_parallel:
@@ -1620,3 +1635,11 @@ resource_types:
     repository: time-resource
     aws_region: us-gov-west-1
     tag: latest
+
+- name: secrets
+  type: s3-iam
+  icon: cloud-lock
+  source:
+    region_name: ((concourse-varz-bucket-region))
+    bucket: ((concourse-varz-bucket))
+    versioned_file: ((name)).yml
