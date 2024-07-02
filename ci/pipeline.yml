@@ -170,7 +170,12 @@ jobs:
         path: sh
         args:
           - -exc
-          - cd release-git-repo/src/kibana-cf_authentication && npm install && npm test
+          - |
+            cd release-git-repo/src/kibana-cf_authentication
+            nvm install
+            nvm use
+            npm install
+            npm test
   on_failure:
     put: slack
     params: &slack-params
