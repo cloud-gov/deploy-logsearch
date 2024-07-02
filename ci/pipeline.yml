@@ -197,6 +197,9 @@ jobs:
 - name: build-logsearch-for-cloudfoundry-release
   plan:
   - in_parallel:
+    - get: logsearch-config
+      params: {depth: 1}
+      trigger: true
     - get: release-git-repo
       resource: logsearch-for-cloudfoundry-release-git-repo
       passed: [test-logsearch-for-cloudfoundry-release]
