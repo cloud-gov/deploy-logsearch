@@ -21,7 +21,7 @@ run:
   args:
   - -c
   - |
-    source ~/.profile
+    . ~/.profile
     cd release-git-repo/src/kibana-cf_authentication
     rm -rf node_modules
     nvm install && nvm use
