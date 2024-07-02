@@ -171,6 +171,7 @@ jobs:
         args:
           - -exc
           - |
+            source ~/.profile
             cd release-git-repo/src/kibana-cf_authentication
             nvm install
             nvm use
