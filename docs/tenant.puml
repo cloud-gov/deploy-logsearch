@@ -148,7 +148,7 @@ node "maintenance (1 x environment)" as maintenance {
     ]
     agent kibana_objects [
         ==upload-kibana-objects
-        uploads index templates, 
+        uploads index templates,
         vizualizations, etc
     ]
     agent es_m [

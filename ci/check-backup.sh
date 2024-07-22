@@ -22,7 +22,7 @@ log_count=$(curl -s "${ES_HOST}:${ES_PORT:-9200}/${INDEX_PATTERN}/_count" -H 'Co
 EOF
 ) | jq -r '.count')
 
-cat <<EOF > ${tempfile}
+cat <<EOF > "${tempfile}"
 logsearch_backup_log_count {environment="${ENVIRONMENT}"} ${log_count}
 logsearch_backup_timestamp {environment="${ENVIRONMENT}"} $(date --date "${now}" +%s)
 EOF
@@ -36,10 +36,10 @@ if [ -n "${BUCKET_NAME:-}" ]; then
     done
   done
 
-  cat <<EOF >> ${tempfile}
+  cat <<EOF >> "${tempfile}"
 logsearch_backup_file_size {environment="${ENVIRONMENT}"} ${file_size}
 logsearch_backup_file_count {environment="${ENVIRONMENT}"} ${file_count}
 EOF
 fi
 
-curl --data-binary @${tempfile} "${GATEWAY_HOST}:${GATEWAY_PORT:-9091}/metrics/job/logsearch_backup/instance/${ENVIRONMENT}"
+curl --data-binary @"${tempfile}" "${GATEWAY_HOST}:${GATEWAY_PORT:-9091}/metrics/job/logsearch_backup/instance/${ENVIRONMENT}"

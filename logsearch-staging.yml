@@ -1,80 +1,72 @@
 instance_groups:
-- name: elasticsearch_master
-  vm_type: t3.medium
-
-- name: elasticsearch_data
-  instances: 3
-  vm_type: t3.xlarge
-
-- name: maintenance
-  vm_type: t3.medium
-
-- name: redis
-  vm_type: t3.medium
-
-- name: archiver
-  instances: 1
-  vm_type: r6i.large
-  jobs:
-  - name: ingestor_cloudfoundry-firehose
-    properties:
-      cloudfoundry:
-        api_endpoint: https://api.fr-stage.cloud.gov
-
-- name: ingestor
-  instances: 1
-  vm_type: r6i.large
-  jobs:
-  - name: ingestor_cloudfoundry-firehose
-    properties:
-      cloudfoundry:
-        api_endpoint: https://api.fr-stage.cloud.gov
-
-- name: kibana
-  vm_type: t3.xlarge
-  jobs:
-  - name: kibana-auth-plugin
-    properties:
-      kibana-auth:
-        cloudfoundry:
-          api_endpoint: https://api.fr-stage.cloud.gov
-          system_domain: fr-stage.cloud.gov
-  - name: route_registrar
-    consumes:
-      nats-tls:
-        from: nats-tls
-        deployment: cf-staging
-    properties:
-      route_registrar:
-        routes:
-        - name: logsearch
-          uris: [logs.fr-stage.cloud.gov]
-  - name: bosh-dns-aliases
-    release: bosh-dns-aliases
-    properties:
-      aliases:
-      - domain: nats.service.cf.internal
-        targets:
-        - deployment: cf-staging
-          domain: bosh
-          instance_group: nats
-          network: default
-          query: '*'
-
-- name: smoke-tests
-  vm_type: t3.small
-  jobs:
-  - name: smoke_tests
-    properties:
-      smoke_tests:
-        count_test:
-          run: true
-          minimum: 1500
-          time_interval: "5m"
-          time_field: "@timestamp"
-          index_pattern: "logs-app-*"
-
+  - name: elasticsearch_master
+    vm_type: t3.medium
+  - name: elasticsearch_data
+    instances: 3
+    vm_type: t3.xlarge
+  - name: maintenance
+    vm_type: t3.medium
+  - name: redis
+    vm_type: t3.medium
+  - name: archiver
+    instances: 1
+    vm_type: r6i.large
+    jobs:
+      - name: ingestor_cloudfoundry-firehose
+        properties:
+          cloudfoundry:
+            api_endpoint: https://api.fr-stage.cloud.gov
+  - name: ingestor
+    instances: 1
+    vm_type: r6i.large
+    jobs:
+      - name: ingestor_cloudfoundry-firehose
+        properties:
+          cloudfoundry:
+            api_endpoint: https://api.fr-stage.cloud.gov
+  - name: kibana
+    vm_type: t3.xlarge
+    jobs:
+      - name: kibana-auth-plugin
+        properties:
+          kibana-auth:
+            cloudfoundry:
+              api_endpoint: https://api.fr-stage.cloud.gov
+              system_domain: fr-stage.cloud.gov
+      - name: route_registrar
+        consumes:
+          nats-tls:
+            from: nats-tls
+            deployment: cf-staging
+        properties:
+          route_registrar:
+            routes:
+              - name: logsearch
+                uris: [logs.fr-stage.cloud.gov]
+      - name: bosh-dns-aliases
+        release: bosh-dns-aliases
+        properties:
+          aliases:
+            - domain: nats.service.cf.internal
+              targets:
+                - deployment: cf-staging
+                  domain: bosh
+                  instance_group: nats
+                  network: default
+                  query: '*'
+  - name: smoke-tests
+    vm_type: t3.small
+    jobs:
+      - name: smoke_tests
+        properties:
+          smoke_tests:
+            count_test:
+              run: true
+              minimum: 1500
+              time_interval: "5m"
+              time_field: "@timestamp"
+              index_pattern: "logs-app-*"
 stemcells:
-- alias: default
-  os: ubuntu-jammy
-  version: latest
+  - alias: default
+    os: ubuntu-jammy
+    version: latest
