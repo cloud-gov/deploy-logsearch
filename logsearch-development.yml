@@ -1,101 +1,93 @@
 instance_groups:
-- name: elasticsearch_master
-  vm_type: t3.medium
-  instances: 1
-  networks:
-  - name: services
-    static_ips:
-    - (( replace ))
-    - (( grab terraform_outputs.logsearch_static_ips.[0]))
-
-- name: elasticsearch_data
-  instances: 3
-  vm_type: m6i.large
-
-- name: maintenance
-  vm_type: t3.medium
-  instances: 1
-  jobs:
-  - name: curator
-    release: logsearch
-    properties:
-      curator:
-        purge_logs:
-          retention_period: 90
-
-- name: redis
-  instances: 1
-  vm_type: t3.small
-
-- name: archiver
-  vm_type: t3.medium
-  instances: 1
-  jobs:
-  - name: ingestor_cloudfoundry-firehose
-    properties:
-      cloudfoundry:
-        api_endpoint: https://api.dev.us-gov-west-1.aws-us-gov.cloud.gov
-
-- name: ingestor
-  vm_type: t3.medium
-  instances: 1
-  jobs:
-  - name: ingestor_cloudfoundry-firehose
-    properties:
-      cloudfoundry:
-        api_endpoint: https://api.dev.us-gov-west-1.aws-us-gov.cloud.gov
-
-- name: kibana
-  vm_type: t3.large
-  instances: 1
-  jobs:
-  - name: kibana-auth-plugin
-    properties:
-      kibana-auth:
-        cloudfoundry:
-          api_endpoint: https://api.dev.us-gov-west-1.aws-us-gov.cloud.gov
-          system_domain: dev.us-gov-west-1.aws-us-gov.cloud.gov
-  - name: route_registrar
-    consumes:
-      nats-tls:
-        from: nats-tls
-        deployment: cf-development
-    properties:
-      #nats:
-      #  tls:
-      #    enabled: true
-      #    client_cert: "(( !/bosh/cf-development/nats_client_cert.certificate ))"
-      #    client_key: "(( !/bosh/cf-development/nats_client_cert.private_key ))"
-      route_registrar:
-        routes:
-        - name: logsearch
-          uris: [logs.dev.us-gov-west-1.aws-us-gov.cloud.gov]
-  - name: bosh-dns-aliases
-    release: bosh-dns-aliases
-    properties:
-      aliases:
-      - domain: nats.service.cf.internal
-        targets:
-        - deployment: cf-development
-          domain: bosh
-          instance_group: nats
-          network: default
-          query: '*'
-
-- name: smoke-tests
-  vm_type: t3.small
-  jobs:
-  - name: smoke_tests
-    properties:
-      smoke_tests:
-        count_test:
-          run: true
-          minimum: 500
-          time_interval: "5m"
-          time_field: "@timestamp"
-          index_pattern: "logs-app-*"
-
+  - name: elasticsearch_master
+    vm_type: t3.medium
+    instances: 1
+    networks:
+      - name: services
+        static_ips:
+          - (( replace ))
+          - (( grab terraform_outputs.logsearch_static_ips.[0]))
+  - name: elasticsearch_data
+    instances: 3
+    vm_type: m6i.large
+  - name: maintenance
+    vm_type: t3.medium
+    instances: 1
+    jobs:
+      - name: curator
+        release: logsearch
+        properties:
+          curator:
+            purge_logs:
+              retention_period: 90
+  - name: redis
+    instances: 1
+    vm_type: t3.small
+  - name: archiver
+    vm_type: t3.medium
+    instances: 1
+    jobs:
+      - name: ingestor_cloudfoundry-firehose
+        properties:
+          cloudfoundry:
+            api_endpoint: https://api.dev.us-gov-west-1.aws-us-gov.cloud.gov
+  - name: ingestor
+    vm_type: t3.medium
+    instances: 1
+    jobs:
+      - name: ingestor_cloudfoundry-firehose
+        properties:
+          cloudfoundry:
+            api_endpoint: https://api.dev.us-gov-west-1.aws-us-gov.cloud.gov
+  - name: kibana
+    vm_type: t3.large
+    instances: 1
+    jobs:
+      - name: kibana-auth-plugin
+        properties:
+          kibana-auth:
+            cloudfoundry:
+              api_endpoint: https://api.dev.us-gov-west-1.aws-us-gov.cloud.gov
+              system_domain: dev.us-gov-west-1.aws-us-gov.cloud.gov
+      - name: route_registrar
+        consumes:
+          nats-tls:
+            from: nats-tls
+            deployment: cf-development
+        properties:
+          #nats:
+          #  tls:
+          #    enabled: true
+          #    client_cert: "(( !/bosh/cf-development/nats_client_cert.certificate ))"
+          #    client_key: "(( !/bosh/cf-development/nats_client_cert.private_key ))"
+          route_registrar:
+            routes:
+              - name: logsearch
+                uris: [logs.dev.us-gov-west-1.aws-us-gov.cloud.gov]
+      - name: bosh-dns-aliases
+        release: bosh-dns-aliases
+        properties:
+          aliases:
+            - domain: nats.service.cf.internal
+              targets:
+                - deployment: cf-development
+                  domain: bosh
+                  instance_group: nats
+                  network: default
+                  query: '*'
+  - name: smoke-tests
+    vm_type: t3.small
+    jobs:
+      - name: smoke_tests
+        properties:
+          smoke_tests:
+            count_test:
+              run: true
+              minimum: 500
+              time_interval: "5m"
+              time_field: "@timestamp"
+              index_pattern: "logs-app-*"
 stemcells:
-- alias: default
-  os: ubuntu-jammy
-  version: latest
+  - alias: default
+    os: ubuntu-jammy
+    version: latest

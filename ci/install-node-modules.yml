@@ -1,4 +1,3 @@
----
 platform: linux
 # installs node-modules into logsearch-for-cloudfoundry
 # this lets us build them into the bosh release without having to
@@ -12,19 +11,17 @@ image_resource:
     repository: general-task
     aws_region: us-gov-west-1
     tag: latest
-
 inputs:
-- name: release-git-repo
+  - name: release-git-repo
 outputs:
-- name: release-git-repo
-
+  - name: release-git-repo
 run:
   path: sh
   args:
-  - -c
-  - |
-    . ~/.profile
-    cd release-git-repo/src/kibana-cf_authentication
-    rm -rf node_modules
-    nvm install && nvm use && nvm install-latest-npm
-    npm clean-install
+    - -c
+    - |
+      . ~/.profile
+      cd release-git-repo/src/kibana-cf_authentication
+      rm -rf node_modules
+      nvm install && nvm use && nvm install-latest-npm
+      npm clean-install

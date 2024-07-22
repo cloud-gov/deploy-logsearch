@@ -1,8 +1,6 @@
 director_uuid: (( param "Please set the UUID of your BOSH Director" ))
-
 features:
   use_dns_addresses: false
-
 update:
   serial: false
   canaries: 1
@@ -10,14 +8,12 @@ update:
   update_watch_time: 5000-600000
   max_in_flight: 1
   max_errors: 1
-
 name: logsearch-platform
-
 releases:
-- {name: logsearch, version: latest}
-- {name: logsearch-for-cloudfoundry, version: latest}
-- {name: prometheus, version: latest}
-- {name: oauth2-proxy, version: latest}
-- {name: secureproxy, version: latest}
-- {name: bpm, version: latest}
-- {name: jammy-snort, version: latest}
+  - {name: logsearch, version: latest}
+  - {name: logsearch-for-cloudfoundry, version: latest}
+  - {name: prometheus, version: latest}
+  - {name: oauth2-proxy, version: latest}
+  - {name: secureproxy, version: latest}
+  - {name: bpm, version: latest}
+  - {name: jammy-snort, version: latest}

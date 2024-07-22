@@ -1,8 +1,5 @@
----
 platform: linux
-
 inputs:
-- {name: logsearch-config}
-
+  - {name: logsearch-config}
 run:
   path: logsearch-config/ci/check-backup.sh

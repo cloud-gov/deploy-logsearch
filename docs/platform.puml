@@ -18,7 +18,7 @@ cloud ALB [
 node "kibana (N x environment)" as kibana {
     agent oauth2proxy [
         ==oauth2_proxy
-        authorizes users based on 
+        authorizes users based on
         authentication against opsuaa
     ]
     agent secureproxy [
@@ -51,8 +51,8 @@ node opsuaa [
 node "bosh-managed ec2 instance" as ec2 {
     agent syslog_forwarder [
         ==syslog_forwarder
-        collects system logs from 
-        var/log and /var/vcap/sys/log/**/* 
+        collects system logs from
+        var/log and /var/vcap/sys/log/**/*
         sends them via syslog
     ]
 }
@@ -111,7 +111,7 @@ node "maintenance (1 x environment)" as maintenance {
     ]
     agent kibana_objects [
         ==upload-kibana-objects
-        uploads index templates, 
+        uploads index templates,
         vizualizations, etc
     ]
     agent es_m [
