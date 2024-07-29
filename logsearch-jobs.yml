@@ -145,7 +145,7 @@ instance_groups:
             app_index_settings:
               index.mapping.total_fields.limit: 2000
               index.queries.cache.enabled: "false"
-              index.max_docvalue_fields_search: 300
+              index.max_docvalue_fields_search: 400
             base_index_component_name: index-mappings-lfc
             app_index_component_name: index-mappings-app-lfc
             platform_index_component_name: index-mappings-platform-lfc
