@@ -168,7 +168,6 @@ instance_groups:
             firehose_events:
               - LogMessage
               - ContainerMetric
-              - ValueMetric
             system_domain: (( grab $CF_SYSTEM_DOMAIN ))
             user: (( grab $CF_USERNAME ))
             password: (( grab $CF_PASSWORD ))
