@@ -63,7 +63,7 @@ instance_groups:
           route_registrar:
             routes:
               - name: logsearch
-                uris: [logs.dev.us-gov-west-1.aws-us-gov.cloud.gov]
+                uris: [logs-deprecated.dev.us-gov-west-1.aws-us-gov.cloud.gov]
       - name: bosh-dns-aliases
         release: bosh-dns-aliases
         properties:
