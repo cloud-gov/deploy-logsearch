@@ -2,7 +2,7 @@ instance_groups:
   - name: elasticsearch_master
     vm_type: m6i.xlarge
   - name: elasticsearch_data
-    instances: 12
+    instances: 0
     vm_type: r6i.2xlarge
     update:
       max_in_flight: 2
@@ -12,7 +12,7 @@ instance_groups:
   - name: redis
     vm_type: t3.medium
   - name: archiver
-    instances: 3
+    instances: 0
     vm_type: r6i.xlarge
     jobs:
       - name: ingestor_cloudfoundry-firehose
@@ -20,7 +20,7 @@ instance_groups:
           cloudfoundry:
             api_endpoint: https://api.fr.cloud.gov
   - name: ingestor
-    instances: 7
+    instances: 0
     vm_type: r6i.xlarge.logsearch.ingestor
     jobs:
       - name: ingestor_cloudfoundry-firehose
