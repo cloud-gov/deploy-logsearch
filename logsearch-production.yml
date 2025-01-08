@@ -45,7 +45,7 @@ instance_groups:
           route_registrar:
             routes:
               - name: logsearch
-                uris: [logs-deprecated.fr.cloud.gov]
+                uris: [logs-deprecated-waiting-for-delete.fr.cloud.gov]
       - name: bosh-dns-aliases
         release: bosh-dns-aliases
         properties:
