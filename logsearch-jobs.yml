@@ -169,7 +169,7 @@ instance_groups:
               - LogMessage
               - ContainerMetric
             system_domain: (( grab $CF_SYSTEM_DOMAIN ))
-            logs_hostname: logs-deprecated
+            logs_hostname: logs-deprecated-waiting-for-delete
             user: (( grab $CF_USERNAME ))
             password: (( grab $CF_PASSWORD ))
           kibana_objects:
