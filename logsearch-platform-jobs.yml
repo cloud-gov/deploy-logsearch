@@ -75,7 +75,7 @@ instance_groups:
         properties:
           curator:
             purge_logs:
-              retention_period: 30
+              retention_period: 365
             actions:
               - action: index_settings
                 description: >-
