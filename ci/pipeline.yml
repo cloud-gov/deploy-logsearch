@@ -5,11 +5,9 @@ groups:
       - build-logsearch-release
       - test-logsearch-for-cloudfoundry-release
       - build-logsearch-for-cloudfoundry-release
-      - check-backup-development-tenant
       - check-backup-development-platform
       - check-backup-staging-platform
       - check-backup-staging-tenant
-      - check-backup-production-tenant
       - check-backup-production-platform
       - deploy-logsearch-platform-development
       - smoke-tests-platform-development
@@ -37,10 +35,6 @@ groups:
       - deploy-logsearch-platform-production
       - smoke-tests-platform-production
       - check-backup-production-platform
-  - name: tenant
-    jobs:
-      - check-backup-development-tenant
-      - check-backup-production-tenant
   - name: platform
     jobs:
       - deploy-logsearch-platform-development
@@ -571,24 +565,6 @@ jobs:
         text: |
           :white_check_mark: Smoke tests for platform logsearch on production PASSED
           <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
-  - name: check-backup-development-tenant
-    plan:
-      - in_parallel:
-          - get: check-backup-timer
-            trigger: true
-          - get: logsearch-config
-          - get: general-task
-      - task: check-backup
-        image: general-task
-        file: logsearch-config/ci/check-backup.yml
-        tags: [iaas]
-        params:
-          AWS_DEFAULT_REGION: ((aws-region))
-          ES_HOST: ((logsearch-development-check-backup-es-host))
-          GATEWAY_HOST: prometheus-staging.service.cf.internal
-          BUCKET_NAME: logsearch-cf-development
-          ENVIRONMENT: development-tenant
-          INDEX_PATTERN: logs-app-*
   - name: check-backup-development-platform
     plan:
       - in_parallel:
@@ -637,24 +613,6 @@ jobs:
           GATEWAY_HOST: prometheus-staging.service.cf.internal
           ENVIRONMENT: development-platform
           INDEX_PATTERN: logs-platform-*
-  - name: check-backup-production-tenant
-    plan:
-      - in_parallel:
-          - get: check-backup-timer
-            trigger: true
-          - get: logsearch-config
-          - get: general-task
-      - task: check-backup
-        image: general-task
-        file: logsearch-config/ci/check-backup.yml
-        tags: [iaas]
-        params:
-          AWS_DEFAULT_REGION: ((aws-region))
-          ES_HOST: ((logsearch-production-check-backup-es-host))
-          GATEWAY_HOST: prometheus-production.service.cf.internal
-          BUCKET_NAME: logsearch-cf-production
-          ENVIRONMENT: production-tenant
-          INDEX_PATTERN: logs-app-*
   - name: check-backup-production-platform
     plan:
       - in_parallel:
