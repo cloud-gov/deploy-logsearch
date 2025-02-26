@@ -206,6 +206,8 @@ jobs:
             resource: terraform-yaml-development
             trigger: true
           - get: general-task
+          - get: wazuh-agent
+            trigger: true
       - task: logsearch-manifest
         image: general-task
         config: &manifest-config
@@ -244,6 +246,11 @@ jobs:
             - secureproxy-release/*.tgz
           stemcells:
             - logsearch-platform-stemcell-jammy/*.tgz
+          ops_files:
+            - wazuh-agent/ops/add-wazuh-agent.yml
+          vars:
+            environment: dev
+            wazuh_server_address: wazuh-server.service.cf.internal
     on_failure:
       put: slack
       params:
@@ -370,7 +377,16 @@ jobs:
             CF_PASSWORD: ((cf-password-staging))
             CF_SYSTEM_DOMAIN: ((cf-system-domain-staging))
       - put: logsearch-platform-staging-deployment
-        params: *deploy-params-platform
+        params: 
+          manifest: logsearch-manifest/manifest.yml
+          releases:
+            - logsearch-release/*.tgz
+            - logsearch-for-cloudfoundry-release/*.tgz
+            - prometheus-release/*.tgz
+            - oauth2-proxy-release/*.tgz
+            - secureproxy-release/*.tgz
+          stemcells:
+            - logsearch-platform-stemcell-jammy/*.tgz
     on_failure:
       put: slack
       params:
@@ -492,7 +508,16 @@ jobs:
             CF_PASSWORD: ((cf-password-production))
             CF_SYSTEM_DOMAIN: ((cf-system-domain-production))
       - put: logsearch-platform-production-deployment
-        params: *deploy-params-platform
+        params: 
+          manifest: logsearch-manifest/manifest.yml
+          releases:
+            - logsearch-release/*.tgz
+            - logsearch-for-cloudfoundry-release/*.tgz
+            - prometheus-release/*.tgz
+            - oauth2-proxy-release/*.tgz
+            - secureproxy-release/*.tgz
+          stemcells:
+            - logsearch-platform-stemcell-jammy/*.tgz
     on_failure:
       put: slack
       params:
@@ -815,6 +840,20 @@ resources:
       region_name: ((concourse-varz-bucket-region))
       bucket: ((concourse-varz-bucket))
       versioned_file: ((name)).yml
+  - name: wazuh-agent
+    type: git
+    source:
+      branch: main
+      commit_verification_keys: ((cloud-gov-pgp-keys))
+      git_config:
+      - name: "user.name"
+        value: "cg-ci-bot"
+      - name: "user.email"
+        value: "no-reply@cloud.gov"
+      paths: [ops/add-wazuh-agent.yml]
+      private_key: ((cg-ci-bot-sshkey.private_key))
+      uri: git@github.com:cloud-gov/wazuh-agent.git
+      username: cg-ci-bot
 resource_types:
   - name: registry-image
     type: registry-image
