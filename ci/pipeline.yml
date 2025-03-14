@@ -247,7 +247,7 @@ jobs:
           stemcells:
             - logsearch-platform-stemcell-jammy/*.tgz
           ops_files:
-            - wazuh-agent/ops/add-wazuh-agent.yml
+            - wazuh-agent/ops/add-wazuh-agent-no-bpm.yml
           vars:
             environment: dev
             wazuh_server_address: wazuh-server.service.cf.internal
@@ -850,7 +850,7 @@ resources:
         value: "cg-ci-bot"
       - name: "user.email"
         value: "no-reply@cloud.gov"
-      paths: [ops/add-wazuh-agent.yml]
+      paths: [ops/add-wazuh-agent-no-bpm.yml]
       private_key: ((cg-ci-bot-sshkey.private_key))
       uri: git@github.com:cloud-gov/wazuh-agent.git
       username: cg-ci-bot
