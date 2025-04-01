@@ -208,6 +208,8 @@ jobs:
           - get: general-task
           - get: wazuh-agent
             trigger: true
+          - get: wazuh-agent-release
+            trigger: true
       - task: logsearch-manifest
         image: general-task
         config: &manifest-config
@@ -855,6 +857,14 @@ resources:
       private_key: ((cg-ci-bot-sshkey.private_key))
       uri: git@github.com:cloud-gov/wazuh-agent.git
       username: cg-ci-bot
+  - name: wazuh-agent-release
+    type: s3-iam
+    source:
+      bucket: ((cg-s3-bosh-releases-bucket))
+      region_name: ((aws-region))
+      private: true
+      regexp: wazuh-agent-(.*).tgz
+
 resource_types:
   - name: registry-image
     type: registry-image
