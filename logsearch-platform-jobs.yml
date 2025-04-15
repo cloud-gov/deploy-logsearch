@@ -13,7 +13,6 @@ instance_groups:
           elasticsearch-platform: {as: elasticsearch_master}
         consumes:
           elasticsearch-platform: {from: elasticsearch_master}
-          curator: {from: maintenance}
         properties:
           elasticsearch:
             cluster_name: logsearch-platform
@@ -30,6 +29,8 @@ instance_groups:
               - "-Dlog4j2.formatMsgNoLookups=true"
       - name: snort-config
         release: jammy-snort
+        consumes:
+          curator: {from: maintenance}
         properties:
           snort:
             rules:
