@@ -4,9 +4,6 @@ instance_groups:
     vm_type: t3.large
     networks:
       - name: services
-        static_ips:
-          - (( replace ))
-          - (( grab terraform_outputs.logsearch_static_ips.[7]))
     vm_extensions:
       - 10GB_ephemeral_disk
   - name: maintenance
