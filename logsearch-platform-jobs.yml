@@ -48,10 +48,6 @@ instance_groups:
     azs: [z1]
     networks:
       - name: services
-        static_ips:
-          - (( grab terraform_outputs.logsearch_static_ips.[7]))
-          - (( grab terraform_outputs.logsearch_static_ips.[8]))
-          - (( grab terraform_outputs.logsearch_static_ips.[9]))
     update:
       max_in_flight: 1 # Should never update more than one ES master node at a time or cluster will go down
   - name: maintenance
@@ -150,8 +146,6 @@ instance_groups:
     azs: [z1]
     networks:
       - name: services
-        static_ips:
-          - (( grab terraform_outputs.logsearch_static_ips.[6] ))
     update:
       serial: true # Block on this job to create deploy group 1
   #########################################################
