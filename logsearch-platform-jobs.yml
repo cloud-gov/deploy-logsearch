@@ -13,6 +13,7 @@ instance_groups:
           elasticsearch-platform: {as: elasticsearch_master}
         consumes:
           elasticsearch-platform: {from: elasticsearch_master}
+          curator: {from: maintenance}
         properties:
           elasticsearch:
             cluster_name: logsearch-platform
@@ -67,6 +68,8 @@ instance_groups:
               - "-Dlog4j2.formatMsgNoLookups=true"
       - name: curator
         release: logsearch
+        provides:
+          curator: {as: maintenance}
         properties:
           curator:
             purge_logs:
