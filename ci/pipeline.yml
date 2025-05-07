@@ -51,7 +51,7 @@ jobs:
     serial: true
     plan:
       - get: logsearch-config
-        params: {depth: 1}
+        params: { depth: 1 }
         trigger: true
       - get: secrets
         # Remember to manually trigger a new build if you upload a new version
@@ -127,7 +127,7 @@ jobs:
         text: |
           :x: FAILED to pass tests for the latest update to logsearch-for-cloudfoundry
           <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
-        channel: '#cg-platform-news'
+        channel: "#cg-platform-news"
         username: ((slack-username))
         icon_url: ((slack-icon-url))
     on_success:
@@ -141,7 +141,7 @@ jobs:
     plan:
       - in_parallel:
           - get: logsearch-config
-            params: {depth: 1}
+            params: { depth: 1 }
             trigger: true
           - get: release-git-repo
             resource: logsearch-for-cloudfoundry-release-git-repo
@@ -317,7 +317,7 @@ jobs:
       put: slack
       params:
         !!merge <<: *slack-params
-        channel: '#cg-platform-news'
+        channel: "#cg-platform-news"
         text: |
           :white_check_mark: Smoke tests for platform logsearch on development PASSED
           <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
@@ -378,7 +378,7 @@ jobs:
             CF_PASSWORD: ((cf-password-staging))
             CF_SYSTEM_DOMAIN: ((cf-system-domain-staging))
       - put: logsearch-platform-staging-deployment
-        params: 
+        params:
           manifest: logsearch-manifest/manifest.yml
           releases:
             - logsearch-release/*.tgz
@@ -455,7 +455,7 @@ jobs:
       put: slack
       params:
         !!merge <<: *slack-params
-        channel: '#cg-platform-news'
+        channel: "#cg-platform-news"
         text: |
           :white_check_mark: Smoke tests for platform logsearch on staging PASSED
           <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
@@ -509,7 +509,7 @@ jobs:
             CF_PASSWORD: ((cf-password-production))
             CF_SYSTEM_DOMAIN: ((cf-system-domain-production))
       - put: logsearch-platform-production-deployment
-        params: 
+        params:
           manifest: logsearch-manifest/manifest.yml
           releases:
             - logsearch-release/*.tgz
@@ -579,7 +579,7 @@ jobs:
       put: slack
       params:
         !!merge <<: *slack-params
-        channel: '#cg-platform'
+        channel: "#cg-platform"
         text: |
           :x: Smoke tests for platform logsearch on production FAILED
           <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
@@ -587,7 +587,7 @@ jobs:
       put: slack
       params:
         !!merge <<: *slack-params
-        channel: '#cg-platform-news'
+        channel: "#cg-platform-news"
         text: |
           :white_check_mark: Smoke tests for platform logsearch on production PASSED
           <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
@@ -682,7 +682,7 @@ resources:
     source:
       commit_verification_keys: ((cloud-gov-pgp-keys))
       uri: https://github.com/cloud-gov/logsearch-for-cloudfoundry
-      branch: sub-v2-to-v3
+      branch: develop
   - name: logsearch-for-cloudfoundry-final-builds-dir-tarball
     type: s3-iam
     source:
@@ -847,13 +847,13 @@ resources:
       branch: main
       commit_verification_keys: ((cloud-gov-pgp-keys))
       git_config:
-      - name: "user.name"
-        value: "cg-ci-bot"
-      - name: "user.email"
-        value: "no-reply@cloud.gov"
-      paths: 
-      - ops/add-wazuh-agent-no-bpm.yml
-      - manifest/dev-vars.yml
+        - name: "user.name"
+          value: "cg-ci-bot"
+        - name: "user.email"
+          value: "no-reply@cloud.gov"
+      paths:
+        - ops/add-wazuh-agent-no-bpm.yml
+        - manifest/dev-vars.yml
       private_key: ((cg-ci-bot-sshkey.private_key))
       uri: git@github.com:cloud-gov/wazuh-agent.git
       username: cg-ci-bot
