@@ -130,13 +130,6 @@ jobs:
         channel: '#cg-platform-news'
         username: ((slack-username))
         icon_url: ((slack-icon-url))
-    on_success:
-      put: slack
-      params:
-        !!merge <<: *slack-params
-        text: |
-          :white_check_mark: Successfully passed tests for the latest update to logsearch-for-cloudfoundry
-          <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
   - name: build-logsearch-for-cloudfoundry-release
     plan:
       - in_parallel:
@@ -255,16 +248,9 @@ jobs:
     on_failure:
       put: slack
       params:
-        !!merge <<: *slack-params
+        <<: *slack-params
         text: |
           :x: FAILED to deploy platform logsearch on development
-          <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
-    on_success:
-      put: slack
-      params:
-        !!merge <<: *slack-params
-        text: |
-          :white_check_mark: Successfully deployed platform logsearch on development
           <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
   - name: smoke-tests-platform-development
     serial_groups: [bosh-platform-development]
@@ -309,17 +295,9 @@ jobs:
     on_failure:
       put: slack
       params:
-        !!merge <<: *slack-params
+        <<: *slack-params
         text: |
           :x: Smoke tests for platform logsearch on development FAILED
-          <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
-    on_success:
-      put: slack
-      params:
-        !!merge <<: *slack-params
-        channel: '#cg-platform-news'
-        text: |
-          :white_check_mark: Smoke tests for platform logsearch on development PASSED
           <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
   - name: deploy-logsearch-platform-staging
     serial_groups: [bosh-platform-staging]
@@ -357,7 +335,7 @@ jobs:
       - task: logsearch-manifest
         image: general-task
         config:
-          !!merge <<: *manifest-config
+          <<: *manifest-config
           run:
             path: sh
             args:
@@ -378,7 +356,7 @@ jobs:
             CF_PASSWORD: ((cf-password-staging))
             CF_SYSTEM_DOMAIN: ((cf-system-domain-staging))
       - put: logsearch-platform-staging-deployment
-        params: 
+        params:
           manifest: logsearch-manifest/manifest.yml
           releases:
             - logsearch-release/*.tgz
@@ -391,16 +369,9 @@ jobs:
     on_failure:
       put: slack
       params:
-        !!merge <<: *slack-params
+        <<: *slack-params
         text: |
           :x: FAILED to deploy platform logsearch on staging
-          <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
-    on_success:
-      put: slack
-      params:
-        !!merge <<: *slack-params
-        text: |
-          :white_check_mark: Successfully deployed platform logsearch on staging
           <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
   - name: smoke-tests-platform-staging
     serial_groups: [bosh-platform-staging]
@@ -447,17 +418,9 @@ jobs:
     on_failure:
       put: slack
       params:
-        !!merge <<: *slack-params
+        <<: *slack-params
         text: |
           :x: Smoke tests for platform logsearch on staging FAILED
-          <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
-    on_success:
-      put: slack
-      params:
-        !!merge <<: *slack-params
-        channel: '#cg-platform-news'
-        text: |
-          :white_check_mark: Smoke tests for platform logsearch on staging PASSED
           <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
 
   - name: deploy-logsearch-platform-production
@@ -488,7 +451,7 @@ jobs:
       - task: logsearch-manifest
         image: general-task
         config:
-          !!merge <<: *manifest-config
+          <<: *manifest-config
           run:
             path: sh
             args:
@@ -509,7 +472,7 @@ jobs:
             CF_PASSWORD: ((cf-password-production))
             CF_SYSTEM_DOMAIN: ((cf-system-domain-production))
       - put: logsearch-platform-production-deployment
-        params: 
+        params:
           manifest: logsearch-manifest/manifest.yml
           releases:
             - logsearch-release/*.tgz
@@ -522,16 +485,9 @@ jobs:
     on_failure:
       put: slack
       params:
-        !!merge <<: *slack-params
+        <<: *slack-params
         text: |
           :x: FAILED to deploy platform logsearch on production
-          <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
-    on_success:
-      put: slack
-      params:
-        !!merge <<: *slack-params
-        text: |
-          :white_check_mark: Successfully deployed platform logsearch on production
           <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
   - name: smoke-tests-platform-production
     serial_groups: [bosh-platform-production]
@@ -578,18 +534,10 @@ jobs:
     on_failure:
       put: slack
       params:
-        !!merge <<: *slack-params
+        <<: *slack-params
         channel: '#cg-platform'
         text: |
           :x: Smoke tests for platform logsearch on production FAILED
-          <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
-    on_success:
-      put: slack
-      params:
-        !!merge <<: *slack-params
-        channel: '#cg-platform-news'
-        text: |
-          :white_check_mark: Smoke tests for platform logsearch on production PASSED
           <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
   - name: check-backup-development-platform
     plan:
@@ -851,7 +799,7 @@ resources:
         value: "cg-ci-bot"
       - name: "user.email"
         value: "no-reply@cloud.gov"
-      paths: 
+      paths:
       - ops/add-wazuh-agent-no-bpm.yml
       - manifest/dev-vars.yml
       private_key: ((cg-ci-bot-sshkey.private_key))
