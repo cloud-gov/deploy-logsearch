@@ -67,6 +67,8 @@ instance_groups:
           elasticsearch-platform: {from: elasticsearch_master}
         properties:
           elasticsearch:
+            node:
+              roles: maintenance
             heap_size: 2G
             config_options: {"xpack.monitoring.enabled": false}
             jvm_options:
@@ -199,6 +201,8 @@ instance_groups:
           elasticsearch-platform: {from: elasticsearch_master}
         properties:
           elasticsearch:
+            node:
+              roles: kibana
             heap_size: 2G
       - name: kibana-platform
         release: logsearch
