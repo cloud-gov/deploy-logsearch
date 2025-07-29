@@ -257,7 +257,7 @@ instance_groups:
             jvm_options:
               - "-Dlog4j2.formatMsgNoLookups=true"
             node:
-              roles: ingestor
+              roles: ingest
             heap_size: 1G
             config_options: {"xpack.monitoring.enabled": false}
       - name: ingestor_syslog
