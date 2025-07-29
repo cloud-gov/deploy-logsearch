@@ -17,8 +17,7 @@ instance_groups:
           elasticsearch:
             cluster_name: logsearch-platform
             node:
-              allow_master: true
-              allow_data: false
+              roles: master
             limits:
               fd: 131072 # 2 ** 17
             health:
@@ -173,8 +172,7 @@ instance_groups:
             jvm_options:
               - "-Dlog4j2.formatMsgNoLookups=true"
             node:
-              allow_master: false
-              allow_data: true
+              roles: data_hot
             limits:
               fd: 131072 # 2 ** 17
             health:
@@ -254,6 +252,8 @@ instance_groups:
           elasticsearch:
             jvm_options:
               - "-Dlog4j2.formatMsgNoLookups=true"
+            node:
+              roles: ingestor
             heap_size: 1G
             config_options: {"xpack.monitoring.enabled": false}
       - name: ingestor_syslog
