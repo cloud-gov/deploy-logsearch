@@ -174,7 +174,7 @@ instance_groups:
             jvm_options:
               - "-Dlog4j2.formatMsgNoLookups=true"
             node:
-              roles: data
+              roles: data_content, data_hot
             limits:
               fd: 131072 # 2 ** 17
             health:
