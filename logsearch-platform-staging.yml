@@ -7,6 +7,12 @@ instance_groups:
     update:
       max_in_flight: 1
       canaries: 1
+  - name: elasticsearch_data_warm
+    instances: 4
+    vm_type: t3.large
+    update:
+      max_in_flight: 1
+      canaries: 1
   - name: ingestor
     vm_type: t3.large
   - name: maintenance
