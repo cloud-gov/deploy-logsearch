@@ -125,6 +125,15 @@ instance_groups:
             index_mappings_component_name: index-mappings
             index_settings_component_name: index-settings
             shards_and_replicas_component_name: shards-and-replicas
+            index_settings:
+              index:
+                routing:
+                  allocation:
+                    include:
+                      _tier_preference: data_hot
+                lifecycle:
+                  name: logs
+                  rollover_alias: ""
       - name: elasticsearch_exporter
         release: prometheus
         properties:
@@ -184,6 +193,36 @@ instance_groups:
             config_options: {"xpack.monitoring.enabled": false}
     vm_type: logsearch_es_data
     persistent_disk_type: logsearch_es_platform_data
+    stemcell: default
+    azs: [z1, z2]
+    networks:
+      - name: services
+    update:
+      max_in_flight: 1 # Only update 1 ES data node at a time or risk downtime
+  - name: elasticsearch_data_warm
+    instances: 9
+    jobs:
+      - name: bpm
+        release: bpm
+      - name: elasticsearch-platform
+        release: logsearch
+        consumes:
+          elasticsearch-platform: {from: elasticsearch_master}
+        properties:
+          elasticsearch:
+            jvm_options:
+              - "-Dlog4j2.formatMsgNoLookups=true"
+            node:
+              roles: data_warm
+            limits:
+              fd: 131072 # 2 ** 17
+            health:
+              timeout: 900
+            recovery:
+              delay_allocation_restart: "15m"
+            config_options: {"xpack.monitoring.enabled": false}
+    vm_type: logsearch_es_data
+    persistent_disk_type: logsearch_es_platform_data_warm
     stemcell: default
     azs: [z1, z2]
     networks:

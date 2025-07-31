@@ -34,6 +34,11 @@ instance_groups:
         properties:
           elasticsearch:
             delete_migrated_data: true
+  - name: elasticsearch_data_warm
+    vm_type: r6i.xlarge
+    update:
+      max_in_flight: 2
+      canaries: 2
   - name: smoke-tests
     vm_type: t3.medium
     jobs:
