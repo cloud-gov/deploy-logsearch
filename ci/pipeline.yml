@@ -127,7 +127,7 @@ jobs:
         text: |
           :x: FAILED to pass tests for the latest update to logsearch-for-cloudfoundry
           <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
-        channel: '#cg-platform-news'
+        channel: ((slack-channel-notifications))
         username: ((slack-username))
         icon_url: ((slack-icon-url))
   - name: build-logsearch-for-cloudfoundry-release
