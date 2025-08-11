@@ -187,7 +187,7 @@ instance_groups:
             limits:
               fd: 131072 # 2 ** 17
             health:
-              timeout: 900
+              timeout: 1500
             recovery:
               delay_allocation_restart: "15m"
             config_options: {"xpack.monitoring.enabled": false}
@@ -217,7 +217,7 @@ instance_groups:
             limits:
               fd: 131072 # 2 ** 17
             health:
-              timeout: 900
+              timeout: 1500
             recovery:
               delay_allocation_restart: "15m"
             config_options: {"xpack.monitoring.enabled": false}
