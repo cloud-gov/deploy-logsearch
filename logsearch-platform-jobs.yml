@@ -170,7 +170,7 @@ instance_groups:
   #2nd deploy group - elasticsearch_data, kibana, ingestors
   #########################################################
   - name: elasticsearch_data
-    instances: 9
+    instances: 6
     jobs:
       - name: bpm
         release: bpm
