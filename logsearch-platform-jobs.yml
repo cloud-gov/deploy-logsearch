@@ -170,7 +170,7 @@ instance_groups:
   #2nd deploy group - elasticsearch_data, kibana, ingestors
   #########################################################
   - name: elasticsearch_data
-    instances: 6
+    instances: 5
     jobs:
       - name: bpm
         release: bpm
@@ -200,7 +200,7 @@ instance_groups:
     update:
       max_in_flight: 1 # Only update 1 ES data node at a time or risk downtime
   - name: elasticsearch_data_warm
-    instances: 9
+    instances: 7
     jobs:
       - name: bpm
         release: bpm
