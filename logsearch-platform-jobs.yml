@@ -160,6 +160,8 @@ instance_groups:
               - {type: visualization, pattern: "/var/vcap/jobs/upload-kibana-objects/kibana-objects/visualization/Platform-*.json"}
               - {type: dashboard, pattern: "/var/vcap/jobs/upload-kibana-objects/kibana-objects/dashboard/Platform-*.json"}
     vm_type: logsearch_maintenance
+    vm_extensions:
+      - 10GB_root_disk
     stemcell: default
     azs: [z1, z2]
     networks:
@@ -170,7 +172,7 @@ instance_groups:
   #2nd deploy group - elasticsearch_data, kibana, ingestors
   #########################################################
   - name: elasticsearch_data
-    instances: 5
+    instances: 6
     jobs:
       - name: bpm
         release: bpm
@@ -200,7 +202,7 @@ instance_groups:
     update:
       max_in_flight: 1 # Only update 1 ES data node at a time or risk downtime
   - name: elasticsearch_data_warm
-    instances: 7
+    instances: 9
     jobs:
       - name: bpm
         release: bpm
@@ -278,6 +280,7 @@ instance_groups:
     vm_extensions:
       - platform-kibana-lb
       - 50GB_ephemeral_disk
+      - 10GB_root_disk
     stemcell: default
     azs: [z1, z2]
     networks:
@@ -356,7 +359,9 @@ instance_groups:
       - name: parser-config-lfc
         release: logsearch-for-cloudfoundry
     vm_type: logsearch_ingestor
-    vm_extensions: [platform-syslog-lb]
+    vm_extensions:
+      - platform-syslog-lb
+      - 10GB_root_disk
     persistent_disk_type: logsearch_ingestor
     stemcell: default
     azs: [z1, z2]
