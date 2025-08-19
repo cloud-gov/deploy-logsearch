@@ -4,8 +4,6 @@ instance_groups:
     vm_type: t3.large
     networks:
       - name: services
-    vm_extensions:
-      - 10GB_ephemeral_disk
   - name: maintenance
     vm_type: t3.medium
     jobs:
@@ -30,13 +28,7 @@ instance_groups:
     instances: 1
     vm_type: t3.medium
   - name: elasticsearch_data
-    instances: 2
-    vm_type: t3.medium
-    update:
-      max_in_flight: 2
-      canaries: 2
-  - name: elasticsearch_data_warm
-    instances: 2
+    instances: 3
     vm_type: t3.medium
     update:
       max_in_flight: 2
