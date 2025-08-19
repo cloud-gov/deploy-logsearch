@@ -48,6 +48,8 @@ instance_groups:
 
 
     vm_type: logsearch_es_master
+    vm_extensions:
+      - 10GB_root_disk
     persistent_disk_type: logsearch_es_master
     stemcell: default
     azs: [z1, z2]
@@ -194,6 +196,8 @@ instance_groups:
               delay_allocation_restart: "15m"
             config_options: {"xpack.monitoring.enabled": false}
     vm_type: logsearch_es_data
+    vm_extensions:
+      - 10GB_root_disk
     persistent_disk_type: logsearch_es_platform_data
     stemcell: default
     azs: [z1, z2]
@@ -224,6 +228,8 @@ instance_groups:
               delay_allocation_restart: "15m"
             config_options: {"xpack.monitoring.enabled": false}
     vm_type: logsearch_es_data
+    vm_extensions:
+      - 10GB_root_disk
     persistent_disk_type: logsearch_es_platform_data_warm
     stemcell: default
     azs: [z1, z2]
@@ -373,7 +379,9 @@ instance_groups:
   - name: smoke-tests
     instances: 1
     vm_type: errand_small
-    vm_extensions: [errand-profile]
+    vm_extensions:
+      - errand-profile
+      - 10GB_root_disk
     stemcell: default
     azs: [z1, z2]
     networks:
