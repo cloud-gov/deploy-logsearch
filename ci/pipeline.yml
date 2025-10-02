@@ -211,11 +211,14 @@ jobs:
             - wazuh-agent/manifest/dev-vars.yml
     on_failure:
       put: slack
-      params:
-        <<: *slack-params
+      params: &slack-params
         text: |
           :x: FAILED to deploy platform logsearch on development
           <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
+        channel: ((slack-channel-notifications))
+        username: ((slack-username))
+        icon_url: ((slack-icon-url))
+
   - name: smoke-tests-platform-development
     serial_groups: [bosh-platform-development]
     plan:
