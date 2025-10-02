@@ -608,7 +608,7 @@ resources:
     source:
       commit_verification_keys: ((cloud-gov-pgp-keys))
       uri: https://github.com/cloud-gov/logsearch-boshrelease
-      branch: develop
+      branch: main
   - name: logsearch-final-builds-dir-tarball
     type: s3-iam
     source:
@@ -630,7 +630,7 @@ resources:
     source:
       commit_verification_keys: ((cloud-gov-pgp-keys))
       uri: https://github.com/cloud-gov/logsearch-for-cloudfoundry
-      branch: develop
+      branch: main
   - name: logsearch-for-cloudfoundry-final-builds-dir-tarball
     type: s3-iam
     source:
