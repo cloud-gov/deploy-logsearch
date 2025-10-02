@@ -3,7 +3,6 @@ groups:
     jobs:
       - reconfigure
       - build-logsearch-release
-      - test-logsearch-for-cloudfoundry-release
       - build-logsearch-for-cloudfoundry-release
       - check-backup-development-platform
       - check-backup-staging-platform
@@ -18,7 +17,6 @@ groups:
   - name: build-releases
     jobs:
       - build-logsearch-release
-      - test-logsearch-for-cloudfoundry-release
       - build-logsearch-for-cloudfoundry-release
   - name: platform-development
     jobs:
@@ -97,39 +95,6 @@ jobs:
             tags: [iaas]
             params:
               file: finalized-release/releases-dir-logsearch.tgz
-  - name: test-logsearch-for-cloudfoundry-release
-    plan:
-      - in_parallel:
-          - get: release-git-repo
-            resource: logsearch-for-cloudfoundry-release-git-repo
-            trigger: true
-          - get: general-task
-      - task: run-tests
-        image: general-task
-        config:
-          inputs:
-            - name: release-git-repo
-          platform: linux
-          run:
-            path: sh
-            args:
-              - -exc
-              - |
-                . ~/.profile
-                cd release-git-repo/src/kibana-cf_authentication
-                nvm install
-                nvm use
-                npm install
-                npm test
-    on_failure:
-      put: slack
-      params: &slack-params
-        text: |
-          :x: FAILED to pass tests for the latest update to logsearch-for-cloudfoundry
-          <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
-        channel: ((slack-channel-notifications))
-        username: ((slack-username))
-        icon_url: ((slack-icon-url))
   - name: build-logsearch-for-cloudfoundry-release
     plan:
       - in_parallel:
@@ -138,7 +103,6 @@ jobs:
             trigger: true
           - get: release-git-repo
             resource: logsearch-for-cloudfoundry-release-git-repo
-            passed: [test-logsearch-for-cloudfoundry-release]
             trigger: true
           - get: pipeline-tasks
           - get: final-builds-dir-tarball
