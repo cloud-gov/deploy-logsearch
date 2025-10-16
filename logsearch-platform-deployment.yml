@@ -17,3 +17,4 @@ releases:
   - {name: secureproxy, version: latest}
   - {name: bpm, version: latest}
   - {name: jammy-snort, version: latest}
+  - {name: bosh-dns-aliases, version: latest}

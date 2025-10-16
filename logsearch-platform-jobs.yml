@@ -1,3 +1,18 @@
+addons:
+- jobs:
+  - name: bosh-dns-aliases
+    properties:
+      aliases:
+      - domain: kibana.logsearch-platform.internal
+        targets:
+        - deployment: logsearch-platform
+          domain: bosh
+          instance_group: kibana
+          network: services
+          query: '*'
+    release: bosh-dns-aliases
+  name: bosh-dns-aliases
+
 instance_groups:
   #######################################################
   #First deploy group - elasticsearch_master, maintenance
