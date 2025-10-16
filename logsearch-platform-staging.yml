@@ -17,10 +17,10 @@ instance_groups:
     vm_type: t3.large
   - name: maintenance
     jobs:
-    - name: elasticsearch_config
-      properties:
-        elasticsearch_config:
-          shards: 2
+      - name: elasticsearch_config
+        properties:
+          elasticsearch_config:
+            shards: 2
     vm_type: t3.large
   - name: kibana
     vm_type: t3.xlarge
