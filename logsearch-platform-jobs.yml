@@ -120,8 +120,6 @@ instance_groups:
       - name: elasticsearch_config
         release: logsearch
         properties:
-          elasticsearch_config:
-            app_index_prefix: logs-platform
             component_templates:
               - shards-and-replicas: /var/vcap/jobs/elasticsearch_config/index-templates/shards-and-replicas.json
               - index-settings: /var/vcap/jobs/elasticsearch_config/index-templates/index-settings.json
@@ -162,8 +160,6 @@ instance_groups:
       - name: upload-kibana-objects
         release: logsearch-for-cloudfoundry
         properties:
-          elasticsearch_config:
-            app_index_prefix: logs-platform
           cloudfoundry:
             system_domain: (( grab $CF_SYSTEM_DOMAIN ))
             user: (( grab $CF_USERNAME ))
