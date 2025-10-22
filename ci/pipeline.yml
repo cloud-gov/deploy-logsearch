@@ -33,17 +33,12 @@ groups:
       - deploy-logsearch-platform-production
       - smoke-tests-platform-production
       - check-backup-production-platform
-  - name: platform
+  - name: upload-kibana-objects
     jobs:
-      - deploy-logsearch-platform-development
-      - smoke-tests-platform-development
-      - check-backup-development-platform
-      - deploy-logsearch-platform-staging
-      - smoke-tests-platform-staging
-      - check-backup-staging-platform
-      - deploy-logsearch-platform-production
-      - smoke-tests-platform-production
-      - check-backup-production-platform
+      - upload-kibana-objects-platform-development
+      - upload-kibana-objects-platform-staging
+      - upload-kibana-objects-platform-production
+
 jobs:
   - name: reconfigure
     serial: true
@@ -567,6 +562,84 @@ jobs:
           GATEWAY_HOST: prometheus-production.service.cf.internal
           ENVIRONMENT: production-platform
           INDEX_PATTERN: logs-platform-*
+
+  # Run upload-kibana-objects-platform-* bosh errands if the dashboards, index-patterns, visualizations or searches are ever wiped
+  # These can also be run manually on the maintenance vm by running /var/vcap/jobs/upload-kibana-objects/bin/run
+  - name: upload-kibana-objects-platform-development
+    serial_groups: [bosh-platform-development]
+    plan:
+      - in_parallel:
+          - get: common
+            resource: master-bosh-root-cert
+          - get: pipeline-tasks
+      - task: upload-kibana-objects
+        file: pipeline-tasks/bosh-errand.yml
+        params:
+          BOSH_ENVIRONMENT: ((bosh.development.environment))
+          BOSH_CLIENT: ((bosh.development.client))
+          BOSH_CLIENT_SECRET: ((bosh.development.client-secret))
+          BOSH_DEPLOYMENT: ((logsearch-platform.development.name))
+          BOSH_ERRAND: upload-kibana-objects
+          BOSH_CA_CERT: common/master-bosh.crt
+    on_failure:
+      put: slack
+      params:
+        <<: *slack-params
+        text: |
+          :x: Errand upload-kibana-objects for logsearch-platform on development FAILED
+          <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
+
+  - name: upload-kibana-objects-platform-staging
+    serial_groups: [bosh-platform-staging]
+    plan:
+      - in_parallel:
+          - get: common
+            resource: master-bosh-root-cert
+          - get: pipeline-tasks
+      - task: upload-kibana-objects
+        file: pipeline-tasks/bosh-errand.yml
+        params:
+          BOSH_ENVIRONMENT: ((bosh.staging.environment))
+          BOSH_CLIENT: ((bosh.staging.client))
+          BOSH_CLIENT_SECRET: ((bosh.staging.client-secret))
+          BOSH_DEPLOYMENT: ((logsearch-platform.staging.name))
+          BOSH_ERRAND: upload-kibana-objects
+          BOSH_CA_CERT: common/master-bosh.crt
+    on_failure:
+      put: slack
+      params:
+        <<: *slack-params
+        text: |
+          :x: Errand upload-kibana-objects for logsearch-platform on staging FAILED
+          <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
+
+  - name: upload-kibana-objects-platform-production
+    serial_groups: [bosh-platform-production]
+    plan:
+      - in_parallel:
+          - get: common
+            resource: master-bosh-root-cert
+          - get: pipeline-tasks
+      - task: upload-kibana-objects
+        file: pipeline-tasks/bosh-errand.yml
+        params:
+          BOSH_ENVIRONMENT: ((bosh.production.environment))
+          BOSH_CLIENT: ((bosh.production.client))
+          BOSH_CLIENT_SECRET: ((bosh.production.client-secret))
+          BOSH_DEPLOYMENT: ((logsearch-platform.production.name))
+          BOSH_ERRAND: upload-kibana-objects
+          BOSH_CA_CERT: common/master-bosh.crt
+    on_failure:
+      put: slack
+      params:
+        <<: *slack-params
+        text: |
+          :x: Errand upload-kibana-objects for logsearch-platform on production FAILED
+          <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
+
+
+
+
 resources:
   - name: logsearch-release-git-repo
     type: git
