@@ -154,7 +154,6 @@ jobs:
             trigger: true
           - get: terraform-yaml
             resource: terraform-yaml-development
-            trigger: true
           - get: general-task
           - get: wazuh-agent
             trigger: true
