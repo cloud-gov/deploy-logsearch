@@ -120,6 +120,7 @@ instance_groups:
       - name: elasticsearch_config
         release: logsearch
         properties:
+          elasticsearch_config:
             component_templates:
               - shards-and-replicas: /var/vcap/jobs/elasticsearch_config/index-templates/shards-and-replicas.json
               - index-settings: /var/vcap/jobs/elasticsearch_config/index-templates/index-settings.json
