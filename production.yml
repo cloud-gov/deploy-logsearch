@@ -1,0 +1,56 @@
+- type: replace
+  path: /instance_groups/name=elasticsearch_master?/jobs?/name=elasticsearch-platform?/properties?/elasticsearch?/delete_migrated_data?
+  value: true
+
+- type: replace
+  path: /instance_groups/name=elasticsearch_master?/vm_type?
+  value: m6i.xlarge
+
+- type: replace
+  path: /instance_groups/name=maintenance?/vm_type?
+  value: m6i.large
+
+- type: replace
+  path: /instance_groups/name=elasticsearch_data?/jobs?/name=elasticsearch-platform?/properties?/elasticsearch?/delete_migrated_data?
+  value: true
+
+- type: replace
+  path: /instance_groups/name=elasticsearch_data?/update?
+  value: 
+    canaries: 1
+    max_in_flight: 2
+
+- type: replace
+  path: /instance_groups/name=elasticsearch_data?/vm_type?
+  value: r6i.xlarge
+
+- type: replace
+  path: /instance_groups/name=elasticsearch_data_warm?/instances?
+  value: 8
+
+- type: replace
+  path: /instance_groups/name=elasticsearch_data_warm?/update?
+  value: 
+    canaries: 1
+    max_in_flight: 1
+
+- type: replace
+  path: /instance_groups/name=elasticsearch_data_warm?/vm_type?
+  value: r6i.xlarge
+
+- type: replace
+  path: /instance_groups/name=kibana?/vm_type?
+  value: t3.xlarge
+  
+- type: replace
+  path: /instance_groups/name=ingestor?/instances?
+  value: 9
+
+- type: replace
+  path: /instance_groups/name=ingestor?/jobs?/name=ingestor_syslog?/properties?/logstash_ingestor?/health?/timeout?
+  value: 900
+
+
+- type: replace
+  path: /instance_groups/name=ingestor?/vm_type?
+  value: r6i.xlarge.logsearch.ingestor

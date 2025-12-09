@@ -50,10 +50,10 @@ jobs:
         # Remember to manually trigger a new build if you upload a new version
         # of the credentials file.
         trigger: false
-      - set_pipeline: ((name))
-        file: logsearch-config/ci/pipeline.yml
-        var_files:
-          - secrets/((name)).yml
+#      - set_pipeline: ((name))
+#        file: logsearch-config/ci/pipeline.yml
+#        var_files:
+#          - secrets/((name)).yml
   - name: build-logsearch-release
     plan:
       - in_parallel:
@@ -303,29 +303,29 @@ jobs:
             resource: terraform-yaml-staging
             trigger: true
           - get: general-task
-      - task: logsearch-manifest
-        image: general-task
-        config:
-          <<: *manifest-config
-          run:
-            path: sh
-            args:
-              - -exc
-              - |
-                SPRUCE_FILE_BASE_PATH=logsearch-config spruce merge \
-                  --prune terraform_outputs \
-                  logsearch-config/logsearch-platform-deployment.yml \
-                  logsearch-config/logsearch-platform-jobs.yml \
-                  common-secrets/logsearch-platform-staging.yml \
-                  logsearch-config/logsearch-platform-staging.yml \
-                  terraform-yaml/state.yml \
-                  > logsearch-manifest/manifest.yml
-          outputs:
-            - name: logsearch-manifest
-          params:
-            CF_USERNAME: ((cf-username-staging))
-            CF_PASSWORD: ((cf-password-staging))
-            CF_SYSTEM_DOMAIN: ((cf-system-domain-staging))
+#      - task: logsearch-manifest
+#        image: general-task
+#        config:
+#          <<: *manifest-config
+#          run:
+#            path: sh
+#            args:
+#              - -exc
+#              - |
+#                SPRUCE_FILE_BASE_PATH=logsearch-config spruce merge \
+#                  --prune terraform_outputs \
+#                  logsearch-config/logsearch-platform-deployment.yml \
+#                  logsearch-config/logsearch-platform-jobs.yml \
+#                  common-secrets/logsearch-platform-staging.yml \
+#                  logsearch-config/logsearch-platform-staging.yml \
+#                  terraform-yaml/state.yml \
+#                  > logsearch-manifest/manifest.yml
+#          outputs:
+#            - name: logsearch-manifest
+#          params:
+#            CF_USERNAME: ((cf-username-staging))
+#            CF_PASSWORD: ((cf-password-staging))
+#            CF_SYSTEM_DOMAIN: ((cf-system-domain-staging))
       - put: logsearch-platform-staging-deployment
         params:
           manifest: logsearch-manifest/manifest.yml
@@ -419,29 +419,29 @@ jobs:
           - get: terraform-yaml
             resource: terraform-yaml-production
           - get: general-task
-      - task: logsearch-manifest
-        image: general-task
-        config:
-          <<: *manifest-config
-          run:
-            path: sh
-            args:
-              - -exc
-              - |
-                SPRUCE_FILE_BASE_PATH=logsearch-config spruce merge \
-                  --prune terraform_outputs \
-                  logsearch-config/logsearch-platform-deployment.yml \
-                  logsearch-config/logsearch-platform-jobs.yml \
-                  common-secrets/logsearch-platform-production.yml \
-                  logsearch-config/logsearch-platform-production.yml \
-                  terraform-yaml/state.yml \
-                  > logsearch-manifest/manifest.yml
-          outputs:
-            - name: logsearch-manifest
-          params:
-            CF_USERNAME: ((cf-username-production))
-            CF_PASSWORD: ((cf-password-production))
-            CF_SYSTEM_DOMAIN: ((cf-system-domain-production))
+#      - task: logsearch-manifest
+#        image: general-task
+#        config:
+#          <<: *manifest-config
+#          run:
+#            path: sh
+#            args:
+#              - -exc
+#              - |
+#                SPRUCE_FILE_BASE_PATH=logsearch-config spruce merge \
+#                  --prune terraform_outputs \
+#                  logsearch-config/logsearch-platform-deployment.yml \
+#                  logsearch-config/logsearch-platform-jobs.yml \
+#                  common-secrets/logsearch-platform-production.yml \
+#                  logsearch-config/logsearch-platform-production.yml \
+#                  terraform-yaml/state.yml \
+#                  > logsearch-manifest/manifest.yml
+#          outputs:
+#            - name: logsearch-manifest
+#          params:
+#            CF_USERNAME: ((cf-username-production))
+#            CF_PASSWORD: ((cf-password-production))
+#            CF_SYSTEM_DOMAIN: ((cf-system-domain-production))
       - put: logsearch-platform-production-deployment
         params:
           manifest: logsearch-manifest/manifest.yml
