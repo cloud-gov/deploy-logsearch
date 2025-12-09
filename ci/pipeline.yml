@@ -50,10 +50,10 @@ jobs:
         # Remember to manually trigger a new build if you upload a new version
         # of the credentials file.
         trigger: false
-#      - set_pipeline: ((name))
-#        file: logsearch-config/ci/pipeline.yml
-#        var_files:
-#          - secrets/((name)).yml
+      - set_pipeline: ((name))
+        file: logsearch-config/ci/pipeline.yml
+        var_files:
+          - secrets/((name)).yml
   - name: build-logsearch-release
     plan:
       - in_parallel:
@@ -159,7 +159,7 @@ jobs:
         file: logsearch-config/ci/terraform-secrets.yml
       - put: logsearch-platform-development-deployment
         params: &deploy-params-platform
-          dry_run: true  # for debugging while converting from spruce
+          no_redact: true
           manifest: logsearch-config/base.yml
           releases:
             - logsearch-release/*.tgz
@@ -171,48 +171,9 @@ jobs:
             - logsearch-platform-stemcell-jammy/*.tgz
           ops_files:
             - logsearch-config/development.yml
-          var_files:
-            - terraform-yaml/state.yml
+          vars_files:
+            - logsearch-config/varsfiles/development.yml
             - terraform-secrets/terraform.yml
-
-#      - task: logsearch-manifest
-#        image: general-task
-#        config: &manifest-config
-#          platform: linux
-#          inputs:
-#            - name: logsearch-config
-#            - name: common-secrets
-#            - name: terraform-yaml
-#          run:
-#            path: sh
-#            args:
-#              - -exc
-#              - |
-#                SPRUCE_FILE_BASE_PATH=logsearch-config spruce merge \
-#                  --prune terraform_outputs \
-#                  logsearch-config/logsearch-platform-deployment.yml \
-#                  logsearch-config/logsearch-platform-jobs.yml \
-#                  common-secrets/logsearch-platform-development.yml \
-#                  logsearch-config/logsearch-platform-development.yml \
-#                  terraform-yaml/state.yml \
-#                  > logsearch-manifest/manifest.yml
-#          outputs:
-#            - name: logsearch-manifest
-#          params:
-#            CF_USERNAME: ((cf-username-development))
-#            CF_PASSWORD: ((cf-password-development))
-#            CF_SYSTEM_DOMAIN: ((cf-system-domain-development))
-#      - put: logsearch-platform-development-deployment
-#        params: &deploy-params-platform
-#          manifest: logsearch-manifest/manifest.yml
-#          releases:
-#            - logsearch-release/*.tgz
-#            - logsearch-for-cloudfoundry-release/*.tgz
-#            - prometheus-release/*.tgz
-#            - oauth2-proxy-release/*.tgz
-#            - secureproxy-release/*.tgz
-#          stemcells:
-#            - logsearch-platform-stemcell-jammy/*.tgz
     on_failure:
       put: slack
       params: &slack-params
@@ -303,40 +264,17 @@ jobs:
             resource: terraform-yaml-staging
             trigger: true
           - get: general-task
-#      - task: logsearch-manifest
-#        image: general-task
-#        config:
-#          <<: *manifest-config
-#          run:
-#            path: sh
-#            args:
-#              - -exc
-#              - |
-#                SPRUCE_FILE_BASE_PATH=logsearch-config spruce merge \
-#                  --prune terraform_outputs \
-#                  logsearch-config/logsearch-platform-deployment.yml \
-#                  logsearch-config/logsearch-platform-jobs.yml \
-#                  common-secrets/logsearch-platform-staging.yml \
-#                  logsearch-config/logsearch-platform-staging.yml \
-#                  terraform-yaml/state.yml \
-#                  > logsearch-manifest/manifest.yml
-#          outputs:
-#            - name: logsearch-manifest
-#          params:
-#            CF_USERNAME: ((cf-username-staging))
-#            CF_PASSWORD: ((cf-password-staging))
-#            CF_SYSTEM_DOMAIN: ((cf-system-domain-staging))
+      - task: terraform-secrets
+        file: logsearch-config/ci/terraform-secrets.yml
       - put: logsearch-platform-staging-deployment
-        params:
-          manifest: logsearch-manifest/manifest.yml
-          releases:
-            - logsearch-release/*.tgz
-            - logsearch-for-cloudfoundry-release/*.tgz
-            - prometheus-release/*.tgz
-            - oauth2-proxy-release/*.tgz
-            - secureproxy-release/*.tgz
-          stemcells:
-            - logsearch-platform-stemcell-jammy/*.tgz
+        params: 
+          <<: *deploy-params-platform
+          ops_files:
+            - logsearch-config/staging.yml
+          vars_files:
+            - logsearch-config/varsfiles/staging.yml
+            - terraform-secrets/terraform.yml
+
     on_failure:
       put: slack
       params:
@@ -419,40 +357,16 @@ jobs:
           - get: terraform-yaml
             resource: terraform-yaml-production
           - get: general-task
-#      - task: logsearch-manifest
-#        image: general-task
-#        config:
-#          <<: *manifest-config
-#          run:
-#            path: sh
-#            args:
-#              - -exc
-#              - |
-#                SPRUCE_FILE_BASE_PATH=logsearch-config spruce merge \
-#                  --prune terraform_outputs \
-#                  logsearch-config/logsearch-platform-deployment.yml \
-#                  logsearch-config/logsearch-platform-jobs.yml \
-#                  common-secrets/logsearch-platform-production.yml \
-#                  logsearch-config/logsearch-platform-production.yml \
-#                  terraform-yaml/state.yml \
-#                  > logsearch-manifest/manifest.yml
-#          outputs:
-#            - name: logsearch-manifest
-#          params:
-#            CF_USERNAME: ((cf-username-production))
-#            CF_PASSWORD: ((cf-password-production))
-#            CF_SYSTEM_DOMAIN: ((cf-system-domain-production))
+      - task: terraform-secrets
+        file: logsearch-config/ci/terraform-secrets.yml
       - put: logsearch-platform-production-deployment
-        params:
-          manifest: logsearch-manifest/manifest.yml
-          releases:
-            - logsearch-release/*.tgz
-            - logsearch-for-cloudfoundry-release/*.tgz
-            - prometheus-release/*.tgz
-            - oauth2-proxy-release/*.tgz
-            - secureproxy-release/*.tgz
-          stemcells:
-            - logsearch-platform-stemcell-jammy/*.tgz
+        params: 
+          <<: *deploy-params-platform
+          ops_files:
+            - logsearch-config/production.yml
+          vars_files:
+            - logsearch-config/varsfiles/production.yml
+            - terraform-secrets/terraform.yml
     on_failure:
       put: slack
       params:
@@ -839,14 +753,7 @@ resources:
       region_name: ((concourse-varz-bucket-region))
       bucket: ((concourse-varz-bucket))
       versioned_file: ((name)).yml
-#  - name: deploy-development
-#    type: bosh-deployment
-#    source:
-#      target: ((bosh.development.environment))
-#      client: ((bosh.development.client))
-#      client_secret: ((bosh.development.client-secret))
-#      ca_cert: ((bosh-ca-cert))
-#      deployment: logsearch-platform
+
 
 resource_types:
   - name: registry-image
