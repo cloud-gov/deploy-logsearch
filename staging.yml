@@ -1,0 +1,55 @@
+- type: replace
+  path: /instance_groups/name=elasticsearch_master?/vm_type?
+  value: t3.large
+
+- type: replace
+  path: /instance_groups/name=maintenance?/jobs?/name=elasticsearch_config?/properties?/elasticsearch_config?/shards?
+  value: 2
+
+- type: replace
+  path: /instance_groups/name=maintenance?/vm_type?
+  value: t3.large
+
+- type: replace
+  path: /instance_groups/name=elasticsearch_data?/instances?
+  value: 2
+
+- type: replace
+  path: /instance_groups/name=elasticsearch_data?/update?
+  value: 
+    canaries: 1
+    max_in_flight: 1
+
+- type: replace
+  path: /instance_groups/name=elasticsearch_data?/vm_type?
+  value: t3.large
+
+- type: replace
+  path: /instance_groups/name=elasticsearch_data_warm?/instances?
+  value: 4
+
+- type: replace
+  path: /instance_groups/name=elasticsearch_data_warm?/update?
+  value: 
+    canaries: 1
+    max_in_flight: 1
+
+- type: replace
+  path: /instance_groups/name=elasticsearch_data_warm?/vm_type?
+  value: t3.large
+
+- type: replace
+  path: /instance_groups/name=kibana?/vm_type?
+  value: t3.xlarge
+
+- type: replace
+  path: /instance_groups/name=ingestor?/vm_type?
+  value: t3.large
+
+- type: replace
+  path: /instance_groups/name=smoke-tests?/jobs?/name=smoke_tests?/properties?/smoke_tests?/count_test?/minimum?
+  value: 20000
+
+- type: replace
+  path: /instance_groups/name=smoke-tests?/vm_type?
+  value: t3.small

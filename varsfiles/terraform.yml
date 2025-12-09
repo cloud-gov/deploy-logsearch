@@ -1,0 +1,4 @@
+access_key_id: ((terraform_outputs.platform_logs_bucket_access_key_id_curr))
+bucket: ((terraform_outputs.platform_logs_bucket_name))
+region: ((terraform_outputs.vpc_region))
+secret_access_key: ((terraform_outputs.platform_logs_bucket_secret_access_key_curr))
