@@ -1,20 +1,8 @@
----
-platform: linux
+#!/bin/bash
 
-image_resource:
-  type: registry-image
-  source:
-    aws_access_key_id: ((ecr_aws_key))
-    aws_secret_access_key: ((ecr_aws_secret))
-    repository: general-task
-    aws_region: us-gov-west-1
-    tag: latest
+bosh interpolate \
+  logsearch-config/varsfiles/terraform.yml \
+  -l terraform-yaml/state.yml \
+  > terraform-secrets/terraform.yml
 
-inputs:
-- name: logsearch-config
-- name: terraform-yaml
-outputs:
-- name: terraform-secrets
 
-run:
-  path: logsearch-config/ci/terraform-secrets.sh
