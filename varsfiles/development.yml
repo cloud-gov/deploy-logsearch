@@ -1,0 +1,2 @@
+oidc_issuer_url: https://opslogin.fr.cloud.gov/oauth/token
+redirect_url: https://logs-platform.dev.us-gov-west-1.aws-us-gov.cloud.gov/oauth2/callback

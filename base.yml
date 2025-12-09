@@ -1,0 +1,449 @@
+features:
+  use_dns_addresses: false
+
+
+addons:
+- jobs:
+  - name: bosh-dns-aliases
+    properties:
+      aliases:
+      - domain: kibana.logsearch-platform.internal
+        targets:
+        - deployment: logsearch-platform
+          domain: bosh
+          instance_group: kibana
+          network: services
+          query: '*'
+    release: bosh-dns-aliases
+  name: bosh-dns-aliases
+
+instance_groups:
+  #######################################################
+  #First deploy group - elasticsearch_master, maintenance
+  #######################################################
+  - name: elasticsearch_master
+    instances: 3
+    jobs:
+      - name: bpm
+        release: bpm
+      - name: elasticsearch-platform
+        release: logsearch
+        provides:
+          elasticsearch-platform: {as: elasticsearch_master}
+        consumes:
+          elasticsearch-platform: {from: elasticsearch_master}
+        properties:
+          elasticsearch:
+            cluster_name: logsearch-platform
+            node:
+              roles: master
+            limits:
+              fd: 131072 # 2 ** 17
+            health:
+              timeout: 900
+            recovery:
+              delay_allocation_restart: "15m"
+            jvm_options:
+              - "-Dlog4j2.formatMsgNoLookups=true"
+      - name: snort-config
+        release: jammy-snort
+        consumes:
+          curator: {from: maintenance}
+        properties:
+          snort:
+            rules:
+              - 'alert tcp any any -> any 9200 (msg:"Unexpected logsearch action"; content:"POST"; http_method; content: "logs-platform"; http_uri; content:"/_update"; http_uri; classtype:web-application-attack; sid:343080003; rev:1;)'
+              - 'alert tcp any any -> any 9200 (msg:"Unexpected logsearch action"; content:"DELETE"; http_method; content: "logs-platform"; http_uri; classtype:web-application-attack; sid:343080005; rev:1;)'
+              - 'suppress gen_id 1, sig_id 343080005, track by_src, ip 127.0.0.1'
+              - 'suppress gen_id 1, sig_id 57907, track by_src, ip 127.0.0.1'
+              - 'suppress gen_id 1, sig_id 26275, track by_src, ip 127.0.0.1'
+              - 'suppress gen_id 1, sig_id 41495, track by_src, ip 127.0.0.1'
+              - 'suppress gen_id 1, sig_id 58741'
+              - 'drop tcp $EXTERNAL_NET any -> $HOME_NET $HTTP_PORTS (msg:"SERVER-OTHER Apache Log4j logging remote code execution attempt"; flow:to_server,established; content:"${"; fast_pattern:only; http_client_body; pcre:"/\x24\x7b.{0,200}(%(25)?24|\x24)(%(25)?7b|\x7b).{0,200}(%(25)?3a|\x3a)(%(25)?(27|2d|5c|22)|[\x27\x2d\x5c\x22])*([jndi\x7d\x3a\x2d]|(%(25)?(7d|3a|2d))|(%(25)?5c|\x5c)u00[a-f0-9]{2}){1,4}(%(25)?(22|27)|[\x22\x27])?(%(25)?(3a|7d)|[\x3a\x7djndi])/Pi"; metadata:policy balanced-ips drop, policy connectivity-ips drop, policy max-detect-ips drop, policy security-ips drop, ruleset community, service http; reference:cve,2021-44228; reference:cve,2021-44832; reference:cve,2021-45046; reference:cve,2021-45105; classtype:attempted-user; sid:58741000; rev:6;)'
+              - 'suppress gen_id 1, sig_id 58739'
+              - 'drop tcp $EXTERNAL_NET any -> $HOME_NET $HTTP_PORTS (msg:"SERVER-OTHER Apache Log4j logging remote code execution attempt"; flow:to_server,established; content:"lower"; fast_pattern:only; http_header; pcre:"/(%(25)?24|\x24)(%(25)?7b|\x7b)lower(%(25)?3a|\x3a)/Hi"; metadata:policy balanced-ips drop, policy connectivity-ips drop, policy max-detect-ips drop, policy security-ips drop, ruleset community, service http; reference:cve,2021-44228; reference:cve,2021-44832; reference:cve,2021-45046; reference:cve,2021-45105; reference:cve,2022-20933; reference:url,tools.cisco.com/security/center/content/CiscoSecurityAdvisory/cisco-sa-meraki-mx-vpn-dos-vnESbgBf; classtype:attempted-user; sid:58739000; rev:5;)'
+              - 'suppress gen_id 1, sig_id 62507'
+              - 'drop tcp any any -> any $HTTP_PORTS (msg:"SERVER-WEBAPP Atlassian Confluence remote code execution attempt"; flow:to_server,established; content:"bootstrapStatusProvider.applicationConfig.setupComplete="; fast_pattern; nocase; http_uri; content:"false"; distance:0; nocase; http_uri; metadata:policy balanced-ips drop, policy connectivity-ips drop, policy max-detect-ips drop, policy security-ips drop, ruleset community, service http; reference:cve,2023-22515; reference:url,confluence.atlassian.com/kb/faq-for-cve-2023-22515-1295682188.html; classtype:attempted-user; sid:62507000; rev:1;)'
+
+
+    vm_type: logsearch_es_master
+    vm_extensions:
+      - 10GB_root_disk
+      - 10GB_ephemeral_disk
+    persistent_disk_type: logsearch_es_master
+    stemcell: default
+    azs: [z1, z2]
+    networks:
+      - name: services
+    update:
+      max_in_flight: 1 # Should never update more than one ES master node at a time or cluster will go down
+  - name: maintenance
+    instances: 1
+    vm_extensions: [errand-profile]
+    jobs:
+      - name: bpm
+        release: bpm
+      - name: elasticsearch-platform
+        release: logsearch
+        consumes:
+          elasticsearch-platform: {from: elasticsearch_master}
+        properties:
+          elasticsearch:
+            node:
+              roles: maintenance
+            heap_size: 2G
+            config_options: {"xpack.monitoring.enabled": false}
+            jvm_options:
+              - "-Dlog4j2.formatMsgNoLookups=true"
+      - name: curator
+        release: logsearch
+        provides:
+          curator: {as: maintenance}
+        properties:
+          curator:
+            purge_logs:
+              retention_period: 365
+            actions:
+              - action: index_settings
+                description: >-
+                  Sets indices older than 1 day to be read only
+                options:
+                  index_settings:
+                    index:
+                      blocks:
+                        write: true
+                filters:
+                  - filtertype: pattern
+                    kind: regex
+                    value: logs*
+                  - filtertype: age
+                    source: creation_date
+                    direction: older
+                    unit: days
+                    unit_count: 1
+      - name: elasticsearch_config
+        release: logsearch
+        properties:
+            component_templates:
+              - shards-and-replicas: /var/vcap/jobs/elasticsearch_config/index-templates/shards-and-replicas.json
+              - index-settings: /var/vcap/jobs/elasticsearch_config/index-templates/index-settings.json
+              - index-mappings: /var/vcap/jobs/elasticsearch_config/index-templates/index-mappings.json
+              - index-mappings-lfc: /var/vcap/jobs/elasticsearch-config-lfc/component-index-mappings.json
+              - index-mappings-app-lfc: /var/vcap/jobs/elasticsearch-config-lfc/component-index-mappings-app.json
+              - index-mappings-platform-lfc: /var/vcap/jobs/elasticsearch-config-lfc/component-index-mappings-platform.json
+            index_templates:
+              - index-mappings-lfc: /var/vcap/jobs/elasticsearch-config-lfc/index-mappings.json
+              - index-mappings-app-lfc: /var/vcap/jobs/elasticsearch-config-lfc/index-mappings-app.json
+              - index-mappings-platform-lfc: /var/vcap/jobs/elasticsearch-config-lfc/index-mappings-platform.json
+      - name: elasticsearch-config-lfc
+        release: logsearch-for-cloudfoundry
+        properties:
+          elasticsearch_config:
+            base_index_component_name: index-mappings-lfc
+            app_index_component_name: index-mappings-app-lfc
+            platform_index_component_name: index-mappings-platform-lfc
+            index_mappings_component_name: index-mappings
+            index_settings_component_name: index-settings
+            shards_and_replicas_component_name: shards-and-replicas
+            index_settings:
+              index:
+                routing:
+                  allocation:
+                    include:
+                      _tier_preference: data_hot
+                lifecycle:
+                  name: logs
+                  rollover_alias: ""
+      - name: elasticsearch_exporter
+        release: prometheus
+        properties:
+          elasticsearch_exporter:
+            es:
+              uri: http://localhost:9200
+              all: true
+      - name: upload-kibana-objects
+        release: logsearch-for-cloudfoundry
+        properties:
+          cloudfoundry:
+            system_domain: ((cf_system_domain))
+            user: ((cf_username))
+            password: ((cf_password))
+            logs_hostname: logs-platform
+          kibana_objects:
+            login_fqdn: opslogin.fr.cloud.gov
+            upload_patterns:
+              - {type: index-pattern, pattern: "/var/vcap/jobs/upload-kibana-objects/kibana-objects/index-pattern/logs-platform.json"}
+              - {type: search, pattern: "/var/vcap/jobs/upload-kibana-objects/kibana-objects/search/platform-*.json"}
+              - {type: visualization, pattern: "/var/vcap/jobs/upload-kibana-objects/kibana-objects/visualization/Platform-*.json"}
+              - {type: dashboard, pattern: "/var/vcap/jobs/upload-kibana-objects/kibana-objects/dashboard/Platform-*.json"}
+    vm_type: logsearch_maintenance
+    vm_extensions:
+      - 10GB_root_disk
+      - 10GB_ephemeral_disk
+    stemcell: default
+    azs: [z1, z2]
+    networks:
+      - name: services
+    update:
+      serial: true # Block on this job to create deploy group 1
+  #########################################################
+  #2nd deploy group - elasticsearch_data, kibana, ingestors
+  #########################################################
+  - name: elasticsearch_data
+    instances: 4
+    jobs:
+      - name: bpm
+        release: bpm
+      - name: elasticsearch-platform
+        release: logsearch
+        consumes:
+          elasticsearch-platform: {from: elasticsearch_master}
+        properties:
+          elasticsearch:
+            jvm_options:
+              - "-Dlog4j2.formatMsgNoLookups=true"
+            node:
+              roles: data_content, data_hot
+            limits:
+              fd: 131072 # 2 ** 17
+            health:
+              timeout: 1500
+            recovery:
+              delay_allocation_restart: "15m"
+            config_options: {"xpack.monitoring.enabled": false}
+    vm_type: logsearch_es_data
+    vm_extensions:
+      - 10GB_root_disk
+      - 10GB_ephemeral_disk
+    persistent_disk_type: logsearch_es_platform_data
+    stemcell: default
+    azs: [z1, z2]
+    networks:
+      - name: services
+    update:
+      max_in_flight: 1 # Only update 1 ES data node at a time or risk downtime
+  - name: elasticsearch_data_warm
+    instances: 7
+    jobs:
+      - name: bpm
+        release: bpm
+      - name: elasticsearch-platform
+        release: logsearch
+        consumes:
+          elasticsearch-platform: {from: elasticsearch_master}
+        properties:
+          elasticsearch:
+            jvm_options:
+              - "-Dlog4j2.formatMsgNoLookups=true"
+            node:
+              roles: data_warm
+            limits:
+              fd: 131072 # 2 ** 17
+            health:
+              timeout: 1500
+            recovery:
+              delay_allocation_restart: "15m"
+            config_options: {"xpack.monitoring.enabled": false}
+    vm_type: logsearch_es_data
+    vm_extensions:
+      - 10GB_root_disk
+      - 10GB_ephemeral_disk
+    persistent_disk_type: logsearch_es_platform_data_warm
+    stemcell: default
+    azs: [z1, z2]
+    networks:
+      - name: services
+    update:
+      max_in_flight: 1 # Only update 1 ES data node at a time or risk downtime
+  - name: kibana
+    instances: 2
+    jobs:
+      - name: bpm
+        release: bpm
+      - name: elasticsearch-platform
+        release: logsearch
+        consumes:
+          elasticsearch-platform: {from: elasticsearch_master}
+        properties:
+          elasticsearch:
+            node:
+              roles: kibana
+            heap_size: 2G
+      - name: kibana-platform
+        release: logsearch
+        consumes:
+          elasticsearch-platform: {from: elasticsearch_master}
+        provides:
+          kibana-platform: {as: kibana_link}
+        properties:
+          kibana:
+            port: 5602
+            memory_limit: 75
+            default_app_id: "dashboard/Platform-Overview"
+            env:
+              - NODE_ENV: production
+            health:
+              timeout: 600
+      - name: oauth2-proxy
+        release: oauth2-proxy
+        properties:
+          address: http://127.0.0.1:5601
+          upstream: http://127.0.0.1:5602
+          provider: oidc
+          client_id: ((client_id))
+          client_secret: ((client_secret))
+          cookie_secret: ((cookie_secret))
+          oidc_issuer_url: ((oidc_issuer_url))
+          redirect_url: ((redirect_url))
+          email_domain: gsa.gov
+      - name: secureproxy
+        release: secureproxy
+        properties:
+          secureproxy:
+            listen_port: 5600
+            proxy_port: 5601
+    vm_type: logsearch_kibana
+    vm_extensions:
+      - platform-kibana-lb
+      - 50GB_ephemeral_disk
+      - 10GB_root_disk
+    stemcell: default
+    azs: [z1, z2]
+    networks:
+      - name: services
+  - name: ingestor
+    instances: 5
+    jobs:
+      - name: bpm
+        release: bpm
+      - name: elasticsearch-platform
+        release: logsearch
+        consumes:
+          elasticsearch-platform: {from: elasticsearch_master}
+        properties:
+          elasticsearch:
+            jvm_options:
+              - "-Dlog4j2.formatMsgNoLookups=true"
+            node:
+              roles: ingest
+            heap_size: 1G
+            config_options: {"xpack.monitoring.enabled": false}
+      - name: ingestor_syslog
+        release: logsearch
+        consumes:
+          elasticsearch: {from: elasticsearch_master}
+        provides:
+          ingestor: {as: ingestor_link}
+        properties:
+          logstash:
+            jvm_options:
+              - "-Dlog4j2.formatMsgNoLookups=true"
+            queue:
+              max_bytes: 30gb
+          logstash_parser:
+            elasticsearch:
+              # Use per-day indexing strategy
+              index: "logs-platform-%{+YYYY.MM.dd}"
+              index_type: "%{@type}"
+              data_hosts: [127.0.0.1]
+            filters:
+              - path: /var/vcap/packages/logsearch-config-logstash-filters/logstash-filters-default.conf
+              - content: |
+                  if [@source][component] == "snort" {
+                    grok {
+                      match => {
+                        "@message" => "\[%{INT:gid}:%{INT:sid}:%{INT:rev}\]\s%{DATA:msg}\s\{%{DATA:proto}\}\s%{IP:src_ip}:%{INT:src_port}\s->\s%{IP:dst_ip}:%{INT:dst_port}"
+                      }
+                    }
+                  }
+                  if [@source][component] == "clamd" {
+                    grok {
+                      match => {
+                        "@message" => "%{WORD:event_type}:\s%{DATA:file_path}:\s%{DATA:signature_name}\sFOUND"
+                      }
+                    }
+                  }
+            outputs:
+              - plugin: s3
+                options:
+                  region: ((region))
+                  bucket: ((bucket))
+                  access_key_id: ((access_key_id))
+                  secret_access_key: ((secret_access_key))
+                  server_side_encryption: true
+                  prefix: "%{+yyyy/MM/dd/HH/mm}"
+                  encoding: "gzip"
+                  temporary_directory: /var/vcap/data/ingestor_syslog/s3_temp
+                  # note that this is different than in the archivers
+                  # here, we're uploading the parsed message as json, not the raw log line
+                  codec: json
+              - plugin: elasticsearch
+                options: {}
+            deployment_dictionary:
+              - /var/vcap/packages/logsearch-config/deployment_lookup.yml
+              - /var/vcap/jobs/parser-config-lfc/config/deployment_lookup.yml
+      - name: parser-config-lfc
+        release: logsearch-for-cloudfoundry
+    vm_type: logsearch_ingestor
+    vm_extensions:
+      - platform-syslog-lb
+      - 10GB_root_disk
+      - 10GB_ephemeral_disk
+    persistent_disk_type: logsearch_ingestor
+    stemcell: default
+    azs: [z1, z2]
+    networks:
+      - name: services
+  ###########################
+  #3rd deploy group - errands
+  ###########################
+  - name: smoke-tests
+    instances: 1
+    vm_type: t3.medium
+    vm_extensions:
+      - errand-profile
+      - 10GB_root_disk
+      - 10GB_ephemeral_disk
+    stemcell: default
+    azs: [z1, z2]
+    networks:
+      - name: services
+    lifecycle: errand
+    release: logsearch
+    jobs:
+      - name: smoke_tests
+        properties:
+          smoke_tests:
+            count_test:
+              run: true
+              minimum: 50000
+              time_interval: "5m"
+              time_field: "@timestamp"
+              index_pattern: "logs-platform-*"
+        release: logsearch
+        consumes:
+          elasticsearch: {from: elasticsearch_master}
+          ingestor_link: {from: ingestor_syslog}
+
+
+name: logsearch-platform
+stemcells:
+  - alias: default
+    os: ubuntu-jammy
+    version: latest
+update:
+  serial: false
+  canaries: 1
+  canary_watch_time: 30000-600000
+  update_watch_time: 5000-600000
+  max_in_flight: 1
+  max_errors: 1
+releases:
+  - {name: logsearch, version: latest}
+  - {name: logsearch-for-cloudfoundry, version: latest}
+  - {name: prometheus, version: latest}
+  - {name: oauth2-proxy, version: latest}
+  - {name: secureproxy, version: latest}
+  - {name: bpm, version: latest}
+  - {name: jammy-snort, version: latest}
+  - {name: bosh-dns-aliases, version: latest}
