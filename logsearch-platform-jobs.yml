@@ -219,7 +219,7 @@ instance_groups:
     update:
       max_in_flight: 1 # Only update 1 ES data node at a time or risk downtime
   - name: elasticsearch_data_warm
-    instances: 7
+    instances: 8
     jobs:
       - name: bpm
         release: bpm
