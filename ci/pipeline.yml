@@ -673,7 +673,7 @@ resources:
     source:
       commit_verification_keys: ((cloud-gov-pgp-keys))
       uri: ((cg-deploy-logsearch-git-url))
-      branch: no-spruce
+      branch: main
   - name: logsearch-platform-stemcell-jammy
     source:
       name: bosh-aws-xen-hvm-ubuntu-jammy-go_agent
