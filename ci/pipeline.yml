@@ -133,12 +133,8 @@ jobs:
     serial_groups: [bosh-platform-development]
     plan:
       - in_parallel:
-          - get: common-development
           - get: pipeline-tasks
           - get: logsearch-config
-            trigger: true
-          - get: common-secrets
-            resource: common-platform-development
             trigger: true
           - get: logsearch-for-cloudfoundry-release
             trigger: true
@@ -236,9 +232,6 @@ jobs:
     plan:
       - in_parallel:
           - get: pipeline-tasks
-          - get: common-secrets
-            resource: common-platform-staging
-            trigger: true
           - get: logsearch-config
             trigger: true
             passed: [smoke-tests-platform-development]
@@ -337,8 +330,6 @@ jobs:
     plan:
       - in_parallel:
           - get: pipeline-tasks
-          - get: common-secrets
-            resource: common-platform-production
           - get: logsearch-config
             passed: [smoke-tests-platform-staging]
           - get: logsearch-release
@@ -614,30 +605,6 @@ resources:
       bucket: ((logsearch-private-bucket))
       region_name: ((aws-region))
       versioned_file: master-bosh.crt
-  - name: common-development
-    type: s3-iam
-    source:
-      bucket: ((logsearch-private-bucket))
-      versioned_file: logsearch-development.yml
-      region_name: ((aws-region))
-  - name: common-platform-development
-    type: s3-iam
-    source:
-      bucket: ((logsearch-private-bucket))
-      versioned_file: logsearch-platform-development.yml
-      region_name: ((aws-region))
-  - name: common-platform-staging
-    type: s3-iam
-    source:
-      bucket: ((logsearch-private-bucket))
-      versioned_file: logsearch-platform-staging.yml
-      region_name: ((aws-region))
-  - name: common-platform-production
-    type: s3-iam
-    source:
-      bucket: ((logsearch-private-bucket))
-      versioned_file: logsearch-platform-production.yml
-      region_name: ((aws-region))
   - name: logsearch-release
     type: s3-iam
     source:
