@@ -54,3 +54,15 @@
 - type: replace
   path: /instance_groups/name=ingestor?/vm_type?
   value: r6i.xlarge.logsearch.ingestor
+
+
+# Need to remove existing vm_extensions before replacing them
+- type: remove
+  path: /instance_groups/name=ingestor/vm_extensions?
+
+- type: replace
+  path: /instance_groups/name=ingestor/vm_extensions?
+  value: 
+    - platform-syslog-lb
+    - 10GB_root_disk
+    - 15GB_ephemeral_disk
