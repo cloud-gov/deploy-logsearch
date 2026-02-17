@@ -20,7 +20,7 @@
 
 - type: replace
   path: /instance_groups/name=elasticsearch_data?/instances?
-  value: 2
+  value: 3
 
 - type: replace
   path: /instance_groups/name=elasticsearch_data?/update?
@@ -70,7 +70,7 @@
 
 - type: replace
   path: /instance_groups/name=ingestor?/vm_type?
-  value: t3.medium
+  value: t3.large
 
 - type: replace
   path: /instance_groups/name=smoke-tests?/jobs?/name=smoke_tests?/properties?/smoke_tests?/count_test?/minimum?
