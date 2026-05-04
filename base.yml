@@ -1,22 +1,19 @@
 features:
   use_dns_addresses: false
-
-
 addons:
-- jobs:
-  - name: bosh-dns-aliases
-    properties:
-      aliases:
-      - domain: kibana.logsearch-platform.internal
-        targets:
-        - deployment: logsearch-platform
-          domain: bosh
-          instance_group: kibana
-          network: services
-          query: '*'
-    release: bosh-dns-aliases
-  name: bosh-dns-aliases
-
+  - jobs:
+      - name: bosh-dns-aliases
+        properties:
+          aliases:
+            - domain: kibana.logsearch-platform.internal
+              targets:
+                - deployment: logsearch-platform
+                  domain: bosh
+                  instance_group: kibana
+                  network: services
+                  query: '*'
+        release: bosh-dns-aliases
+    name: bosh-dns-aliases
 instance_groups:
   #######################################################
   #First deploy group - elasticsearch_master, maintenance
@@ -64,8 +61,6 @@ instance_groups:
               - 'drop tcp $EXTERNAL_NET any -> $HOME_NET $HTTP_PORTS (msg:"SERVER-OTHER Apache Log4j logging remote code execution attempt"; flow:to_server,established; content:"lower"; fast_pattern:only; http_header; pcre:"/(%(25)?24|\x24)(%(25)?7b|\x7b)lower(%(25)?3a|\x3a)/Hi"; metadata:policy balanced-ips drop, policy connectivity-ips drop, policy max-detect-ips drop, policy security-ips drop, ruleset community, service http; reference:cve,2021-44228; reference:cve,2021-44832; reference:cve,2021-45046; reference:cve,2021-45105; reference:cve,2022-20933; reference:url,tools.cisco.com/security/center/content/CiscoSecurityAdvisory/cisco-sa-meraki-mx-vpn-dos-vnESbgBf; classtype:attempted-user; sid:58739000; rev:5;)'
               - 'suppress gen_id 1, sig_id 62507'
               - 'drop tcp any any -> any $HTTP_PORTS (msg:"SERVER-WEBAPP Atlassian Confluence remote code execution attempt"; flow:to_server,established; content:"bootstrapStatusProvider.applicationConfig.setupComplete="; fast_pattern; nocase; http_uri; content:"false"; distance:0; nocase; http_uri; metadata:policy balanced-ips drop, policy connectivity-ips drop, policy max-detect-ips drop, policy security-ips drop, ruleset community, service http; reference:cve,2023-22515; reference:url,confluence.atlassian.com/kb/faq-for-cve-2023-22515-1295682188.html; classtype:attempted-user; sid:62507000; rev:1;)'
-
-
     vm_type: logsearch_es_master
     vm_extensions:
       - 10GB_root_disk
@@ -124,17 +119,17 @@ instance_groups:
       - name: elasticsearch_config
         release: logsearch
         properties:
-            component_templates:
-              - shards-and-replicas: /var/vcap/jobs/elasticsearch_config/index-templates/shards-and-replicas.json
-              - index-settings: /var/vcap/jobs/elasticsearch_config/index-templates/index-settings.json
-              - index-mappings: /var/vcap/jobs/elasticsearch_config/index-templates/index-mappings.json
-              - index-mappings-lfc: /var/vcap/jobs/elasticsearch-config-lfc/component-index-mappings.json
-              - index-mappings-app-lfc: /var/vcap/jobs/elasticsearch-config-lfc/component-index-mappings-app.json
-              - index-mappings-platform-lfc: /var/vcap/jobs/elasticsearch-config-lfc/component-index-mappings-platform.json
-            index_templates:
-              - index-mappings-lfc: /var/vcap/jobs/elasticsearch-config-lfc/index-mappings.json
-              - index-mappings-app-lfc: /var/vcap/jobs/elasticsearch-config-lfc/index-mappings-app.json
-              - index-mappings-platform-lfc: /var/vcap/jobs/elasticsearch-config-lfc/index-mappings-platform.json
+          component_templates:
+            - shards-and-replicas: /var/vcap/jobs/elasticsearch_config/index-templates/shards-and-replicas.json
+            - index-settings: /var/vcap/jobs/elasticsearch_config/index-templates/index-settings.json
+            - index-mappings: /var/vcap/jobs/elasticsearch_config/index-templates/index-mappings.json
+            - index-mappings-lfc: /var/vcap/jobs/elasticsearch-config-lfc/component-index-mappings.json
+            - index-mappings-app-lfc: /var/vcap/jobs/elasticsearch-config-lfc/component-index-mappings-app.json
+            - index-mappings-platform-lfc: /var/vcap/jobs/elasticsearch-config-lfc/component-index-mappings-platform.json
+          index_templates:
+            - index-mappings-lfc: /var/vcap/jobs/elasticsearch-config-lfc/index-mappings.json
+            - index-mappings-app-lfc: /var/vcap/jobs/elasticsearch-config-lfc/index-mappings-app.json
+            - index-mappings-platform-lfc: /var/vcap/jobs/elasticsearch-config-lfc/index-mappings-platform.json
       - name: elasticsearch-config-lfc
         release: logsearch-for-cloudfoundry
         properties:
@@ -376,7 +371,7 @@ instance_groups:
                   temporary_directory: /var/vcap/data/ingestor_syslog/s3_temp
                   # note that this is different than in the archivers
                   # here, we're uploading the parsed message as json, not the raw log line
-                  codec: json
+                  codec: json_lines
               - plugin: elasticsearch
                 options: {}
             deployment_dictionary:
@@ -424,8 +419,6 @@ instance_groups:
         consumes:
           elasticsearch: {from: elasticsearch_master}
           ingestor_link: {from: ingestor_syslog}
-
-
 name: logsearch-platform
 stemcells:
   - alias: default
