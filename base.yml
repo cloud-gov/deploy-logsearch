@@ -406,6 +406,8 @@ instance_groups:
     lifecycle: errand
     release: logsearch
     jobs:
+      - name: bpm
+        release: bpm
       - name: smoke_tests
         properties:
           smoke_tests:
