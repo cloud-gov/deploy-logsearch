@@ -78,6 +78,19 @@ instance_groups:
     jobs:
       - name: bpm
         release: bpm
+      - name: smoke_tests
+        properties:
+          smoke_tests:
+            count_test:
+              run: true
+              minimum: 50000
+              time_interval: "5m"
+              time_field: "@timestamp"
+              index_pattern: "logs-platform-*"
+        release: logsearch
+        consumes:
+          elasticsearch: {from: elasticsearch_master}
+          ingestor_link: {from: ingestor_syslog}
       - name: elasticsearch-platform
         release: logsearch
         consumes:
@@ -389,38 +402,6 @@ instance_groups:
     azs: [z1, z2]
     networks:
       - name: services
-  ###########################
-  #3rd deploy group - errands
-  ###########################
-  - name: smoke-tests
-    instances: 1
-    vm_type: t3.medium
-    vm_extensions:
-      - errand-profile
-      - 10GB_root_disk
-      - 10GB_ephemeral_disk
-    stemcell: default
-    azs: [z1, z2]
-    networks:
-      - name: services
-    lifecycle: errand
-    release: logsearch
-    jobs:
-      - name: bpm
-        release: bpm
-      - name: smoke_tests
-        properties:
-          smoke_tests:
-            count_test:
-              run: true
-              minimum: 50000
-              time_interval: "5m"
-              time_field: "@timestamp"
-              index_pattern: "logs-platform-*"
-        release: logsearch
-        consumes:
-          elasticsearch: {from: elasticsearch_master}
-          ingestor_link: {from: ingestor_syslog}
 name: logsearch-platform
 stemcells:
   - alias: default
