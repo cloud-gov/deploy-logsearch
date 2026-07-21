@@ -19,17 +19,6 @@
   path: /instance_groups/name=elasticsearch_data?/vm_type?
   value: t3.large
 - type: replace
-  path: /instance_groups/name=elasticsearch_data_warm?/instances?
-  value: 4
-- type: replace
-  path: /instance_groups/name=elasticsearch_data_warm?/update?
-  value:
-    canaries: 1
-    max_in_flight: 1
-- type: replace
-  path: /instance_groups/name=elasticsearch_data_warm?/vm_type?
-  value: t3.large
-- type: replace
   path: /instance_groups/name=kibana?/vm_type?
   value: t3.xlarge
 - type: replace
