@@ -230,39 +230,6 @@ instance_groups:
       - name: services
     update:
       max_in_flight: 1 # Only update 1 ES data node at a time or risk downtime
-  - name: elasticsearch_data_warm
-    instances: 7
-    jobs:
-      - name: bpm
-        release: bpm
-      - name: elasticsearch-platform
-        release: logsearch
-        consumes:
-          elasticsearch-platform: {from: elasticsearch_master}
-        properties:
-          elasticsearch:
-            jvm_options:
-              - "-Dlog4j2.formatMsgNoLookups=true"
-            node:
-              roles: data_warm
-            limits:
-              fd: 131072 # 2 ** 17
-            health:
-              timeout: 1500
-            recovery:
-              delay_allocation_restart: "15m"
-            config_options: {"xpack.monitoring.enabled": false}
-    vm_type: logsearch_es_data
-    vm_extensions:
-      - 10GB_root_disk
-      - 10GB_ephemeral_disk
-    persistent_disk_type: logsearch_es_platform_data_warm
-    stemcell: default
-    azs: [z1, z2]
-    networks:
-      - name: services
-    update:
-      max_in_flight: 1 # Only update 1 ES data node at a time or risk downtime
   - name: kibana
     instances: 2
     jobs:
