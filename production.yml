@@ -20,7 +20,7 @@
   value: r6i.xlarge
 - type: replace
   path: /instance_groups/name=elasticsearch_data?/instances?
-  value: 5
+  value: 4
 - type: replace
   path: /instance_groups/name=kibana?/vm_type?
   value: t3.xlarge
