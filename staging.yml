@@ -9,7 +9,7 @@
   value: t3.large
 - type: replace
   path: /instance_groups/name=elasticsearch_data?/instances?
-  value: 2
+  value: 0
 - type: replace
   path: /instance_groups/name=elasticsearch_data?/update?
   value:

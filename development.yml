@@ -1,6 +1,6 @@
 - type: replace
   path: /instance_groups/name=elasticsearch_master?/instances?
-  value: 1
+  value: 0
 - type: replace
   path: /instance_groups/name=elasticsearch_master?/vm_type?
   value: t3.large
@@ -15,7 +15,7 @@
   value: t3.medium
 - type: replace
   path: /instance_groups/name=elasticsearch_data?/instances?
-  value: 3
+  value: 0
 - type: replace
   path: /instance_groups/name=elasticsearch_data?/update?
   value:
@@ -26,7 +26,7 @@
   value: t3.medium
 - type: replace
   path: /instance_groups/name=kibana?/instances?
-  value: 1
+  value: 0
 - type: replace
   path: /instance_groups/name=kibana?/vm_type?
   value: t3.large
@@ -35,7 +35,7 @@
   value: https://logs-platform.dev.us-gov-west-1.aws-us-gov.cloud.gov
 - type: replace
   path: /instance_groups/name=ingestor?/instances?
-  value: 1
+  value: 0
 - type: replace
   path: /instance_groups/name=ingestor?/vm_type?
   value: t3.large
