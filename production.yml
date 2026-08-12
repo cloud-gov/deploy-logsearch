@@ -20,13 +20,13 @@
   value: r6i.xlarge
 - type: replace
   path: /instance_groups/name=elasticsearch_data?/instances?
-  value: 4
+  value: 0
 - type: replace
   path: /instance_groups/name=kibana?/vm_type?
   value: t3.xlarge
 - type: replace
   path: /instance_groups/name=ingestor?/instances?
-  value: 9
+  value: 0
 - type: replace
   path: /instance_groups/name=ingestor?/jobs?/name=ingestor_syslog?/properties?/logstash_ingestor?/health?/timeout?
   value: 900
