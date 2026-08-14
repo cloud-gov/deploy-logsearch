@@ -1,3 +1,12 @@
+> [!WARNING]
+> **This repository is deprecated and no longer maintained.**
+>
+> It has been replaced by the following repositories:
+> - https://github.com/cloud-gov/deploy-logs-opensearch
+> - https://github.com/cloud-gov/deploy-platform-opensearch
+>
+> Please use those repositories instead.
+
 # 18F cloud.gov ELK deployment
 
 This repo contains the pipeline and [BOSH](https://bosh.io) manifests for deploying cloud.gov [ELK](https://www.elastic.co/videos/introduction-to-the-elk-stack) implementation.
